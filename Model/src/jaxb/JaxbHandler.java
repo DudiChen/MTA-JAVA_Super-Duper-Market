@@ -1,6 +1,6 @@
 package jaxb;
 
-import exceptions.XMLException;
+import exception.XMLException;
 import jaxb.generated.*;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

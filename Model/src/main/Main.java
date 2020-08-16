@@ -1,7 +1,7 @@
 package main;
 
-import entities.Product;
-import exceptions.XMLException;
+import entity.Product;
+import exception.XMLException;
 import jaxb.JaxbHandler;
 import jaxb.generated.SuperDuperMarketDescriptor;
 
@@ -10,7 +10,7 @@ public class Main {
         Product.PurchaseMethod pm = Product.PurchaseMethod.QUANTITY;
         System.out.println(pm);
 
-        String XML_PATH = "/resources/ex1-big.xml";
+        String XML_PATH = "/resource/ex1-big.xml";
         JaxbHandler jaxbh = new JaxbHandler();
         SuperDuperMarketDescriptor sdpMarketDescriptor = null;
         try {
