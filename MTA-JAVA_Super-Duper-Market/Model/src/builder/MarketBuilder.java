@@ -12,6 +12,7 @@ import javax.xml.bind.ValidationException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market> {
 
@@ -57,13 +58,11 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         List<Integer> ids = sdmStores.stream().map(SDMStore::getId).collect(Collectors.toList());
         Set<Integer> dups = getDuplicateIds(ids);
         StringBuilder errors = new StringBuilder();
+        Map<Integer, Store> idToStore = constructIdToStore(new HashSet<>(sdmStores));
 
         // check for duplicate ids stores
         errors.append(dups.stream().map(Object::toString)
                 .reduce("", (acc, current) -> acc + "duplicate id for store " + current.toString() + System.lineSeparator()));
-
-
-        Map<Integer, Store> idToStore = constructIdToStore(new HashSet<>(sdmStores));
 
         // check for non existing products sold by stores
         Map<Integer, List<Product>> nonValidStoresToNonExistingProds = getNonExistingProducts(new HashSet<>(idToStore.values()), idToProduct);
@@ -135,16 +134,23 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
 
     private Map<Integer, List<Product>> getNonExistingProducts(Set<Store> stores, Map<Integer, Product> idToProduct) {
         Map<Integer, List<Product>> res = new HashMap<>();
+
         stores.stream()
-                .forEach(store -> {
-                            res.put(store.getId(), store.getStock().getSoldProduts()
-                                    .values()
-                                    .stream()
-                                    .map(StoreProduct::getProduct)
-                                    .filter(storeProduct -> !idToProduct.containsKey(storeProduct.getId()))
-                                    .collect(Collectors.toList()));
-                        }
+                .forEach(store ->
+                        res.put(store.getId(),
+                                store.getStock().getSoldProduts()
+                                .values()
+                                .stream()
+                                .map(storeProduct -> {
+                                    System.out.println(storeProduct);
+                                    return storeProduct.getProduct();
+                                })
+                                .filter(product -> {
+                                    return !idToProduct.containsKey(product.getId());
+                                })
+                                .collect(Collectors.toList()))
                 );
+
         return res;
     }
 }

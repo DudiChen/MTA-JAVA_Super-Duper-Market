@@ -28,7 +28,7 @@ public class JaxbHandler {
             throw new XMLException(INVALID_XML_JAXB_LOAD_MESSAGE);
         }
 
-        validateXMLValues(sdMarketDescriptor);
+//        validateXMLValues(sdMarketDescriptor);
 
         return sdMarketDescriptor;
     }

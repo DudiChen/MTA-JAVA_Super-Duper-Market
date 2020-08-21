@@ -11,7 +11,7 @@ import javax.xml.bind.ValidationException;
 
 public class Main {
     public static void main(String[] args) {
-        String XML_PATH = "/resource/ex1-big.xml";
+        String XML_PATH = "/resource/ex1-error-3.4.xml";
         JaxbHandler jaxbh = new JaxbHandler();
         SuperDuperMarketDescriptor sdpMarketDescriptor = null;
         try {
@@ -19,7 +19,10 @@ public class Main {
             Market market = new MarketBuilder().build(sdpMarketDescriptor);
             System.out.println(market);
         }
-        catch (XMLException | ValidationException e) {
+        catch (ValidationException e) {
+            System.out.println(e.getMessage());
+        }
+        catch (XMLException e) {
             System.out.println(e.getMessage());
         }
     }
