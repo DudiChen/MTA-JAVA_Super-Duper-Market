@@ -7,8 +7,10 @@ import entity.StoreProduct;
 import jaxb.generated.SDMItem;
 import jaxb.generated.SDMStore;
 import jaxb.generated.SuperDuperMarketDescriptor;
+
 import javax.xml.bind.ValidationException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market> {
@@ -80,8 +82,23 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
                     .reduce("", (acc, currProductId) -> acc + "item id " + currProductId + "is not sold by any store" + System.lineSeparator());
             throw new ValidationException(errors);
         }
+
+        // check for duplicate product sell
+        Map<Store, List<Product>> nonValidStoresToDuplicateProds = getDuplicateProducts(new HashSet<>(sdmStores), idToProduct);
+        if (nonValidStoresToDuplicateProds.size() > 0) {
+            StringBuilder errors = new StringBuilder();
+            nonValidStoresToDuplicateProds
+                    .forEach((store, products) -> {
+                        if (products.size() > 0) {
+                            products
+                                    .forEach(product -> errors.append("product" + product.toString() + " sold by " + store.toString() + "more then once" + System.lineSeparator()));
+                        }
+                    });
+            throw new ValidationException(errors.toString());
+        }
         return idToStore;
     }
+
 
     private List<Product> getNonSoldProducts(Map<Integer, Store> idToStore, Map<Integer, Product> idToProduct) {
         return idToProduct.values().stream()
@@ -91,19 +108,37 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
                 .collect(Collectors.toList());
     }
 
+    private Map<Store, List<Product>> getDuplicateProducts(Set<SDMStore> sdmStores, Map<Integer, Product> idToProduct) {
+        Map<Store, List<Product>> res = new HashMap<>();
+        sdmStores.stream()
+                .forEach(store ->
+                        res.put(new StoreBuilder().build(store),
+                                store.getSDMPrices().getSDMSell()
+                                .stream()
+                                .map(sdmSell -> idToProduct.get(sdmSell.getItemId()).getId())
+                                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                                .entrySet().stream()
+                                .filter(idToApearances -> idToApearances.getValue() > 1)
+                                .map(Map.Entry::getKey)
+                                .map(id -> idToProduct.get(id))
+                                .collect(Collectors.toList())
+                ));
+        return res;
+    }
+
     private Map<Store, List<Product>> getNonExistingProducts(Set<SDMStore> sdmStores, Map<Integer, Product> idToProduct) {
         Map<Store, List<Product>> res = new HashMap<>();
         sdmStores.stream()
                 .map(sdmStore -> new StoreBuilder().build(sdmStore))
-                .forEach(store -> {
-                    res.put(store,
-                            store.getStock().getSoldProduts()
-                                    .values()
-                                    .stream()
-                                    .filter(storeProduct -> !idToProduct.containsKey(storeProduct.getProduct()))
-                                    .map(StoreProduct::getProduct)
-                                    .collect(Collectors.toList()));
-                });
+                .forEach(store ->
+                        res.put(store,
+                                store.getStock().getSoldProduts()
+                                        .values()
+                                        .stream()
+                                        .filter(storeProduct -> !idToProduct.containsKey(storeProduct.getProduct().getId()))
+                                        .map(StoreProduct::getProduct)
+                                        .collect(Collectors.toList()))
+                );
         return res;
     }
 }
