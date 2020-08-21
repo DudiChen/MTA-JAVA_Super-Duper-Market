@@ -8,14 +8,14 @@ public class StoreProduct {
     private final Product product;
     private double price;
 
-    private StoreProduct(Product product, double price) {
+    public StoreProduct(Product product, double price) {
         this.product = product;
         this.price = price;
     }
 
-//    public StoreProduct createInstance()
-//    {
-//    }
+    public int getId() {
+        return this.product.getId();
+    }
 
     public double getPrice() {
         return price;
@@ -24,11 +24,6 @@ public class StoreProduct {
     public void setPrice(double price) {
 
         this.price = price;
-    }
-
-    public int getId()
-    {
-        return product.getId();
     }
 
     public String getName()

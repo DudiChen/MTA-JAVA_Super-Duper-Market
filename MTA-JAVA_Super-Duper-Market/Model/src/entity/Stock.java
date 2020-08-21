@@ -4,17 +4,21 @@ import java.util.Map;
 
 public class Stock {
 
-    private Map<Integer, StoreProduct> soldProduts;
+    private Map<Integer, StoreProduct> soldProducts;
 
     public boolean doesProductExist(Product product) {
-        return this.soldProduts.containsKey(product.getId());
+        return this.soldProducts.containsKey(product.getId());
+    }
+
+    public Map<Integer, StoreProduct> getSoldProducts() {
+        return soldProducts;
+    }
+
+    public Stock(Map<Integer, StoreProduct> soldProducts) {
+        this.soldProducts = soldProducts;
     }
 
     public Map<Integer, StoreProduct> getSoldProduts() {
-        return soldProduts;
-    }
-
-    public Stock(Map<Integer, StoreProduct> soldProduts) {
-        this.soldProduts = soldProduts;
+        return this.soldProducts;
     }
 }

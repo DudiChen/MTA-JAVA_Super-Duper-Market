@@ -9,7 +9,7 @@ public class ProductBuilder implements Builder<SDMItem, Product> {
         return new Product(
           source.getId(),
           source.getName(),
-          Product.PurchaseMethod.valueOf(source.getPurchaseCategory())
+          Product.PurchaseMethod.valueOf(source.getPurchaseCategory().toUpperCase())
         );
     }
 }
