@@ -10,7 +10,6 @@ import java.util.Map;
 public class Store {
     private Point coordinate;
     private Stock stock;
-//    private Map<Integer, StoreProduct> idToProductMap;
     private int ppk;
     //    private List<Discount> discounts;
     private int id;
@@ -21,20 +20,13 @@ public class Store {
         this.ppk = ppk;
         this.id = id;
     }
-    public Store(SuperDuperMarketDescriptor sdmDescriptor)
-    {
-
-    }
-
-//    public static class StoreBuilder implements Builder<Store> {
-//
-//        public Store build() {
-//
-//        }
-//    }
 
     public int getId() {
         return id;
+    }
+
+    public Stock getStock() {
+        return stock;
     }
 
 //    public Map<Integer, StoreProduct> getIdToProduct() {
