@@ -8,6 +8,7 @@ import jaxb.JaxbHandler;
 import jaxb.generated.SuperDuperMarketDescriptor;
 
 import javax.xml.bind.ValidationException;
+import java.io.FileNotFoundException;
 
 public class Main {
     public static void main(String[] args) {
@@ -21,9 +22,8 @@ public class Main {
         }
         catch (ValidationException e) {
             System.out.println(e.getMessage());
-        }
-        catch (XMLException e) {
-            System.out.println(e.getMessage());
+        } catch (XMLException e) {
+            e.printStackTrace();
         }
     }
 }

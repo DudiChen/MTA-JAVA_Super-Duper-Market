@@ -42,6 +42,11 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         Set<Integer> dupIds = findDuplicates(ids);
         StringBuilder errors = new StringBuilder();
 
+        Set<Integer> badCoordinatesStoresIds = getBadCoordinatesStoresIds(new HashSet<>(sdmStores));
+        if(badCoordinatesStoresIds.size() > 0) {
+            badCoordinatesStoresIds
+                    .forEach(storeId -> errors.append("store id " + storeId + " has illegal location - coordinates must be in the range of [0, 50]" + System.lineSeparator()));
+        }
 
         // check for duplicate product sell of each store
         Map<Integer, List<Integer>> nonValidStoreIdsToDuplicateProds = getDuplicateProducts(sdmStores);
@@ -68,6 +73,7 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
                 });
 
 
+
         // 3.5 validation - all the products are sold by at least one store
         List<Product> nonSoldProducts = getNonSoldProducts(new HashSet<>(sdmStores));
         errors.append(nonSoldProducts.stream().map(Product::getId).map(Object::toString)
@@ -80,11 +86,18 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         return constructIdToStore(new HashSet<>(sdmStores));
     }
 
+    private Set<Integer> getBadCoordinatesStoresIds(Set<SDMStore> stores) {
+        return stores.stream()
+                .filter(store -> store.getLocation().getX() < 0 || store.getLocation().getY() < 0 || store.getLocation().getX() > 50 || store.getLocation().getY() > 50)
+                .map(store -> store.getId())
+                .collect(Collectors.toSet());
+    }
+
     private Map<Integer, Product> constructIdToProduct(Set<SDMItem> sdmItems) {
         return sdmItems.stream().collect(Collectors.toMap(SDMItem::getId, item -> new ProductBuilder().build(item)));
     }
 
-    private Map<Integer, Store> constructIdToStore(Set<SDMStore> sdmStores) {
+    private Map<Integer, Store> constructIdToStore(Set<SDMStore> sdmStores) throws ValidationException {
         return sdmStores.stream().collect(Collectors.toMap(SDMStore::getId, store -> new StoreBuilder(idToProduct).build(store)));
     }
 
@@ -93,7 +106,7 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         for (Product product : new HashSet<>(idToProduct.values())) {
             boolean isSold = false;
             for (SDMStore sdmStore : sdmStores) {
-                if (sdmStore.getSDMPrices().getSDMSell().stream().anyMatch(sell -> sell.getItemId() == product.getId())){
+                if (sdmStore.getSDMPrices().getSDMSell().stream().anyMatch(sell -> sell.getItemId() == product.getId())) {
                     isSold = true;
                     break;
                 }

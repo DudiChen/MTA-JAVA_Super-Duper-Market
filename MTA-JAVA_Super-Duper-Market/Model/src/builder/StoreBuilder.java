@@ -4,6 +4,7 @@ import entity.Product;
 import entity.Store;
 import jaxb.generated.SDMStore;
 
+import javax.xml.bind.ValidationException;
 import java.awt.*;
 import java.util.Map;
 
