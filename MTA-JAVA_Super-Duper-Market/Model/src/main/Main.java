@@ -11,7 +11,7 @@ import javax.xml.bind.ValidationException;
 
 public class Main {
     public static void main(String[] args) {
-        String XML_PATH = "/resource/ex1-error-3.4.xml";
+        String XML_PATH = "/resource/ex1-error-3.6.xml";
         JaxbHandler jaxbh = new JaxbHandler();
         SuperDuperMarketDescriptor sdpMarketDescriptor = null;
         try {

@@ -18,7 +18,4 @@ public class Stock {
         this.soldProducts = soldProducts;
     }
 
-    public Map<Integer, StoreProduct> getSoldProduts() {
-        return this.soldProducts;
-    }
 }
