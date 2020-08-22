@@ -58,16 +58,9 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         errors.append(dupIds.stream().map(Object::toString)
                 .reduce("", (acc, current) -> acc + "duplicate id for store " + current.toString() + System.lineSeparator()));
 
-        if (errors.length() > 0) {
-            throw new ValidationException(errors.toString());
-        }
-
-        Map<Integer, Store> idToStore = constructIdToStore(new HashSet<>(sdmStores));
-
-
 
         // check for non existing products sold by stores
-        Map<Integer, List<Integer>> nonValidStoresToNonExistingProds = getNonExistingProducts(new HashSet<>(idToStore.values()));
+        Map<Integer, List<Integer>> nonValidStoresToNonExistingProds = getNonExistingProducts(new HashSet<>(sdmStores));
         nonValidStoresToNonExistingProds
                 .forEach((store, products) -> {
                     if (products.size() > 0) {
@@ -76,14 +69,17 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
                     }
                 });
 
+
         // 3.5 validation - all the products are sold by at least one store
-        List<Product> nonSoldProducts = getNonSoldProducts(new HashSet<>(idToStore.values()));
+        List<Product> nonSoldProducts = getNonSoldProducts(new HashSet<>(sdmStores));
         errors.append(nonSoldProducts.stream().map(Product::getId).map(Object::toString)
                 .reduce("", (acc, currProductId) -> acc + "item id " + currProductId + " is not sold by any store" + System.lineSeparator()));
+
 
         if (errors.length() > 0) {
             throw new ValidationException(errors.toString());
         }
+        Map<Integer, Store> idToStore = constructIdToStore(new HashSet<>(sdmStores));
         return idToStore;
     }
 
@@ -95,12 +91,12 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         return sdmStores.stream().collect(Collectors.toMap(SDMStore::getId, store -> new StoreBuilder(idToProduct).build(store)));
     }
 
-    private List<Product> getNonSoldProducts(Set<Store> idToStore) {
+    private List<Product> getNonSoldProducts(Set<SDMStore> sdmStores) {
         List<Product> unSoldProducts = new ArrayList<>();
         for (Product product : new HashSet<>(idToProduct.values())) {
             boolean isSold = false;
-            for (Store store : idToStore) {
-                if (store.getStock().doesProductExist(product)) {
+            for (SDMStore sdmStore : sdmStores) {
+                if (sdmStore.getSDMPrices().getSDMSell().stream().anyMatch(sell -> sell.getItemId() == product.getId())){
                     isSold = true;
                     break;
                 }
@@ -123,20 +119,18 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         return res;
     }
 
-    private Map<Integer, List<Integer>> getNonExistingProducts(Set<Store> stores) {
+    private Map<Integer, List<Integer>> getNonExistingProducts(Set<SDMStore> stores) {
         Map<Integer, List<Integer>> res = new HashMap<>();
 
-        stores
-                .forEach(store ->
-                        res.put(store.getId(),
-                                store.getStock().getSoldProducts()
-                                        .entrySet()
-                                        .stream()
-                                        .filter(entry -> entry.getValue().getProduct() == null)
-                                        .map(entry -> entry.getKey())
-                                        .collect(Collectors.toList()))
-                );
-
+        for (SDMStore sdmStore : stores) {
+            Set<Integer> nonExistingProdIds = sdmStore.getSDMPrices().getSDMSell().stream()
+                    .map(sell -> sell.getItemId())
+                    .filter(id -> !idToProduct.containsKey(id))
+                    .collect(Collectors.toSet());
+            if (nonExistingProdIds.size() > 0) {
+                res.put(sdmStore.getId(), nonExistingProdIds.stream().collect(Collectors.toList()));
+            }
+        }
         return res;
     }
 
