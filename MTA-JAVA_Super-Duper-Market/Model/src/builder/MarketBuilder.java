@@ -3,7 +3,6 @@ package builder;
 import entity.Market;
 import entity.Product;
 import entity.Store;
-import entity.StoreProduct;
 import jaxb.generated.SDMItem;
 import jaxb.generated.SDMSell;
 import jaxb.generated.SDMStore;
@@ -11,7 +10,6 @@ import jaxb.generated.SuperDuperMarketDescriptor;
 
 import javax.xml.bind.ValidationException;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market> {
@@ -48,10 +46,10 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         // check for duplicate product sell of each store
         Map<Integer, List<Integer>> nonValidStoreIdsToDuplicateProds = getDuplicateProducts(sdmStores);
         nonValidStoreIdsToDuplicateProds
-                .forEach((storeId, products) -> {
-                    if (products.size() > 0) {
-                        products
-                                .forEach(product -> errors.append("product " + product.toString() + " sold by " + storeId.toString() + " more then once" + System.lineSeparator()));
+                .forEach((storeId, productIds) -> {
+                    if (productIds.size() > 0) {
+                        productIds
+                                .forEach(productId -> errors.append("product id " + productId + " sold by store id " + storeId + " more then once" + System.lineSeparator()));
                     }
                 });
         // check for duplicate ids stores
@@ -62,10 +60,10 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         // check for non existing products sold by stores
         Map<Integer, List<Integer>> nonValidStoresToNonExistingProds = getNonExistingProducts(new HashSet<>(sdmStores));
         nonValidStoresToNonExistingProds
-                .forEach((store, products) -> {
-                    if (products.size() > 0) {
-                        products
-                                .forEach(productId -> errors.append("product " + productId.toString() + " sold by " + store.toString() + " but doesn't exist" + System.lineSeparator()));
+                .forEach((storeId, productIds) -> {
+                    if (productIds.size() > 0) {
+                        productIds
+                                .forEach(productId -> errors.append("product id " + productId + " sold by store id " + storeId + " but doesn't exist" + System.lineSeparator()));
                     }
                 });
 
@@ -79,8 +77,7 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         if (errors.length() > 0) {
             throw new ValidationException(errors.toString());
         }
-        Map<Integer, Store> idToStore = constructIdToStore(new HashSet<>(sdmStores));
-        return idToStore;
+        return constructIdToStore(new HashSet<>(sdmStores));
     }
 
     private Map<Integer, Product> constructIdToProduct(Set<SDMItem> sdmItems) {
@@ -144,7 +141,6 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
                 duplicates.add(t);
             }
         }
-
         return duplicates;
     }
 }
