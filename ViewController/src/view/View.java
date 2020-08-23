@@ -1,3 +1,18 @@
+package view;
+
+import entity.Store;
+
+import java.util.List;
+
+public class View {
+
+    public int getChosenStore(List<Store> allStores) {
+    }
+
+    public void getOrderFromUser() {
+    }
+}
+
 //package view;
 //
 //import com.sdp.controller.command.Executor;
