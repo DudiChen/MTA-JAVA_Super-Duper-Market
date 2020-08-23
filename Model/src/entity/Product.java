@@ -1,13 +1,6 @@
 package entity;
 
 public class Product {
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
 
     public enum PurchaseMethod {
         QUANTITY("Quantity"),

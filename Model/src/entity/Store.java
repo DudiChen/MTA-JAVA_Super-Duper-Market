@@ -4,8 +4,10 @@ import java.awt.*;
 import builder.Builder;
 import builder.StoreBuilder;
 import exception.ProductIdNotFoundException;
+import javafx.util.Pair;
 import jaxb.generated.SuperDuperMarketDescriptor;
 
+import java.util.List;
 import java.util.Map;
 
 public class Store {
@@ -37,4 +39,7 @@ public class Store {
         return stock.getProductPrice(productId) + (ppk * distance);
     }
 
+    public void makeOrder(Purchase purchase) {
+
+    }
 }

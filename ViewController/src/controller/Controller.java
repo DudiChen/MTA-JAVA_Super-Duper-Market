@@ -1,23 +1,20 @@
 package controller;
 
 import entity.Market;
+import entity.Purchase;
 import entity.Store;
 
 import java.util.List;
 
 public class Controller {
     Market market = new Market();
-
+    View view;
     public void fetchAllStoresToUI() {
         List<Store> stores = market.getAllStores();
 
     }
 
     public void loadXMLData() {
-
-    }
-
-    public void performOrder() {
     }
 
     public void addNewProduct() {
@@ -27,5 +24,14 @@ public class Controller {
     }
 
     public void getCustomerToUI() {
+    }
+
+    public void makeOrder() {
+        int storeId = view.getChosenStore(market.getAllStores());
+
+        view.getOrderFromUser();
+        while(){
+
+        }
     }
 }

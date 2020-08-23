@@ -1,8 +1,6 @@
 package entity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Market {
 
@@ -18,14 +16,37 @@ public class Market {
         this.idToProduct = idToProduct;
     }
 
-
-    public void addStore(Store store)
-    {
-
+    public void addStore(Store store) {
+        this.idToStore.put(store.getId(), store);
     }
 
-    // TODO: Consider how to protect the list of Store (make final)
+    public void addProduct(Product product) {
+        this.idToProduct.put(product.getId(), product);
+    }
+
     public List<Store> getAllStores() {
-        return new ArrayList<>(idToStore.values());
+        return Collections.unmodifiableList(new ArrayList<>(idToStore.values()));
+    }
+
+    public List<Product> getAllProducts() {
+        return Collections.unmodifiableList(new ArrayList<>(idToProduct.values()));
+    }
+
+    public int getIdForStore() {
+        Random rand = new Random();
+        int result = rand.nextInt() * Integer.MAX_VALUE;
+        while(!idToStore.containsKey(result)) {
+            result = rand.nextInt() * Integer.MAX_VALUE;
+        }
+        return result;
+    }
+
+    public int getIdForProduct() {
+        Random rand = new Random();
+        int result = rand.nextInt() * Integer.MAX_VALUE;
+        while(!idToProduct.containsKey(result)) {
+            result = rand.nextInt() * Integer.MAX_VALUE;
+        }
+        return result;
     }
 }
