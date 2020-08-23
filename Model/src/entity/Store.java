@@ -1,14 +1,8 @@
 package entity;
 
 import java.awt.*;
-import builder.Builder;
-import builder.StoreBuilder;
-import exception.ProductIdNotFoundException;
-import javafx.util.Pair;
-import jaxb.generated.SuperDuperMarketDescriptor;
 
-import java.util.List;
-import java.util.Map;
+import exception.ProductIdNotFoundException;
 
 public class Store {
     private Point coordinate;
@@ -39,7 +33,15 @@ public class Store {
         return stock.getProductPrice(productId) + (ppk * distance);
     }
 
-    public void makeOrder(Purchase purchase) {
+    public void makeOrder(Order purchase) {
 
+    }
+
+    public Point getCoordinate() {
+        return coordinate;
+    }
+
+    public boolean isProductSold(int productId) {
+        return this.getStock().doesProductIdExist(productId);
     }
 }

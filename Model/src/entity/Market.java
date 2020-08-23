@@ -49,4 +49,12 @@ public class Market {
         }
         return result;
     }
+
+    public Store getStoreById(int id) {
+        return idToStore.get(id);
+    }
+
+    public Product getProductById(int id) {
+        return this.idToProduct.get(id);
+    }
 }
