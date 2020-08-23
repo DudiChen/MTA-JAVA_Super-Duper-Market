@@ -3,6 +3,7 @@ package entity;
 import java.awt.*;
 import builder.Builder;
 import builder.StoreBuilder;
+import exception.ProductIdNotFoundException;
 import jaxb.generated.SuperDuperMarketDescriptor;
 
 import java.util.Map;
@@ -29,10 +30,11 @@ public class Store {
         return stock;
     }
 
-//    public Map<Integer, StoreProduct> getIdToProduct() {
-//        return idToProductMap;
-//    }
-
-
+    public double getProductPriceByPPK(int productId, double distance) throws ProductIdNotFoundException {
+        if (!stock.doesProductIdExist(productId)) {
+            throw new ProductIdNotFoundException();
+        }
+        return stock.getProductPrice(productId) + (ppk * distance);
+    }
 
 }
