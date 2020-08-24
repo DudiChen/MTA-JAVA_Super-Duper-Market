@@ -18,6 +18,10 @@ public class Store {
         this.id = id;
     }
 
+    public double getPriceOfProduct(int productId) {
+        return this.stock.getProductPrice(productId);
+    }
+
     public int getId() {
         return id;
     }
@@ -33,8 +37,8 @@ public class Store {
         return stock.getProductPrice(productId) + (ppk * distance);
     }
 
-    public void makeOrder(Order purchase) {
-
+    public double getShipmentCost(Point destinationForShipping) {
+        return this.ppk * this.coordinate.distance(destinationForShipping);
     }
 
     public Point getCoordinate() {
@@ -43,5 +47,9 @@ public class Store {
 
     public boolean isProductSold(int productId) {
         return this.getStock().doesProductIdExist(productId);
+    }
+
+    public double getProductPriceWithQuantity(Integer productId, Integer quantity) {
+        return this.stock.getProductPrice(productId) * quantity;
     }
 }

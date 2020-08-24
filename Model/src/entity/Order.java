@@ -1,6 +1,7 @@
 package entity;
 
-import javafx.util.Pair;
+import com.sun.tools.javac.util.Pair;
+import entity.market.MarketUtils;
 
 import java.awt.*;
 import java.util.Date;
@@ -10,11 +11,13 @@ public class Order {
     List<Pair<Integer, Integer>> productIdsToQuantity;
     Point destination;
     Date deliveryDate;
+    int id;
 
     public Order(List<Pair<Integer, Integer>> productIdsToQuantity, Point destination, Date deliveryDate) {
         this.productIdsToQuantity = productIdsToQuantity;
         this.destination = destination;
         this.deliveryDate = deliveryDate;
+        this.id = MarketUtils.generateId();
     }
 
     public List<Pair<Integer, Integer>> getProductIdsToQuantity() {
@@ -27,5 +30,9 @@ public class Order {
 
     public Date getDeliveryDate() {
         return deliveryDate;
+    }
+
+    public int getId() {
+        return id;
     }
 }

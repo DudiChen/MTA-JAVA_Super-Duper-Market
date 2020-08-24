@@ -1,11 +1,8 @@
 package builder;
 
-import entity.Market;
+import entity.market.Market;
 import entity.Product;
 import entity.Store;
-import entity.StoreProduct;
-import jaxb.generated.SDMItem;
-import jaxb.generated.SDMStore;
 import jaxb.generated.SuperDuperMarketDescriptor;
 
 import java.util.HashMap;

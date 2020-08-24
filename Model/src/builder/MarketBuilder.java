@@ -1,6 +1,6 @@
 package builder;
 
-import entity.Market;
+import entity.market.Market;
 import entity.Product;
 import entity.Store;
 import jaxb.generated.SDMItem;
@@ -45,7 +45,7 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         Set<Integer> badCoordinatesStoresIds = getBadCoordinatesStoresIds(new HashSet<>(sdmStores));
         if(badCoordinatesStoresIds.size() > 0) {
             badCoordinatesStoresIds
-                    .forEach(storeId -> errors.append("store id " + storeId + " has illegal location - coordinates must be in the range of [0, 50]" + System.lineSeparator()));
+                    .forEach(storeId -> errors.append("store id ").append(storeId).append(" has illegal location - coordinates must be in the range of [0, 50]").append(System.lineSeparator()));
         }
 
         // check for duplicate product sell of each store
@@ -54,7 +54,7 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
                 .forEach((storeId, productIds) -> {
                     if (productIds.size() > 0) {
                         productIds
-                                .forEach(productId -> errors.append("product id " + productId + " sold by store id " + storeId + " more then once" + System.lineSeparator()));
+                                .forEach(productId -> errors.append("product id ").append(productId).append(" sold by store id ").append(storeId).append(" more then once").append(System.lineSeparator()));
                     }
                 });
         // check for duplicate ids stores
@@ -68,7 +68,7 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
                 .forEach((storeId, productIds) -> {
                     if (productIds.size() > 0) {
                         productIds
-                                .forEach(productId -> errors.append("product id " + productId + " sold by store id " + storeId + " but doesn't exist" + System.lineSeparator()));
+                                .forEach(productId -> errors.append("product id ").append(productId).append(" sold by store id ").append(storeId).append(" but doesn't exist").append(System.lineSeparator()));
                     }
                 });
 
@@ -89,7 +89,7 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
     private Set<Integer> getBadCoordinatesStoresIds(Set<SDMStore> stores) {
         return stores.stream()
                 .filter(store -> store.getLocation().getX() < 0 || store.getLocation().getY() < 0 || store.getLocation().getX() > 50 || store.getLocation().getY() > 50)
-                .map(store -> store.getId())
+                .map(SDMStore::getId)
                 .collect(Collectors.toSet());
     }
 
@@ -123,7 +123,7 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         for (SDMStore sdmStore : stores) {
             Set<Integer> duplicateProductIds = findDuplicates(sdmStore.getSDMPrices().getSDMSell().stream().map(SDMSell::getItemId).collect(Collectors.toList()));
             if (duplicateProductIds.size() > 0) {
-                res.put(sdmStore.getId(), duplicateProductIds.stream().collect(Collectors.toList()));
+                res.put(sdmStore.getId(), new ArrayList<>(duplicateProductIds));
             }
         }
         return res;
@@ -134,11 +134,11 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
 
         for (SDMStore sdmStore : stores) {
             Set<Integer> nonExistingProdIds = sdmStore.getSDMPrices().getSDMSell().stream()
-                    .map(sell -> sell.getItemId())
+                    .map(SDMSell::getItemId)
                     .filter(id -> !idToProduct.containsKey(id))
                     .collect(Collectors.toSet());
             if (nonExistingProdIds.size() > 0) {
-                res.put(sdmStore.getId(), nonExistingProdIds.stream().collect(Collectors.toList()));
+                res.put(sdmStore.getId(), new ArrayList<>(nonExistingProdIds));
             }
         }
         return res;

@@ -1,4 +1,4 @@
-package command.store;
+package command;
 
 import command.Command;
 import controller.Controller;
