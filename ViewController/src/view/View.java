@@ -1,12 +1,11 @@
 package view;
 
 
-import com.sun.tools.javac.util.Pair;
-import command.Command;
 import entity.Product;
 import entity.Store;
 import entity.market.OrderInvoice;
 import exception.OrderValidationException;
+import javafx.util.Pair;
 
 import java.awt.*;
 import java.util.Date;

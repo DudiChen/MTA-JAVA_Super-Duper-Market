@@ -1,6 +1,5 @@
 package entity.market;
 
-import com.sun.tools.javac.util.Pair;
 import entity.Order;
 import entity.Product;
 import entity.Store;
@@ -14,7 +13,6 @@ public class Market {
     private Map<Integer, Store> idToStore;
     private Map<Integer, Product> idToProduct;
     private Map<Integer, OrderInvoice> idToOrderInvoice;
-
     public Market() {
 
     }
@@ -52,11 +50,11 @@ public class Market {
         List<InvoiceProduct> invoiceProducts = order.getProductIdsToQuantity().stream()
                 .map(pair -> new InvoiceProduct(
                         order.getId(),
-                        this.idToProduct.get(pair.fst).getName(),
-                        this.idToProduct.get(pair.fst).getPurchaseMethod().getName(),
-                        this.idToStore.get(storeId).getPriceOfProduct(pair.fst),
-                        pair.fst,
-                        this.idToStore.get(storeId).getProductPriceWithQuantity(pair.fst, pair.snd)
+                        this.idToProduct.get(pair.getKey()).getName(),
+                        this.idToProduct.get(pair.getKey()).getPurchaseMethod().getName(),
+                        this.idToStore.get(storeId).getPriceOfProduct(pair.getKey()),
+                        pair.getKey(),
+                        this.idToStore.get(storeId).getProductPriceWithQuantity(pair.getKey(), pair.getValue())
                         )
                 ).collect(Collectors.toList());
         double shipmentCost = this.idToStore.get(storeId).getShipmentCost(order.getDestination());

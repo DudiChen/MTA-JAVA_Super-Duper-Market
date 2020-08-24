@@ -1,12 +1,12 @@
 package controller;
 
 import builder.MarketBuilder;
-import com.sun.tools.javac.util.Pair;
 import entity.market.Market;
 import entity.Order;
 import entity.Store;
 import exception.OrderValidationException;
 import exception.XMLException;
+import javafx.util.Pair;
 import jaxb.JaxbHandler;
 import jaxb.generated.SuperDuperMarketDescriptor;
 import view.View;
@@ -74,7 +74,7 @@ public class Controller {
             }
             // validate chosen products are sold by the chosen store
             for (Pair<Integer, Integer> productToQuantity : productPricePair) {
-                int productId = productToQuantity.fst;
+                int productId = productToQuantity.getKey();
                 if (!chosenStore.get().isProductSold(productId)) {
                     err.append(market.getProductById(productId).toString()).append(" is not sold by ").append(market.getStoreById(chosenStore.get().getId())).append(System.lineSeparator());
                 }

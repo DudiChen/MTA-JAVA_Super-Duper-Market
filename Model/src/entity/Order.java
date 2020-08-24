@@ -1,7 +1,7 @@
 package entity;
 
-import com.sun.tools.javac.util.Pair;
 import entity.market.MarketUtils;
+import javafx.util.Pair;
 
 import java.awt.*;
 import java.util.Date;
