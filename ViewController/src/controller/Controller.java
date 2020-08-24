@@ -1,6 +1,7 @@
 package controller;
 
 import builder.MarketBuilder;
+import command.Executor;
 import entity.market.Market;
 import entity.Order;
 import entity.Store;
@@ -18,13 +19,24 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Controller {
     Market market;
     View view;
+    Executor executor;
+    AtomicReference<Store> chosenStore = null;
 
-    public Controller() {
+
+    public Controller(View view) {
         this.market = new Market();
+        this.view = view;
+        this.executor = new Executor(this);
+        registerToViewEvents();
     }
 
     public void fetchAllStoresToUI() {
         view.displayStores(market.getAllStores());
+    }
+
+    public void loadXMLDataToUI() {
+        String xmlPath = view.promptUserXmlFilePath();
+        loadXMLData(xmlPath);
     }
 
     public void loadXMLData(String fullFilePath) { //"/resource/ex1-big.xml"
@@ -36,14 +48,10 @@ public class Controller {
             view.fileLoadedSuccessfully();
         } catch (ValidationException e) {
             view.displayError(e.getMessage());
-        } catch (XMLParseException e) {
-            e.printStackTrace();
-        } catch (XMLException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
+        } catch (XMLParseException | XMLException | FileNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e) {
-            System.out.println(e); // TODO : figure out what to do with the exception
+            System.out.println(e.getMessage()); // TODO : figure out what to do with the exception
         }
     }
 
@@ -57,14 +65,30 @@ public class Controller {
     public void getCustomerToUI() {
     }
 
-    public void makeOrder() {
-        fetchAllStoresToUI();
-        AtomicReference<Store> chosenStore = null;
+    private void registerToViewEvents() {
+        registerOnStoreChoice();
+        registerOnOrderPlaced();
+        registerOnOrderAccepted();
+        registerOnOrderCanceled();
+    }
+
+    private void registerOnOrderAccepted() {
+        view.onOrderAccepted = (orderInvoiceId) -> market.approveOrder(orderInvoiceId);
+    }
+
+    private void registerOnOrderCanceled() {
+        view.onOrderCanceled = (orderInvoiceId) -> market.cancelOrder(orderInvoiceId);
+    }
+
+    private void registerOnStoreChoice() {
         view.onStoreIdChoice = (storeId) -> {
             assert false;
             chosenStore.set(market.getStoreById(storeId));
             fetchAllProductsToUI();
         };
+    }
+
+    private void registerOnOrderPlaced() {
         view.onOrderPlaced = (date, destination, productPricePair) -> {
             StringBuilder err = new StringBuilder();
             // validate store coordination is not the same as customer coordinate
@@ -85,11 +109,21 @@ public class Controller {
             int orderInvoiceId = market.receiveOrder(new Order(productPricePair, destination, date), chosenStore.get().getId());
             view.summarizeOrder(market.getOrderInvoice(orderInvoiceId));
         };
-        view.onOrderAccepted = (orderInvoiceId) -> market.approveOrder(orderInvoiceId);
-        view.onOrderCanceled = (orderInvoiceId) -> market.cancelOrder(orderInvoiceId);
+    }
+
+    public void makeOrder() {
+        fetchAllStoresToUI();
     }
 
     public void fetchOrdersHistoryToUI() {
         view.showOrdersHistory(market.getOrdersHistory());
+    }
+
+    public Executor getExecutor() {
+        return executor;
+    }
+
+    public void run() {
+
     }
 }

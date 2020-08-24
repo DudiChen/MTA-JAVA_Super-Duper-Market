@@ -1,9 +1,12 @@
-//import com.sdp.controller.command.Executor;
-//
-//public class Main {
-//
-//    public static void main(String[] args) {
-////        Executor controller = new Executor();
-////        controller.getView().run();
-//    }
-//}
+import controller.Controller;
+import view.ConsoleView;
+import view.View;
+
+public class Main {
+
+    public static void main(String[] args) {
+        View view = new ConsoleView();
+        Controller controller = new Controller(view);
+        controller.run();
+    }
+}
