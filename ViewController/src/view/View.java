@@ -1,6 +1,7 @@
 package view;
 
 
+import controller.Controller;
 import entity.Product;
 import entity.Store;
 import entity.market.OrderInvoice;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class View {
+
     public Consumer<Integer> onStoreIdChoice;
     public TriConsumer<Date, Point, List<Pair<Integer, Integer>>> onOrderPlaced;
     public Consumer<Integer> onOrderAccepted;
@@ -32,10 +34,13 @@ public abstract class View {
 
     public abstract String promptUserXmlFilePath();
 
+    public abstract void showMainMenu();
+
+    public abstract void setController(Controller controller);
+
     @FunctionalInterface
     public interface TriConsumer<T, U, V> {
         void apply(T t, U u, V v) throws OrderValidationException;
     }
 
-    public abstract void showMainMenu();
 }

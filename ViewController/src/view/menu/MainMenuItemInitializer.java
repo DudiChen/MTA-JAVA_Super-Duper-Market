@@ -14,7 +14,7 @@ public class MainMenuItemInitializer {
         MenuItemActionable loadXmlMenuItem = new MenuItemActionable(controller, "Load XML Data File");
         MenuItemActionable showAllStoresMenuItem = new MenuItemActionable(controller,"Show All Stores Information");
         MenuItemActionable showAllProductsMenuItem = new MenuItemActionable(controller,"Show All Products Information");
-        MenuItemActionable placeOrderMenuItem = new MenuItemActionable(controller,"Show date");
+        MenuItemActionable placeOrderMenuItem = new MenuItemActionable(controller,"Place an Order");
         MenuItemActionable showOrdersHistoryMenuItem = new MenuItemActionable(controller,"Show Orders History");
 
         loadXmlMenuItem.setOnSelectedCommand(new LoadFromXMLCommand());

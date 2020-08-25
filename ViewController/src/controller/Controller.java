@@ -26,6 +26,7 @@ public class Controller {
     public Controller(View view) {
         this.market = new Market();
         this.view = view;
+        this.view.setController(this);
         this.executor = new Executor(this);
         registerToViewEvents();
     }
@@ -39,7 +40,7 @@ public class Controller {
         loadXMLData(xmlPath);
     }
 
-    public void loadXMLData(String fullFilePath) { //"/resource/ex1-big.xml"
+    public void loadXMLData(String fullFilePath) {
         JaxbHandler jaxbHandler = new JaxbHandler();
         SuperDuperMarketDescriptor sdpMarketDescriptor = null;
         try {
@@ -124,6 +125,6 @@ public class Controller {
     }
 
     public void run() {
-
+        this.view.showMainMenu();
     }
 }

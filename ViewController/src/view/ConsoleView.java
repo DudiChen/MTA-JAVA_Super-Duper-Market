@@ -13,14 +13,15 @@ public class ConsoleView extends View {
 //    private String mainMenuHeader = "";
     MainMenu mainMenu;
 
-    public ConsoleView(Controller controller) {
-        this.mainMenu = MainMenuItemInitializer.initialize(controller);
-    }
-
     @Override
     public void showMainMenu() {
 //        System.out.println(mainMenuHeader);
         mainMenu.show();
+    }
+
+    @Override
+    public void setController(Controller controller) {
+        this.mainMenu = MainMenuItemInitializer.initialize(controller);
     }
 
 //    private int getUserChoice() {
@@ -60,6 +61,6 @@ public class ConsoleView extends View {
     // TODO: [View][Dudi]: Add view prompt for xml path
     @Override
     public String promptUserXmlFilePath() {
-        return null;
+        return "/Users/noamwa/Desktop/Studies/java/ex02-sdp/MTA-JAVA_Super-Duper-Market/Model/src/resource/ex1-big.xml";
     }
 }
