@@ -22,7 +22,8 @@ public class StoreBuilder implements Builder<SDMStore, Store> {
                 new PointBuilder().build(source.getLocation()),
                 new StockBuilder(this.idToProduct).build(source.getSDMPrices()),
                 source.getDeliveryPpk(),
-                source.getId()
+                source.getId(),
+                source.getName()
         );
     }
 }

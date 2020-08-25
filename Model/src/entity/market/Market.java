@@ -13,6 +13,7 @@ public class Market {
     private Map<Integer, Store> idToStore;
     private Map<Integer, Product> idToProduct;
     private Map<Integer, OrderInvoice> idToOrderInvoice;
+
     public Market() {
 
     }
@@ -46,18 +47,19 @@ public class Market {
         return this.idToProduct.get(id);
     }
 
-    public int receiveOrder(Order order, int storeId) {
+    public int receiveOrder(Order order) {
         List<InvoiceProduct> invoiceProducts = order.getProductIdsToQuantity().stream()
                 .map(pair -> new InvoiceProduct(
-                        order.getId(),
-                        this.idToProduct.get(pair.getKey()).getName(),
-                        this.idToProduct.get(pair.getKey()).getPurchaseMethod().getName(),
-                        this.idToStore.get(storeId).getPriceOfProduct(pair.getKey()),
-                        pair.getKey(),
-                        this.idToStore.get(storeId).getProductPriceWithQuantity(pair.getKey(), pair.getValue())
+                                order.getId(),
+                                this.idToProduct.get(pair.getKey()).getName(),
+                                this.idToProduct.get(pair.getKey()).getPurchaseMethod().getName(),
+                                this.idToStore.get(order.getStoreId()).getPriceOfProduct(pair.getKey()),
+                                pair.getKey(),
+                                this.idToStore.get(order.getStoreId()).getProductPriceWithQuantity(pair.getKey(), pair.getValue()),
+                                this.idToStore.get(pair.getKey()).getShipmentCost(order.getDestination())
                         )
                 ).collect(Collectors.toList());
-        double shipmentCost = this.idToStore.get(storeId).getShipmentCost(order.getDestination());
+        double shipmentCost = this.idToStore.get(order.getStoreId()).getShipmentCost(order.getDestination());
         double totalPrice = invoiceProducts.stream()
                 .map(InvoiceProduct::getPrice)
                 .reduce((double) 0, Double::sum);
@@ -67,13 +69,19 @@ public class Market {
                         order.getId(),
                         invoiceProducts,
                         shipmentCost + totalPrice,
-                        order.getDeliveryDate()
-                )
+                        order.getDeliveryDate(),
+                        order.getId(),
+                        this.idToStore.get(order.getStoreId()).getShipmentCost(order.getDestination()))
         );
         return order.getId();
     }
 
     public void approveOrder(int orderReceiptId) {
+        OrderInvoice orderFinalization = this.idToOrderInvoice.get(orderReceiptId);
+        Store providingStore = this.idToStore.get(orderFinalization.getStoreId());
+        providingStore.addOrder(orderFinalization);
+        providingStore.addToNumberOfTimesAProductWasSold(orderFinalization.getInvoiceProducts().size());
+        orderFinalization.getInvoiceProducts().stream().forEach(invoiceProduct -> providingStore.addToTotalShipmentIncome(invoiceProduct.getShipmentCost()));
         this.idToOrderInvoice.get(orderReceiptId).setStatus(OrderInvoice.OrderStatus.ACCEPTED);
     }
 
@@ -87,5 +95,9 @@ public class Market {
 
     public List<OrderInvoice> getOrdersHistory() {
         return Collections.unmodifiableList(new ArrayList<>(this.idToOrderInvoice.values()));
+    }
+
+    public boolean isEmpty() {
+        return (idToProduct == null || idToProduct.isEmpty()) || (idToStore == null || idToStore.isEmpty());
     }
 }

@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -32,7 +33,8 @@ public class JaxbHandler {
             throw new XMLParseException(XML_FILE_INVALID_TYPE_MESSAGE);
         }
 
-        InputStream inputStreamFromXml = JaxbHandler.class.getResourceAsStream(xmlPath);
+//        InputStream inputStreamFromXml = JaxbHandler.class.getResourceAsStream(xmlPath);
+        InputStream inputStreamFromXml = new FileInputStream(xmlPath);
         SuperDuperMarketDescriptor sdMarketDescriptor = null;
         try {
             sdMarketDescriptor = desrializeFrom(inputStreamFromXml);
@@ -44,7 +46,7 @@ public class JaxbHandler {
     }
 
     private boolean isFileXMLType(String xmlPath) {
-        return (xmlPath.contains(".") && xmlPath.substring(xmlPath.lastIndexOf("." + 1)).equals("xml"));
+        return (xmlPath.contains(".") && xmlPath.substring(xmlPath.lastIndexOf(".")).equals(".xml"));
     }
 
     private SuperDuperMarketDescriptor desrializeFrom(InputStream inStream) throws JAXBException {

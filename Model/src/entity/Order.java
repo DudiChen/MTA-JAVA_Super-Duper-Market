@@ -11,13 +11,15 @@ public class Order {
     List<Pair<Integer, Integer>> productIdsToQuantity;
     Point destination;
     Date deliveryDate;
+    int storeId;
     int id;
 
-    public Order(List<Pair<Integer, Integer>> productIdsToQuantity, Point destination, Date deliveryDate) {
+    public Order(List<Pair<Integer, Integer>> productIdsToQuantity, Point destination, Date deliveryDate, int storeId) {
         this.productIdsToQuantity = productIdsToQuantity;
         this.destination = destination;
         this.deliveryDate = deliveryDate;
         this.id = MarketUtils.generateId();
+        this.storeId = storeId;
     }
 
     public List<Pair<Integer, Integer>> getProductIdsToQuantity() {
@@ -34,5 +36,9 @@ public class Order {
 
     public int getId() {
         return id;
+    }
+
+    public int getStoreId() {
+        return storeId;
     }
 }

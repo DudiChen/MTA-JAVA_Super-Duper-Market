@@ -14,6 +14,8 @@ import view.View;
 import javax.management.modelmbean.XMLParseException;
 import javax.xml.bind.ValidationException;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Controller {
@@ -32,7 +34,13 @@ public class Controller {
     }
 
     public void fetchAllStoresToUI() {
-        view.displayStores(market.getAllStores());
+        List<Store> stores = new ArrayList<>();
+        if(market == null || market.isEmpty()) {
+            view.displayStores(stores);
+            return;
+        }
+        stores = market.getAllStores();
+        view.displayStores(stores);
     }
 
     public void loadXMLDataToUI() {
@@ -52,7 +60,7 @@ public class Controller {
         } catch (XMLParseException | XMLException | FileNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e) {
-            System.out.println(e.getMessage()); // TODO : figure out what to do with the exception
+            System.out.println(e.getMessage() + "unknown exception while loading xml file"); // TODO : figure out what to do with the exception
         }
     }
 
@@ -107,7 +115,7 @@ public class Controller {
             if (err.length() > 0) {
                 throw new OrderValidationException(err.toString());
             }
-            int orderInvoiceId = market.receiveOrder(new Order(productPricePair, destination, date), chosenStore.get().getId());
+            int orderInvoiceId = market.receiveOrder(new Order(productPricePair, destination, date, chosenStore.get().getId()));
             view.summarizeOrder(market.getOrderInvoice(orderInvoiceId));
         };
     }

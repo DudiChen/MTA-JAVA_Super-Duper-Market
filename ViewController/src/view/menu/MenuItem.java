@@ -20,4 +20,11 @@ public abstract class MenuItem {
 
     public abstract boolean startMenuItem();
 
+    public MenuItem getBaseMenuItem() {
+        return baseMenuItem;
+    }
+
+    public void setBaseMenuItem(MenuItem baseMenuItem) {
+        this.baseMenuItem = baseMenuItem;
+    }
 }

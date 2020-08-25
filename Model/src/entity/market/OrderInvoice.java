@@ -13,12 +13,20 @@ public class OrderInvoice {
     private List<InvoiceProduct> invoiceProduct;
     private double totalPrice;
     private Date deliveryDate;
+    private int storeId;
+    private double shipmentPrice;
 
-    public OrderInvoice(int id, List<InvoiceProduct> invoiceProducts, double totalPrice, Date deliveryDate) {
+    public double getShipmentPrice() {
+        return shipmentPrice;
+    }
+
+    public OrderInvoice(int id, List<InvoiceProduct> invoiceProducts, double totalPrice, Date deliveryDate, int storeId, double shipmentPrice) {
         this.orderId = id;
         this.invoiceProduct = invoiceProducts;
         this.totalPrice = totalPrice;
         this.deliveryDate = deliveryDate;
+        this.storeId = storeId;
+        this.shipmentPrice = shipmentPrice;
     }
 
     public void setStatus(OrderStatus orderStatus) {
@@ -29,12 +37,20 @@ public class OrderInvoice {
         return orderId;
     }
 
-    public List<InvoiceProduct> getInvoiceProduct() {
+    public List<InvoiceProduct> getInvoiceProducts() {
         return invoiceProduct;
     }
 
     public double getTotalPrice() {
         return totalPrice;
+    }
+
+    public int getStoreId() {
+        return storeId;
+    }
+
+    public Date getDeliveryDate() {
+        return deliveryDate;
     }
 
 

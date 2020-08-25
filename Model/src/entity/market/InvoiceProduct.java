@@ -7,14 +7,16 @@ public class InvoiceProduct {
     private double price;
     private int quantity;
     private double totalPrice;
+    private double shipmentCost;
 
-    public InvoiceProduct(int id, String name, String purchaseMethod, double price, int quantity, double totalPrice) {
+    public InvoiceProduct(int id, String name, String purchaseMethod, double price, int quantity, double totalPrice, double shipmentCost) {
         this.id = id;
         this.name = name;
         this.purchaseMethod = purchaseMethod;
         this.price = price;
         this.quantity = quantity;
         this.totalPrice = totalPrice;
+        this.shipmentCost = shipmentCost;
     }
 
     public String getName() {
@@ -35,5 +37,9 @@ public class InvoiceProduct {
 
     public double getTotalPrice() {
         return totalPrice;
+    }
+
+    public double getShipmentCost() {
+        return this.shipmentCost;
     }
 }

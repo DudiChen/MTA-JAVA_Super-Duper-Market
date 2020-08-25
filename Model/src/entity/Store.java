@@ -1,21 +1,50 @@
 package entity;
 
-import java.awt.*;
 
+import entity.market.OrderInvoice;
 import exception.ProductIdNotFoundException;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Store {
     private Point coordinate;
     private Stock stock;
+
+    public int getPpk() {
+        return ppk;
+    }
+
     private int ppk;
     //    private List<Discount> discounts;
     private int id;
+    private String name;
+    private int numberOfTimesAProductWasSold;
+    private double totalShipmentIncome;
+    private List<OrderInvoice> ordersHistory;
 
-    public Store(Point point, Stock stock, int ppk, int id) {
+    public Store(Point point, Stock stock, int ppk, int id, String name) {
         this.coordinate = point;
         this.stock = stock;
         this.ppk = ppk;
         this.id = id;
+        this.name = name;
+        this.numberOfTimesAProductWasSold = 0;
+        this.totalShipmentIncome = 0;
+        this.ordersHistory = new ArrayList<>();
+    }
+
+    public void addToTotalShipmentIncome(double shipmentCost) {
+        this.totalShipmentIncome += shipmentCost;
+    }
+
+    public void addOrder(OrderInvoice order) {
+        this.ordersHistory.add(order);
+    }
+
+    public void addToNumberOfTimesAProductWasSold(int quantity) {
+        this.numberOfTimesAProductWasSold += quantity;
     }
 
     public double getPriceOfProduct(int productId) {
@@ -51,5 +80,21 @@ public class Store {
 
     public double getProductPriceWithQuantity(Integer productId, Integer quantity) {
         return this.stock.getProductPrice(productId) * quantity;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getNumberOfTimesAProductWasSold() {
+        return numberOfTimesAProductWasSold;
+    }
+
+    public List<OrderInvoice> getOrdersHistory() {
+        return ordersHistory;
+    }
+
+    public double getTotalShipmentIncome() {
+        return totalShipmentIncome;
     }
 }
