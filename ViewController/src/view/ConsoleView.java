@@ -49,13 +49,20 @@ public class ConsoleView extends View {
         boolean isParsed = true;
         do {
             try {
+                scanner = new Scanner(System.in);
                 userInput = scanner.nextInt();
+                if(userInput > stores.size() || userInput < 1){
+                    throw new InputMismatchException();
+                }
+                else {
+                    isParsed = true;
+                }
             } catch (InputMismatchException e) {
-                System.out.println("Input Not Valid, Please Try Again:");
+                System.out.println("Input Not Valid, Please Try Again");
                 isParsed = false;
             }
         }
-        while (!isParsed || userInput < 0 || userInput > stores.size());
+        while (!isParsed);
         this.chosenStoreId = stores.get(userInput - 1).getId();
         onStoreIdChoice.accept(this.chosenStoreId);
     }
@@ -153,6 +160,9 @@ public class ConsoleView extends View {
                         throw new IllegalArgumentException();
                     }
                     int x = Integer.parseInt(inputParts[0]);
+                    if(x < 1 || x > allProducts.size()){
+                        throw new ArrayIndexOutOfBoundsException();
+                    }
                     chosenProduct = allProducts.get(x - 1);
                     String y = inputParts[1];
                     if (chosenProduct.getPurchaseMethod().equals(Product.PurchaseMethod.WEIGHT)) {
