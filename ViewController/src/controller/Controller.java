@@ -203,13 +203,21 @@ public class Controller {
     }
 
     public void saveOrderHistory() {
+        if (market.isEmpty()) { // TODO: this is a patch - the check should be if the market has the sufficient data - fix for ex2 !
+            view.displayError("Please Load XML File Before");
+            return;
+        }
         String outputPath = view.promptUserFilePath();
         try (OutputStream outputStream = new FileOutputStream(outputPath)) {
             ObjectOutputStream out = new ObjectOutputStream(outputStream);
             try {
-                out.writeObject(market.getOrdersHistory());
+                List<OrderInvoice> history = market.getOrdersHistory();
+                if(history.size() == 0) {
+                    view.displayError("No History To Show");
+                }
+                out.writeObject(history);
             } catch (MarketIsEmptyException e) {
-                view.displayError("No History To Save");
+                view.displayError("Load XML First");
             }
             view.fileLoadedSuccessfully();
         } catch (FileNotFoundException e) {
