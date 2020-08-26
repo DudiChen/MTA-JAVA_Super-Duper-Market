@@ -17,11 +17,14 @@ import view.View;
 
 import javax.management.modelmbean.XMLParseException;
 import javax.xml.bind.ValidationException;
+import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Controller {
@@ -106,7 +109,34 @@ public class Controller {
 //                int orderInvoiceId = market.receiveOrder(new Order(productQuantityPairs, destination, date, chosenStore.get().getId()));
 //                view.summarizeOrder(market.getOrderInvoice(orderInvoiceId));
             }
+            else {
+                Map<Integer,List<Pair<Integer, Double>>> storeIdToOrder = new HashMap<>();
+//                Pair<Integer, Double> pair;
+                for (Pair<Integer,Double> pair : productQuantityPairs) {
+                    int storeId = findStoreIdOfLowestProductPrice(pair.getKey(), destination);
+                    if (storeIdToOrder.get(storeId) == null)
+                    {
+                        storeIdToOrder.put(storeId, new ArrayList<Pair<Integer, Double>>());
+                    }
+                    storeIdToOrder.get(storeId).add(pair);
+                }
+//                productQuantityPairs.stream().map((pair) -> )
+            }
         };
+    }
+
+    private int findStoreIdOfLowestProductPrice(int productId, Point destination) {
+        int storeIDofLowestPrice = 0;
+        int lowestProductPrice = 0;
+        List<Store> stores = market.getAllStores();
+        for (Store store : stores) {
+            if (storeIDofLowestPrice == 0) {
+                storeIDofLowestPrice = store.getId();
+//                lowestProductPrice = store.get
+            }
+
+        }
+        return storeIDofLowestPrice;
     }
 
     private void registerOnOrderAccepted() {

@@ -72,12 +72,16 @@ public class MenuItemNonActionable extends MenuItem {
             try {
                 userInput = scanner.nextInt();
             } catch(InputMismatchException e) {
-                System.out.println("input not valid try again:");
+                promptUserForInvalidChoiceInput();
                 isParsed = false;
             }
         }
         while (!isParsed || userInput < 0 || userInput > subMenuItems.size());
 
         return userInput;
+    }
+
+    private void promptUserForInvalidChoiceInput() {
+        System.out.println("input not valid try again:");
     }
 }
