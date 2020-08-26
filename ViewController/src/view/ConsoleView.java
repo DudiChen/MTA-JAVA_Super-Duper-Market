@@ -78,13 +78,15 @@ public class ConsoleView extends View {
         System.out.println("Please Enter Delivery Date (Date Format Must Be dd/mm-hh:mm)");
         Scanner scanner = new Scanner(System.in);
         boolean isParsed = true;
-        DateFormat format = new SimpleDateFormat("dd/mm/yyyy-hh:mm", Locale.ENGLISH);
+        DateFormat format = new SimpleDateFormat("dd/mm-hh:mm", Locale.ENGLISH);
         format.setLenient(false);
         Date date = null;
         do {
             try {
                 String userInput = scanner.next();
+                date = format.parse(userInput);
                 userInput = userInput.split("-")[0] + "/" + Calendar.getInstance().get(Calendar.YEAR) + "-" + userInput.split("-")[1];
+                format = new SimpleDateFormat("dd/mm/yyyy-hh:mm", Locale.ENGLISH);
                 date = format.parse(userInput);
                 isParsed = true;
             } catch (InputMismatchException | ParseException e) {
