@@ -233,21 +233,33 @@ public class Controller {
     }
 
     public void saveOrderHistory() {
-        String outputPath = view.promptUserFilePath();
-        try (OutputStream outputStream = new FileOutputStream(outputPath)) {
-            ObjectOutputStream out = new ObjectOutputStream(outputStream);
-            try {
-                out.writeObject(market.getOrdersHistory());
-            } catch (MarketIsEmptyException e) {
-                view.displayError("No History To Save");
-            }
-            view.fileLoadedSuccessfully();
-        } catch (FileNotFoundException e) {
-            view.displayError("File Not Found");
-
-        } catch (IOException e) {
-            view.displayError("Error While Writing To File");
+        if (market.isEmpty()) { // TODO: this is a patch - the check should be if the market has the sufficient data - fix for ex2 !
+            view.displayError("Please Load XML File Before");
+            return;
         }
+        try {
+            List<OrderInvoice> history = market.getOrdersHistory();
+            if(history.size() == 0) {
+                view.displayError("No History To Show");
+            }
+            else{
+                String outputPath = view.promptUserFilePath();
+                try (OutputStream outputStream = new FileOutputStream(outputPath)) {
+                    ObjectOutputStream out = new ObjectOutputStream(outputStream);
+                    out.writeObject(history);
+                    view.fileLoadedSuccessfully();
+                }
+                catch (FileNotFoundException e) {
+                    view.displayError("File Not Found");
+
+                } catch (IOException e) {
+                    view.displayError("Error While Writing To File");
+                }
+            }
+        } catch (MarketIsEmptyException e) {
+            view.displayError("Load XML First");
+        }
+
     }
 
     public void loadOrderHistory() {

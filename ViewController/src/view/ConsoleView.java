@@ -14,7 +14,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class ConsoleView extends View {
     //    private String mainMenuHeader = "";
@@ -49,13 +48,20 @@ public class ConsoleView extends View {
         boolean isParsed = true;
         do {
             try {
+                scanner = new Scanner(System.in);
                 userInput = scanner.nextInt();
+                if(userInput > stores.size() || userInput < 1){
+                    throw new InputMismatchException();
+                }
+                else {
+                    isParsed = true;
+                }
             } catch (InputMismatchException e) {
-                System.out.println("Input Not Valid, Please Try Again:");
+                System.out.println("Input Not Valid, Please Try Again");
                 isParsed = false;
             }
         }
-        while (!isParsed || userInput < 0 || userInput > stores.size());
+        while (!isParsed);
         this.chosenStoreId = stores.get(userInput - 1).getId();
         onStoreIdChoice.accept(this.chosenStoreId);
     }
@@ -71,13 +77,15 @@ public class ConsoleView extends View {
         System.out.println("Please Enter Delivery Date (Date Format Must Be dd/mm-hh:mm)");
         Scanner scanner = new Scanner(System.in);
         boolean isParsed = true;
-        DateFormat format = new SimpleDateFormat("dd/mm/yyyy-hh:mm", Locale.ENGLISH);
+        DateFormat format = new SimpleDateFormat("dd/mm-hh:mm", Locale.ENGLISH);
         format.setLenient(false);
         Date date = null;
         do {
             try {
                 String userInput = scanner.next();
+                date = format.parse(userInput);
                 userInput = userInput.split("-")[0] + "/" + Calendar.getInstance().get(Calendar.YEAR) + "-" + userInput.split("-")[1];
+                format = new SimpleDateFormat("dd/mm/yyyy-hh:mm", Locale.ENGLISH);
                 date = format.parse(userInput);
                 isParsed = true;
             } catch (InputMismatchException | ParseException e) {
@@ -153,6 +161,9 @@ public class ConsoleView extends View {
                         throw new IllegalArgumentException();
                     }
                     int x = Integer.parseInt(inputParts[0]);
+                    if(x < 1 || x > allProducts.size()){
+                        throw new ArrayIndexOutOfBoundsException();
+                    }
                     chosenProduct = allProducts.get(x - 1);
                     String y = inputParts[1];
                     if (chosenProduct.getPurchaseMethod().equals(Product.PurchaseMethod.WEIGHT)) {

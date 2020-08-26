@@ -17,7 +17,7 @@ public class Market {
     private Map<Integer, OrderInvoice> idToOrderInvoice;
 
     public Market() {
-
+        this.idToOrderInvoice = new HashMap<>();
     }
 
     public Market(Map<Integer, Store> idToStore, Map<Integer, Product> idToProduct) {
