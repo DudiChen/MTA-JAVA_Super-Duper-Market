@@ -1,12 +1,10 @@
 package entity.market;
-
-import entity.Order;
-import entity.StoreProduct;
-
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class OrderInvoice {
+
+public class OrderInvoice implements Serializable {
 
     private OrderStatus orderStatus = OrderStatus.ISSUED;
     private int orderId;
@@ -54,7 +52,7 @@ public class OrderInvoice {
     }
 
 
-    enum OrderStatus {
+    enum OrderStatus implements Serializable {
         ACCEPTED, CANCELED, ISSUED
     }
 }

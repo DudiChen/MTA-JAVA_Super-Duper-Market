@@ -20,7 +20,6 @@ public class Store {
     //    private List<Discount> discounts;
     private int id;
     private String name;
-    private int numberOfTimesAProductWasSold;
     private double totalShipmentIncome;
     private List<OrderInvoice> ordersHistory;
 
@@ -30,7 +29,6 @@ public class Store {
         this.ppk = ppk;
         this.id = id;
         this.name = name;
-        this.numberOfTimesAProductWasSold = 0;
         this.totalShipmentIncome = 0;
         this.ordersHistory = new ArrayList<>();
     }
@@ -43,9 +41,15 @@ public class Store {
         this.ordersHistory.add(order);
     }
 
-    public void addToNumberOfTimesAProductWasSold(int quantity) {
-        this.numberOfTimesAProductWasSold += quantity;
+    public int getTotalProductSales(int productId) {
+        return (int)
+                this.ordersHistory.stream()
+                        .map(orderInvoice -> orderInvoice.getInvoiceProducts())
+                        .flatMap(List::stream)
+                        .filter(invoiceProduct -> invoiceProduct.getId() == productId)
+                        .count();
     }
+
 
     public double getPriceOfProduct(int productId) {
         return this.stock.getProductPrice(productId);
@@ -78,16 +82,12 @@ public class Store {
         return this.getStock().doesProductIdExist(productId);
     }
 
-    public double getProductPriceWithQuantity(Integer productId, Integer quantity) {
+    public double getProductPriceWithQuantity(Integer productId, double quantity) {
         return this.stock.getProductPrice(productId) * quantity;
     }
 
     public String getName() {
         return name;
-    }
-
-    public int getNumberOfTimesAProductWasSold() {
-        return numberOfTimesAProductWasSold;
     }
 
     public List<OrderInvoice> getOrdersHistory() {

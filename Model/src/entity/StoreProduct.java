@@ -1,5 +1,7 @@
 package entity;
 
+import java.util.Objects;
+
 public class StoreProduct {
     public Product getProduct() {
         return product;

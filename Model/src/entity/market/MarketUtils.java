@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class MarketUtils {
 
-    public static int generateId() {
-        return new Random().nextInt() * Integer.MAX_VALUE;
+    public static int generateIdForOrder() {
+        return Math.abs(new Random().nextInt() * Integer.MAX_VALUE);
     }
 }

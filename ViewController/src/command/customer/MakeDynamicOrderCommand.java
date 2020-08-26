@@ -1,11 +1,11 @@
-package command.store;
+package command.customer;
 
 import command.Command;
 import controller.Controller;
 
-public class GetAllProductsCommand implements Command {
+public class MakeDynamicOrderCommand implements Command {
     @Override
     public void execute(Controller controller) {
-        controller.fetchAllProductsToUI();
+        controller.makeDynamicOrder();
     }
 }

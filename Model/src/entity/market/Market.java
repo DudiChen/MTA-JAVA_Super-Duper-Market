@@ -3,8 +3,10 @@ package entity.market;
 import entity.Order;
 import entity.Product;
 import entity.Store;
+import exception.MarketIsEmptyException;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 // TODO : handle errors with proper exceptions
@@ -21,6 +23,7 @@ public class Market {
     public Market(Map<Integer, Store> idToStore, Map<Integer, Product> idToProduct) {
         this.idToStore = idToStore;
         this.idToProduct = idToProduct;
+        this.idToOrderInvoice = new HashMap<>();
     }
 
     public void addStore(Store store) {
@@ -50,18 +53,18 @@ public class Market {
     public int receiveOrder(Order order) {
         List<InvoiceProduct> invoiceProducts = order.getProductIdsToQuantity().stream()
                 .map(pair -> new InvoiceProduct(
-                                order.getId(),
+                                pair.getKey(),
                                 this.idToProduct.get(pair.getKey()).getName(),
                                 this.idToProduct.get(pair.getKey()).getPurchaseMethod().getName(),
                                 this.idToStore.get(order.getStoreId()).getPriceOfProduct(pair.getKey()),
-                                pair.getKey(),
+                                pair.getValue(),
                                 this.idToStore.get(order.getStoreId()).getProductPriceWithQuantity(pair.getKey(), pair.getValue()),
-                                this.idToStore.get(pair.getKey()).getShipmentCost(order.getDestination())
+                                this.idToStore.get(order.getStoreId()).getShipmentCost(order.getDestination())
                         )
                 ).collect(Collectors.toList());
         double shipmentCost = this.idToStore.get(order.getStoreId()).getShipmentCost(order.getDestination());
         double totalPrice = invoiceProducts.stream()
-                .map(InvoiceProduct::getPrice)
+                .map(InvoiceProduct::getTotalPrice)
                 .reduce((double) 0, Double::sum);
 
         this.idToOrderInvoice.put(order.getId(),
@@ -70,7 +73,7 @@ public class Market {
                         invoiceProducts,
                         shipmentCost + totalPrice,
                         order.getDeliveryDate(),
-                        order.getId(),
+                        order.getStoreId(),
                         this.idToStore.get(order.getStoreId()).getShipmentCost(order.getDestination()))
         );
         return order.getId();
@@ -80,8 +83,7 @@ public class Market {
         OrderInvoice orderFinalization = this.idToOrderInvoice.get(orderReceiptId);
         Store providingStore = this.idToStore.get(orderFinalization.getStoreId());
         providingStore.addOrder(orderFinalization);
-        providingStore.addToNumberOfTimesAProductWasSold(orderFinalization.getInvoiceProducts().size());
-        orderFinalization.getInvoiceProducts().stream().forEach(invoiceProduct -> providingStore.addToTotalShipmentIncome(invoiceProduct.getShipmentCost()));
+        orderFinalization.getInvoiceProducts().forEach(invoiceProduct -> providingStore.addToTotalShipmentIncome(invoiceProduct.getShipmentCost()));
         this.idToOrderInvoice.get(orderReceiptId).setStatus(OrderInvoice.OrderStatus.ACCEPTED);
     }
 
@@ -93,11 +95,22 @@ public class Market {
         this.idToOrderInvoice.get(orderInvoiceId).setStatus(OrderInvoice.OrderStatus.CANCELED);
     }
 
-    public List<OrderInvoice> getOrdersHistory() {
-        return Collections.unmodifiableList(new ArrayList<>(this.idToOrderInvoice.values()));
+    public void setOrdersHistory(List<OrderInvoice> ordersHistory) {
+        // make map from list
+        this.idToOrderInvoice = ordersHistory.stream().collect(Collectors.toMap(OrderInvoice::getOrderId, o -> o));
+    }
+
+    public List<OrderInvoice> getOrdersHistory() throws MarketIsEmptyException {
+        if (this.idToOrderInvoice.values().isEmpty()) {
+            return new ArrayList<>();
+        }
+        else if(this.isEmpty()) {
+            throw new MarketIsEmptyException();
+        }
+        return new ArrayList<>(this.idToOrderInvoice.values());
     }
 
     public boolean isEmpty() {
-        return (idToProduct == null || idToProduct.isEmpty()) || (idToStore == null || idToStore.isEmpty());
+        return (idToProduct == null || idToProduct.isEmpty()) || (idToStore == null || idToStore.isEmpty()) ;
     }
 }

@@ -1,15 +1,17 @@
 package entity.market;
 
-public class InvoiceProduct {
+import java.io.Serializable;
+
+public class InvoiceProduct implements Serializable {
     private int id;
     private String name;
     private String purchaseMethod;
     private double price;
-    private int quantity;
+    private double quantity;
     private double totalPrice;
     private double shipmentCost;
 
-    public InvoiceProduct(int id, String name, String purchaseMethod, double price, int quantity, double totalPrice, double shipmentCost) {
+    public InvoiceProduct(int id, String name, String purchaseMethod, double price, double quantity, double totalPrice, double shipmentCost) {
         this.id = id;
         this.name = name;
         this.purchaseMethod = purchaseMethod;
@@ -31,7 +33,7 @@ public class InvoiceProduct {
         return price;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
@@ -41,5 +43,9 @@ public class InvoiceProduct {
 
     public double getShipmentCost() {
         return this.shipmentCost;
+    }
+
+    public int getId() {
+        return id;
     }
 }
