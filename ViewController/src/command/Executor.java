@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Executor {
-    // TODO: [Dudi]: Make Controller member final
     private final Controller controller;
     private final List<Command> commandsHistory = new ArrayList<>();
 

@@ -33,7 +33,7 @@ public class MenuItemActionable extends MenuItem {
     @Override
     public boolean startMenuItem() {
         executeCommand();
-        System.out.println("Enter any key to continue...");
+        System.out.println("Press Enter to continue...");
         try {
             System.in.read();
         } catch (IOException e) {}

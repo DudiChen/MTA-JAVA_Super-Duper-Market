@@ -330,14 +330,13 @@ public class ConsoleView extends View {
         }
     }
 
-    // TODO: [VIEW][DUDI][MENUS]: bug when waiting for any key
-    // TODO: [View][Dudi]: Add view prompt for xml path
     @Override
     public String promptUserFilePath() {
         System.out.println("Please Enter Path:");
         return new Scanner(System.in).next();
         //      "/Users/noamwa/Desktop/Studies/java/ex02-sdp/MTA-JAVA_Super-Duper-Market/Model/src/resource/ex1-big.xml";
         //      "/Users/noamwa/Desktop/Studies/java/ex02-sdp/MTA-JAVA_Super-Duper-Market/Model/src/resource/test";
+        // C:\Users\dudi_\IdeaProjects\My_Super-Duper-Market\Model\src\resource\ex1-big.xml
     }
 }
 

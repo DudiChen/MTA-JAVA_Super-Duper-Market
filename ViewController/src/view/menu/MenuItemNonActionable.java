@@ -70,6 +70,7 @@ public class MenuItemNonActionable extends MenuItem {
         boolean isParsed = true;
         do {
             try {
+                while(!scanner.hasNextInt()) scanner.next();
                 userInput = scanner.nextInt();
             } catch(InputMismatchException e) {
                 promptUserForInvalidChoiceInput();
