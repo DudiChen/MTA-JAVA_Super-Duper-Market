@@ -337,6 +337,7 @@ public class ConsoleView extends View {
         //      "/Users/noamwa/Desktop/Studies/java/ex02-sdp/MTA-JAVA_Super-Duper-Market/Model/src/resource/ex1-big.xml";
         //      "/Users/noamwa/Desktop/Studies/java/ex02-sdp/MTA-JAVA_Super-Duper-Market/Model/src/resource/test";
         // C:\Users\dudi_\IdeaProjects\My_Super-Duper-Market\Model\src\resource\ex1-big.xml
+        // C:\Users\dudi_\IdeaProjects\My_Super-Duper-Market\Model\src\resource\ex1-error-3.5.xml
     }
 }
 

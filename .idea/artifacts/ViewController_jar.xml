@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact name="ViewController:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ViewController_jar</output-path>
+    <root id="root">
+      <element id="archive" name="ViewController.jar">
+        <element id="module-output" name="ViewController" />
+        <element id="module-output" name="Model" />
+      </element>
+    </root>
+  </artifact>
+</component>

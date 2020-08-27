@@ -81,7 +81,7 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
 
 
         if (errors.length() > 0) {
-            throw new ValidationException(errors.toString());
+            throw new ValidationException("Errors:" + System.lineSeparator() + errors.toString());
         }
         return constructIdToStore(new HashSet<>(sdmStores));
     }

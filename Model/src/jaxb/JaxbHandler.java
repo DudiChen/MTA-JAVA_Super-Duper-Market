@@ -32,12 +32,12 @@ public class JaxbHandler {
         else if (!isFileXMLType(xmlPath)) {
             throw new XMLParseException(XML_FILE_INVALID_TYPE_MESSAGE);
         }
-
 //        InputStream inputStreamFromXml = JaxbHandler.class.getResourceAsStream(xmlPath);
-        InputStream inputStreamFromXml = new FileInputStream(xmlPath);
+//        InputStream inputStreamFromXml = new FileInputStream(xmlPath);
         SuperDuperMarketDescriptor sdMarketDescriptor = null;
         try {
-            sdMarketDescriptor = desrializeFrom(inputStreamFromXml);
+//            sdMarketDescriptor = desrializeFrom(inputStreamFromXml);
+            sdMarketDescriptor = desrializeFrom(xmlFile);
         }
         catch (JAXBException ex) {
             throw new XMLException(INVALID_XML_JAXB_LOAD_MESSAGE);
@@ -49,10 +49,11 @@ public class JaxbHandler {
         return (xmlPath.contains(".") && xmlPath.substring(xmlPath.lastIndexOf(".")).equals(".xml"));
     }
 
-    private SuperDuperMarketDescriptor desrializeFrom(InputStream inStream) throws JAXBException {
+        private SuperDuperMarketDescriptor desrializeFrom(File xmlFilw) throws JAXBException {
+//        private SuperDuperMarketDescriptor desrializeFrom(InputStream inStream) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(JAXB_XML_CLASSES_PACKAGE_NAME);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        return (SuperDuperMarketDescriptor) unmarshaller.unmarshal(inStream);
+        return (SuperDuperMarketDescriptor) unmarshaller.unmarshal(xmlFilw);
     }
 }
 
