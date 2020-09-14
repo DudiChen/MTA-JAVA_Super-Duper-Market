@@ -10,6 +10,7 @@ import entity.market.OrderInvoice;
 import exception.MarketIsEmptyException;
 import exception.OrderValidationException;
 import exception.XMLException;
+import javafx.fxml.FXML;
 import javafx.util.Pair;
 import jaxb.JaxbHandler;
 import jaxb.generated.SuperDuperMarketDescriptor;
@@ -19,29 +20,29 @@ import javax.management.modelmbean.XMLParseException;
 import javax.xml.bind.ValidationException;
 import java.awt.*;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class Controller {
-    Market market;
-    View view;
-    Executor executor;
-    AtomicReference<Store> chosenStore;
+    private Market market;
+    private View view;
+    private Executor executor;
+    private AtomicReference<Store> chosenStore;
+    private boolean loaded = false;
 
     public Controller(View view) {
-        this.market = new Market();
         this.view = view;
-        this.view.setController(this);
+        view.setController(this);
+        this.market = new Market();
+        this.loadXMLDataToUI();
         this.executor = new Executor(this);
         this.chosenStore = new AtomicReference<>();
         registerToViewEvents();
     }
 
+    @FXML
     public void fetchAllStoresToUI() {
         List<Store> stores = new ArrayList<>();
         if (market == null || market.isEmpty()) {
@@ -114,10 +115,7 @@ public class Controller {
 //                Pair<Integer, Double> pair;
                 for (Pair<Integer,Double> pair : productQuantityPairs) {
                     int storeId = findStoreIdOfLowestProductPrice(pair.getKey(), destination);
-                    if (storeIdToOrder.get(storeId) == null)
-                    {
-                        storeIdToOrder.put(storeId, new ArrayList<Pair<Integer, Double>>());
-                    }
+                    storeIdToOrder.computeIfAbsent(storeId, k -> new ArrayList<Pair<Integer, Double>>());
                     storeIdToOrder.get(storeId).add(pair);
                 }
 //                productQuantityPairs.stream().map((pair) -> )
@@ -189,7 +187,7 @@ public class Controller {
         fetchAllStoresListToUI();
     }
 
-    private void fetchAllStoresListToUI() {
+    public void fetchAllStoresListToUI() {
         List<Store> stores = new ArrayList<>();
         if (market == null || market.isEmpty()) {
             view.displayStoresList(stores);
@@ -199,19 +197,20 @@ public class Controller {
         view.displayStoresList(stores);
     }
 
-    private void fetchAllProductsListToUI() {
+    public void fetchAllProductsListToUI() {
         List<Product> products = new ArrayList<>();
         List<Store> allStores = new ArrayList<>();
         if (market == null || market.isEmpty()) {
             view.displayProductsList(products, allStores);
             return;
         }
-        products = market.getAllProducts();
+        products = market.getAllProducts()
+                .stream().filter(product -> chosenStore.get().isProductSold(product.getId())).collect(Collectors.toList());
         allStores = market.getAllStores();
         view.displayProductsList(products, allStores);
     }
 
-
+    @FXML
     public void fetchOrdersHistoryToUI() {
         try {
             view.showOrdersHistory(market.getOrdersHistory());
