@@ -1,8 +1,8 @@
 package view.menu;
 
-import command.store.GetAllStoresCommand;
 import controller.Controller;
 import entity.Product;
+import entity.Store;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import view.menu.item.StoreProductContent;
 
 import java.io.IOException;
 import java.net.URL;
@@ -19,18 +20,28 @@ import java.util.function.Consumer;
 
 public class ProductsMenu implements Initializable {
     @FXML
-    private ListView productsContentsList;
+    private ListView productsList;
     private final Controller controller;
     private final Consumer<ActionEvent> onBack;
     private Parent content;
     @FXML
     private Button backButton;
+    private List<Product> products;
+    private Store chosenStore;
+
+    public ProductsMenu(Controller controller, List<Product> products, Consumer<ActionEvent> onBack, Store chosenStore) {
+        this.products = products;
+        this.controller = controller;
+        this.onBack = onBack;
+        this.chosenStore = chosenStore;
+        this.content = loadFXML("storeProducts");
+    }
 
     public ProductsMenu(Controller controller, List<Product> products, Consumer<ActionEvent> onBack) {
-        System.out.println(products);
+        this.products = products;
         this.controller = controller;
-        this.content = loadFXML("storeProducts");
         this.onBack = onBack;
+        this.content = loadFXML("storeProducts");
     }
 
     public Parent getContent() {
@@ -50,7 +61,15 @@ public class ProductsMenu implements Initializable {
         return null;
     }
 
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.backButton.setOnAction(event -> onBack.accept(event));
+        this.backButton.setOnAction(onBack::accept);
+        if(this.chosenStore != null){
+            this.productsList.setCellFactory(param -> new StoreProductContent(chosenStore));
+        }
+        else {
+            //this.productsContentsList.setCellFactory(param -> new GeneralProductContent());
+        }
+        this.productsList.getItems().addAll(products);
     }
 }

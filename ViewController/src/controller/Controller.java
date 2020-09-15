@@ -201,13 +201,13 @@ public class Controller {
         List<Product> products = new ArrayList<>();
         List<Store> allStores = new ArrayList<>();
         if (market == null || market.isEmpty()) {
-            view.displayProductsList(products, allStores);
+            view.displayProductsList(products, chosenStore.get());
             return;
         }
         products = market.getAllProducts()
                 .stream().filter(product -> chosenStore.get().isProductSold(product.getId())).collect(Collectors.toList());
         allStores = market.getAllStores();
-        view.displayProductsList(products, allStores);
+        view.displayProductsList(products, chosenStore.get());
     }
 
     @FXML

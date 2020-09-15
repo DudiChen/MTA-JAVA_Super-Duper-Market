@@ -17,6 +17,7 @@ import javafx.scene.control.Tab;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import view.menu.StoresMenu;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -44,7 +45,7 @@ public class DesktopView extends View {
 
     @Override
     public void displayStores(List<Store> allStores) {
-        if(!storesTab.isSelected()){
+        if (!storesTab.isSelected()) {
             return;
         }
         this.storesMenu = new StoresMenu(allStores, onStoreIdChoice, controller);
@@ -99,14 +100,12 @@ public class DesktopView extends View {
     }
 
     @Override
-    public void displayProductsList(List<Product> products, List<Store> stores) {
-        if(!this.storesTab.isSelected()) {
+    public void displayProductsList(List<Product> products, Store store) {
+        if (!this.storesTab.isSelected()) {
             return;
         }
-        else {
-            this.storesMenu.orderFromStore(products);
-            this.storesTab.setContent(this.storesMenu.getContent());
-        }
+        this.storesMenu.orderFromStore(products, store);
+        this.storesTab.setContent(this.storesMenu.getContent());
     }
 
     // TODO: move to utils

@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.ListView;
+import view.menu.item.StoreContent;
 
 import java.io.IOException;
 import java.net.URL;
@@ -57,9 +58,9 @@ public class StoresMenu implements Initializable {
         this.storesContentsList.getItems().addAll(storesDataList);
     }
 
-    public void orderFromStore(List<Product> products) {
+    public void orderFromStore(List<Product> products, Store store) {
         this.mainScreen = this.content;
-        ProductsMenu storeProductsMenu = new ProductsMenu(this.controller, products, event -> this.controller.getExecutor().executeOperation(new GetAllStoresCommand()));
+        ProductsMenu storeProductsMenu = new ProductsMenu(this.controller, products, event -> this.controller.getExecutor().executeOperation(new GetAllStoresCommand()), store);
         this.content = storeProductsMenu.getContent();
     }
 }

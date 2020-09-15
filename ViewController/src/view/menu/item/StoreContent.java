@@ -1,4 +1,4 @@
-package view.menu;
+package view.menu.item;
 
 import controller.Controller;
 import entity.Store;
@@ -40,7 +40,7 @@ public class StoreContent extends ListCell<Store> {
     // TODO: move to utils
     private void loadFXML() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("sample/store.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../sample/store.fxml"));
             loader.setRoot(this);
             loader.setController(this);
             loader.load();

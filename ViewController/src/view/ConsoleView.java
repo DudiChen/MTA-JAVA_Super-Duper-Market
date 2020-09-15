@@ -66,7 +66,7 @@
 //
 //
 //    @Override
-//    public void displayProductsList(List<Product> allProducts, List<Store> allStores) throws IllegalFormatException {
+//    public void displayProductsList(List<Product> allProducts, Store allStores) throws IllegalFormatException {
 //        if (null == allProducts || allProducts.size() == 0) {
 //            System.out.println("Currently No Products Exist In System. Please Load Data First");
 //            return;
