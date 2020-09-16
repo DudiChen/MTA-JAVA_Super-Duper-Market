@@ -2,15 +2,21 @@ package view.menu.item;
 
 import entity.Product;
 import entity.Store;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.util.Pair;
+import javafx.util.converter.IntegerStringConverter;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-public class StoreProductContent extends ListCell<Product> {
+public class StoreProductContent extends ListCell<Product> implements Initializable {
 
     @FXML
     private Label nameLabel;
@@ -24,8 +30,12 @@ public class StoreProductContent extends ListCell<Product> {
     private Label quantityLabel;
     private Store chosenStore;
     private Product product;
+    private SimpleIntegerProperty productIdProperty;
+    private SimpleDoubleProperty quantityProperty;
 
     public StoreProductContent(Store chosenStore) {
+        this.productIdProperty = new SimpleIntegerProperty();
+        this.quantityProperty = new SimpleDoubleProperty();
         this.chosenStore = chosenStore;
         loadFXML();
     }
@@ -50,6 +60,7 @@ public class StoreProductContent extends ListCell<Product> {
             setContentDisplay(ContentDisplay.TEXT_ONLY);
         } else {
             this.product = product;
+            this.productIdProperty.setValue(this.product.getId());
             nameLabel.setText(product.getName());
             idLabel.setText(idLabel.getText() + product.getId());
             StringBuilder price = new StringBuilder();
@@ -87,7 +98,16 @@ public class StoreProductContent extends ListCell<Product> {
         }
     }
 
-    public Pair<Integer, Double> getIdToQuanity() {
-        return new Pair(this.product.getId(), this.quantitySlider.getValue());
+    public SimpleIntegerProperty getProductIdProperty() {
+        return productIdProperty;
+    }
+
+    public SimpleDoubleProperty getQuantityProperty() {
+        return quantityProperty;
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        this.quantitySlider.valueProperty().bindBidirectional(this.quantityProperty);
     }
 }

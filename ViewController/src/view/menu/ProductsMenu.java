@@ -5,6 +5,11 @@ import controller.Controller;
 import entity.Product;
 import entity.Store;
 import exception.OrderValidationException;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,35 +27,31 @@ import view.menu.item.StoreProductContent;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ProductsMenu implements Initializable, Navigatable {
 
-    private final Controller controller;
     private Parent content;
-    @FXML
-    private ListView productsList;
     private List<Product> products;
     private Store chosenStore;
+    private TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced;
+    private List<Pair<SimpleIntegerProperty, SimpleDoubleProperty>> chosenProductToQuantity;
     @FXML
     private Button orderButton;
     @FXML
     private DatePicker deliveryDatePicker;
-    private TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced;
-    private List<StoreProductContent> productsContents;
+    @FXML
+    private ListView productsList;
 
-    public ProductsMenu(Controller controller, List<Product> products, Store chosenStore) {
-        this.productsContents = new ArrayList<>();
+    public ProductsMenu(List<Product> products, Store chosenStore) {
         this.products = products;
-        this.controller = controller;
         this.chosenStore = chosenStore;
+        this.chosenProductToQuantity = new ArrayList<>();
         this.content = loadFXML("storeProducts");
     }
 
@@ -71,14 +72,16 @@ public class ProductsMenu implements Initializable, Navigatable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.orderButton.setOnAction(this::onOrder);
-        if(this.chosenStore != null){
+        if (this.chosenStore != null) {
             this.productsList.setCellFactory(param -> {
+                Pair<SimpleIntegerProperty, SimpleDoubleProperty> bindings = new Pair<>(new SimpleIntegerProperty(), new SimpleDoubleProperty());
+                this.chosenProductToQuantity.add(bindings);
                 StoreProductContent storeProductContent = new StoreProductContent(chosenStore);
-                this.productsContents.add(storeProductContent);
+                bindings.getKey().bindBidirectional(storeProductContent.getProductIdProperty());
+                bindings.getValue().bindBidirectional(storeProductContent.getQuantityProperty());
                 return storeProductContent;
             });
-        }
-        else {
+        } else {
             //this.productsContentsList.setCellFactory(param -> new GeneralProductContent());
         }
         this.productsList.getItems().addAll(products);
@@ -88,22 +91,25 @@ public class ProductsMenu implements Initializable, Navigatable {
         StringBuilder err = new StringBuilder();
         Date date = null;
         // validate everything
-        if(this.deliveryDatePicker.getValue() == null){
+        if (this.deliveryDatePicker.getValue() == null) {
             err.append("Please enter a delivery date first").append(System.lineSeparator());
-        }
-        else {
+        } else {
             date = Date.from(this.deliveryDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
         }
 
-        Point point = new Point(0,0);
-        List<Pair<Integer, Double>> chosenProductToQuantity = this.productsContents.stream()
-                .map(StoreProductContent::getIdToQuanity)
-                .filter(pair -> pair.getValue() != 0)
+        Point point = new Point(0, 0);
+
+        // filter all 0 quantities and transform from binding properties to values
+        List<Pair<Integer, Double>> chosenProductToQuantity =
+                this.chosenProductToQuantity.stream()
+                .filter(pair -> pair.getValue().getValue() != 0)
+                .map(pair -> new Pair<>(pair.getKey().get(), pair.getValue().get()))
                 .collect(Collectors.toList());
-        if(chosenProductToQuantity.stream().map(Pair::getValue).mapToDouble(Double::doubleValue).sum() == 0) {
+
+        if (chosenProductToQuantity.stream().map(Pair::getValue).mapToDouble(Double::doubleValue).sum() == 0) {
             err.append("Please choose products to order").append(System.lineSeparator());
         }
-        if(!err.toString().isEmpty()) {
+        if (!err.toString().isEmpty()) {
             Alert invalidInputAlert = new Alert(Alert.AlertType.WARNING);
             invalidInputAlert.setContentText(err.toString());
             invalidInputAlert.show();

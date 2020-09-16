@@ -52,7 +52,7 @@ public class DesktopView extends View {
             return;
         }
         this.appContext.setRoot(storesTab);
-        this.storesMenu = new StoresMenu(allStores, onStoreIdChoice, controller, this.appContext);
+        this.storesMenu = new StoresMenu(allStores, onStoreIdChoice, this.appContext);
         this.storesMenu.setOnOrderPlaced(onOrderPlaced);
         this.appContext.navigate(this.storesMenu);
     }
@@ -77,7 +77,7 @@ public class DesktopView extends View {
 
     @Override
     public void fileLoadedSuccessfully() {
-        System.out.println("file loaded successful");
+        System.out.println("file loaded successfuly");
     }
 
     @Override
@@ -94,6 +94,7 @@ public class DesktopView extends View {
     @Override
     public void showMainMenu() {
         this.mainMenu = loadFXML("mainMenu");
+        assert this.mainMenu != null;
         primaryStage.setScene(new Scene(this.mainMenu));
         primaryStage.show();
     }

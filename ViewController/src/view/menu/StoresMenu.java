@@ -26,14 +26,11 @@ import java.util.function.Consumer;
 
 public class StoresMenu implements Initializable, Navigatable {
 
-    private final Controller controller;
     @FXML
     private ListView storesContentsList;
     private List<Store> storesDataList;
     private Parent content;
     private Consumer<Integer> onStoreIdChoice;
-    private Parent mainScreen;
-    private ProductsMenu currentProductsMenu;
     private ApplicationContext applicationContext;
     private TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced;
 
@@ -42,9 +39,8 @@ public class StoresMenu implements Initializable, Navigatable {
     }
 
 
-    public StoresMenu(List<Store> storesDataList, Consumer<Integer> onStoreIdChoice, Controller controller, ApplicationContext applicationContext) {
+    public StoresMenu(List<Store> storesDataList, Consumer<Integer> onStoreIdChoice, ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-        this.controller = controller;
         this.storesDataList = storesDataList;
         this.onStoreIdChoice = onStoreIdChoice;
         this.content = loadFXML("storesMenu");
@@ -75,9 +71,8 @@ public class StoresMenu implements Initializable, Navigatable {
     }
 
     public void orderFromStore(List<Product> products, Store store) {
-        ProductsMenu storeProductsMenu = new ProductsMenu(this.controller, products, store);
+        ProductsMenu storeProductsMenu = new ProductsMenu(products, store);
         storeProductsMenu.setOnOrderPlaced((d, p, id) -> {
-            this.currentProductsMenu = storeProductsMenu;
             this.onOrderPlaced.apply(d, p, id);
         });
         this.applicationContext.navigate(storeProductsMenu);
