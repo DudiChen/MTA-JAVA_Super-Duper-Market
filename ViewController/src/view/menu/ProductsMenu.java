@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -30,12 +31,10 @@ import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class ProductsMenu implements Initializable {
+public class ProductsMenu implements Initializable, Navigatable {
+
     private final Controller controller;
-    private final Consumer<ActionEvent> onBack;
     private Parent content;
-    @FXML
-    private Button backButton;
     @FXML
     private ListView productsList;
     private List<Product> products;
@@ -47,18 +46,14 @@ public class ProductsMenu implements Initializable {
     private TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced;
     private List<StoreProductContent> productsContents;
 
-    public ProductsMenu(Controller controller, List<Product> products, Consumer<ActionEvent> onBack, Store chosenStore) {
+    public ProductsMenu(Controller controller, List<Product> products, Store chosenStore) {
         this.productsContents = new ArrayList<>();
         this.products = products;
         this.controller = controller;
-        this.onBack = onBack;
         this.chosenStore = chosenStore;
         this.content = loadFXML("storeProducts");
     }
 
-    public Parent getContent() {
-        return this.content;
-    }
 
     //TODO: move to utils
     private Parent loadFXML(String name) {
@@ -75,7 +70,6 @@ public class ProductsMenu implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.backButton.setOnAction(onBack::accept);
         this.orderButton.setOnAction(this::onOrder);
         if(this.chosenStore != null){
             this.productsList.setCellFactory(param -> {
@@ -125,5 +119,10 @@ public class ProductsMenu implements Initializable {
 
     public void setOnOrderPlaced(TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced) {
         this.onOrderPlaced = onOrderPlaced;
+    }
+
+    @Override
+    public Node getContent() {
+        return this.content;
     }
 }

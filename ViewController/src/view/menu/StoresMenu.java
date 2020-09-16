@@ -9,9 +9,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ListView;
 import javafx.util.Pair;
+import view.ApplicationContext;
 import view.TriConsumer;
 import view.menu.item.StoreContent;
 import java.awt.*;
@@ -22,7 +24,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-public class StoresMenu implements Initializable {
+public class StoresMenu implements Initializable, Navigatable {
 
     private final Controller controller;
     @FXML
@@ -32,19 +34,20 @@ public class StoresMenu implements Initializable {
     private Consumer<Integer> onStoreIdChoice;
     private Parent mainScreen;
     private ProductsMenu currentProductsMenu;
-    Consumer<ActionEvent> backToHere;
+    private ApplicationContext applicationContext;
+    private TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced;
+
     public void setOnOrderPlaced(TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced) {
         this.onOrderPlaced = onOrderPlaced;
     }
 
-    private TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced;
 
-    public StoresMenu(List<Store> storesDataList, Consumer<Integer> onStoreIdChoice, Controller controller) {
+    public StoresMenu(List<Store> storesDataList, Consumer<Integer> onStoreIdChoice, Controller controller, ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
         this.controller = controller;
         this.storesDataList = storesDataList;
-        this.content = loadFXML("storesMenu");
         this.onStoreIdChoice = onStoreIdChoice;
-        this.backToHere = event -> this.controller.getExecutor().executeOperation(new GetAllStoresCommand());
+        this.content = loadFXML("storesMenu");
     }
 
     // TODO: move to utils
@@ -60,29 +63,23 @@ public class StoresMenu implements Initializable {
         return null;
     }
 
-    public Parent getContent() {
+    @Override
+    public Node getContent() {
         return this.content;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.storesContentsList.setCellFactory(param -> new StoreContent(onStoreIdChoice));
+        this.storesContentsList.setCellFactory(param -> new StoreContent(onStoreIdChoice, applicationContext));
         this.storesContentsList.getItems().addAll(storesDataList);
     }
 
     public void orderFromStore(List<Product> products, Store store) {
-        this.mainScreen = this.content;
-        ProductsMenu storeProductsMenu = new ProductsMenu(this.controller, products, this.backToHere, store);
+        ProductsMenu storeProductsMenu = new ProductsMenu(this.controller, products, store);
         storeProductsMenu.setOnOrderPlaced((d, p, id) -> {
             this.currentProductsMenu = storeProductsMenu;
             this.onOrderPlaced.apply(d, p, id);
         });
-        this.content = storeProductsMenu.getContent();
-    }
-
-    public void confirmOrder(OrderInvoice orderInvoice) {
-        this.mainScreen = this.content;
-        ConfirmOrderScreen confirmOrderScreen = new ConfirmOrderScreen(orderInvoice, this.backToHere);
-        this.content = confirmOrderScreen.getContent();
+        this.applicationContext.navigate(storeProductsMenu);
     }
 }

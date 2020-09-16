@@ -14,7 +14,6 @@
         <VBox>
             <VBox>
                 <HBox>
-                    <Button fx:id="backButton" layoutY="1.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="29.0" text="«"/>
                     <HBox>
                         <Label text="Delivery Date: "/>
                     <DatePicker fx:id="deliveryDatePicker" prefWidth="100.0"/>

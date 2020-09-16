@@ -8,11 +8,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import view.ApplicationContext;
 
 import java.io.IOException;
 import java.util.function.Consumer;
 
 public class StoreContent extends ListCell<Store> {
+
+    private final ApplicationContext applicationContext;
+    private Consumer<Integer> onStoreIdChoice;
 
     @FXML
     private Label nameLabel;
@@ -28,10 +32,10 @@ public class StoreContent extends ListCell<Store> {
 
     @FXML
     private Button orderButton;
-    private Consumer<Integer> onStoreIdChoice;
 
 
-    public StoreContent(Consumer<Integer> onStoreIdChoice) {
+    public StoreContent(Consumer<Integer> onStoreIdChoice, ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
         this.onStoreIdChoice = onStoreIdChoice;
         loadFXML();
     }

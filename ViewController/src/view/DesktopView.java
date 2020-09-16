@@ -11,6 +11,7 @@ import entity.market.OrderInvoice;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
@@ -18,10 +19,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import view.menu.ConfirmOrderScreen;
 import view.menu.StoresMenu;
-
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class DesktopView extends View {
 
@@ -29,7 +31,8 @@ public class DesktopView extends View {
     private FileChooser fileChooser;
     private Parent mainMenu;
     private StoresMenu storesMenu;
-
+    private Controller controller;
+    private ApplicationContext appContext;
     @FXML
     private Tab storesTab;
     @FXML
@@ -37,11 +40,10 @@ public class DesktopView extends View {
     @FXML
     private Tab ordersTab;
 
-    private Controller controller;
-
     public DesktopView(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.fileChooser = new FileChooser();
+        this.appContext = new ApplicationContext();
     }
 
     @Override
@@ -49,15 +51,16 @@ public class DesktopView extends View {
         if (!storesTab.isSelected()) {
             return;
         }
-        this.storesMenu = new StoresMenu(allStores, onStoreIdChoice, controller);
+        this.appContext.setRoot(storesTab);
+        this.storesMenu = new StoresMenu(allStores, onStoreIdChoice, controller, this.appContext);
         this.storesMenu.setOnOrderPlaced(onOrderPlaced);
         this.appContext.navigate(this.storesMenu);
-//        this.storesTab.setContent(storesMenu.getContent());
     }
 
 
     @Override
     public void displayProducts(List<Product> allProducts, List<Store> allStores) {
+        this.appContext.setRoot(productsTab);
     }
 
     @Override
@@ -65,9 +68,7 @@ public class DesktopView extends View {
         if (!this.storesTab.isSelected()) {
             return;
         }
-        this.storesMenu.confirmOrder(orderInvoice);
         this.appContext.navigate(new ConfirmOrderScreen(orderInvoice));
-//        this.storesTab.setContent(this.storesMenu.getContent());
     }
 
     @Override
@@ -113,8 +114,6 @@ public class DesktopView extends View {
             return;
         }
         this.storesMenu.orderFromStore(products, store);
-        this.appContext.navigate(this.storesMenu);
-//        this.storesTab.setContent(this.storesMenu.getContent());
     }
 
     // TODO: move to utils

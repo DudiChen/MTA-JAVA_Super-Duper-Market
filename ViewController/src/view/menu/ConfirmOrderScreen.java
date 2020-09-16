@@ -18,14 +18,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-public class ConfirmOrderScreen implements Initializable {
+public class ConfirmOrderScreen implements Initializable, Navigatable {
     private final OrderInvoice orderInvoice;
     @FXML
     private ListView invoiceProductsContents;
     @FXML
     private Button confirmButton;
-    @FXML
-    private Button backButton;
     @FXML
     private Label shipmentCostLabel;
     @FXML
@@ -46,20 +44,19 @@ public class ConfirmOrderScreen implements Initializable {
         return null;
     }
 
-    public ConfirmOrderScreen(OrderInvoice orderInvoice, Consumer<ActionEvent> onBack) {
+    public ConfirmOrderScreen(OrderInvoice orderInvoice) {
         this.orderInvoice = orderInvoice;
-        this.onBack = onBack;
         this.content = loadFXML("confirmOrder");
 //        this.onBack.accept(new ActionEvent());
     }
 
+    @Override
     public Parent getContent() {
         return this.content;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.backButton.setOnAction(e -> onBack.accept(new ActionEvent()));
         this.shipmentCostLabel.setText(this.shipmentCostLabel.getText() + orderInvoice.getShipmentPrice());
         this.totalLabel.setText(this.totalLabel.getText() + orderInvoice.getTotalPrice());
         this.invoiceProductsContents.setCellFactory(param -> new InvoiceProductContent());
