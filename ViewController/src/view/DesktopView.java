@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import view.menu.ConfirmOrderScreen;
 import view.menu.StoresMenu;
 
 import java.io.File;
@@ -49,7 +50,9 @@ public class DesktopView extends View {
             return;
         }
         this.storesMenu = new StoresMenu(allStores, onStoreIdChoice, controller);
-        this.storesTab.setContent(storesMenu.getContent());
+        this.storesMenu.setOnOrderPlaced(onOrderPlaced);
+        this.appContext.navigate(this.storesMenu);
+//        this.storesTab.setContent(storesMenu.getContent());
     }
 
 
@@ -59,7 +62,12 @@ public class DesktopView extends View {
 
     @Override
     public void summarizeOrder(OrderInvoice orderInvoice) {
-
+        if (!this.storesTab.isSelected()) {
+            return;
+        }
+        this.storesMenu.confirmOrder(orderInvoice);
+        this.appContext.navigate(new ConfirmOrderScreen(orderInvoice));
+//        this.storesTab.setContent(this.storesMenu.getContent());
     }
 
     @Override
@@ -105,7 +113,8 @@ public class DesktopView extends View {
             return;
         }
         this.storesMenu.orderFromStore(products, store);
-        this.storesTab.setContent(this.storesMenu.getContent());
+        this.appContext.navigate(this.storesMenu);
+//        this.storesTab.setContent(this.storesMenu.getContent());
     }
 
     // TODO: move to utils

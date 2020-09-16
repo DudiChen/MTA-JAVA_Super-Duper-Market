@@ -42,10 +42,4 @@ public abstract class View {
     public abstract void displayStoresList(List<Store> stores);
 
     public abstract void displayProductsList(List<Product> products, Store stores);
-
-    @FunctionalInterface
-    public interface TriConsumer<T, U, V> {
-        void apply(T t, U u, V v) throws OrderValidationException;
-    }
-
 }
