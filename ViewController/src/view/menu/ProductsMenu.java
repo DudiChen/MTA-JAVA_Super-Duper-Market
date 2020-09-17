@@ -1,15 +1,10 @@
 package view.menu;
 
-import com.sun.deploy.net.MessageHeader;
-import controller.Controller;
 import entity.Product;
 import entity.Store;
 import exception.OrderValidationException;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +17,9 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.util.Pair;
 import view.TriConsumer;
+import view.menu.item.AbstractProductContent;
+import view.menu.item.ProductContent;
+import view.menu.item.ProductsContentFactory;
 import view.menu.item.StoreProductContent;
 
 import java.awt.*;
@@ -34,11 +32,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-public class ProductsMenu implements Initializable, Navigatable {
+public class ProductsMenu<T extends AbstractProductContent> implements Initializable, Navigatable {
 
+    private final ProductsContentFactory productsContentFactory;
     private Parent content;
     private List<Product> products;
-    private Store chosenStore;
     private TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced;
     private List<Pair<SimpleIntegerProperty, SimpleDoubleProperty>> chosenProductToQuantity;
     @FXML
@@ -48,13 +46,12 @@ public class ProductsMenu implements Initializable, Navigatable {
     @FXML
     private ListView productsList;
 
-    public ProductsMenu(List<Product> products, Store chosenStore) {
+    public ProductsMenu(List<Product> products, ProductsContentFactory productsContentFactory) {
+        this.productsContentFactory = productsContentFactory;
         this.products = products;
-        this.chosenStore = chosenStore;
         this.chosenProductToQuantity = new ArrayList<>();
         this.content = loadFXML("storeProducts");
     }
-
 
     //TODO: move to utils
     private Parent loadFXML(String name) {
@@ -72,18 +69,20 @@ public class ProductsMenu implements Initializable, Navigatable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.orderButton.setOnAction(this::onOrder);
-        if (this.chosenStore != null) {
-            this.productsList.setCellFactory(param -> {
-                Pair<SimpleIntegerProperty, SimpleDoubleProperty> bindings = new Pair<>(new SimpleIntegerProperty(), new SimpleDoubleProperty());
-                this.chosenProductToQuantity.add(bindings);
-                StoreProductContent storeProductContent = new StoreProductContent(chosenStore);
-                bindings.getKey().bindBidirectional(storeProductContent.getProductIdProperty());
-                bindings.getValue().bindBidirectional(storeProductContent.getQuantityProperty());
-                return storeProductContent;
-            });
-        } else {
-            //this.productsContentsList.setCellFactory(param -> new GeneralProductContent());
-        }
+        this.productsList.setCellFactory(param -> {
+            AbstractProductContent productContent = this.productsContentFactory.getItem();
+//
+//            if (this.chosenStore != null) {
+//                ProductContent storeProductContent = new StoreProductContent(chosenStore);
+//            } else {
+//                productContent = new ProductContent();
+//            }
+            Pair<SimpleIntegerProperty, SimpleDoubleProperty> bindings = new Pair<>(new SimpleIntegerProperty(), new SimpleDoubleProperty());
+            this.chosenProductToQuantity.add(bindings);
+            bindings.getKey().bindBidirectional(productContent.getProductIdProperty());
+            bindings.getValue().bindBidirectional(productContent.getQuantityProperty());
+            return productContent;
+        });
         this.productsList.getItems().addAll(products);
     }
 
@@ -102,9 +101,10 @@ public class ProductsMenu implements Initializable, Navigatable {
         // filter all 0 quantities and transform from binding properties to values
         List<Pair<Integer, Double>> chosenProductToQuantity =
                 this.chosenProductToQuantity.stream()
-                .filter(pair -> pair.getValue().getValue() != 0)
-                .map(pair -> new Pair<>(pair.getKey().get(), pair.getValue().get()))
-                .collect(Collectors.toList());
+                        .filter(pair -> pair.getValue().getValue() != 0)
+                        .map(pair -> new Pair<>(pair.getKey().get(), pair.getValue().get()))
+                        .distinct()
+                        .collect(Collectors.toList());
 
         if (chosenProductToQuantity.stream().map(Pair::getValue).mapToDouble(Double::doubleValue).sum() == 0) {
             err.append("Please choose products to order").append(System.lineSeparator());
@@ -115,7 +115,6 @@ public class ProductsMenu implements Initializable, Navigatable {
             invalidInputAlert.show();
             return;
         }
-
         try {
             onOrderPlaced.apply(date, point, chosenProductToQuantity);
         } catch (OrderValidationException e) {

@@ -5,12 +5,23 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Label layoutX="253.0" layoutY="6.0" text="Order Summary" />
-      <ListView fx:id="invoiceProductsContents" layoutY="23.0" prefHeight="304.0" prefWidth="601.0" />
-
-      <Label fx:id="shipmentCostLabel" layoutX="14.0" layoutY="327.0" text="Shipment Cost: " />
-      <Label fx:id="totalLabel" layoutX="14.0" layoutY="352.0" text="Total: " />
-   </children>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Separator?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox>
+            <VBox>
+                <Label text="Order Summary"/>
+                <ListView fx:id="invoiceProductsContents" layoutY="23.0" prefHeight="240.0" prefWidth="600.0"/>
+            </VBox>
+            <VBox>
+                <Label fx:id="shipmentCostLabel" text="Shipment Cost: "/>
+                <Label fx:id="totalLabel" text="Total: "/>
+                <Separator/>
+                <Button fx:id="approveButton" text="Approve Order"/>
+            </VBox>
+        </VBox>
+    </children>
 </AnchorPane>

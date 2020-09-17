@@ -11,19 +11,21 @@ import entity.market.OrderInvoice;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Tab;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import view.menu.ConfirmOrderScreen;
+import view.menu.OrdersMenu;
+import view.menu.ProductsMenu;
 import view.menu.StoresMenu;
+import view.menu.item.ProductContent;
+import view.menu.item.ProductsContentFactory;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
-import java.util.ResourceBundle;
 
 public class DesktopView extends View {
 
@@ -60,7 +62,13 @@ public class DesktopView extends View {
 
     @Override
     public void displayProducts(List<Product> allProducts, List<Store> allStores) {
+        if (!productsTab.isSelected()) {
+            return;
+        }
         this.appContext.setRoot(productsTab);
+        ProductsMenu<ProductContent> productsMenu = new ProductsMenu<>(allProducts, new ProductsContentFactory(allStores));
+        productsMenu.setOnOrderPlaced(this.onDynamicOrder);
+        this.appContext.navigate(productsMenu);
     }
 
     @Override
@@ -68,11 +76,18 @@ public class DesktopView extends View {
         if (!this.storesTab.isSelected()) {
             return;
         }
-        this.appContext.navigate(new ConfirmOrderScreen(orderInvoice));
+        this.appContext.navigate(new ConfirmOrderScreen(orderInvoice, id -> {
+            onOrderAccepted.accept(id);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setContentText("Order ID " + id + " Received");
+            alert.show();
+            this.executeOperation(new GetAllStoresCommand());
+        }));
     }
 
     @Override
     public void displayError(String message) {
+        System.out.println(message);
     }
 
     @Override
@@ -82,7 +97,12 @@ public class DesktopView extends View {
 
     @Override
     public void showOrdersHistory(List<OrderInvoice> ordersHistory) {
-
+        if (!ordersTab.isSelected()) {
+            return;
+        }
+        this.appContext.setRoot(ordersTab);
+        OrdersMenu ordersMenu = new OrdersMenu(ordersHistory, this.controller);
+        this.appContext.navigate(ordersMenu);
     }
 
     @Override
@@ -110,7 +130,7 @@ public class DesktopView extends View {
     }
 
     @Override
-    public void displayProductsList(List<Product> products, Store store) {
+    public void displayProductsForStore(List<Product> products, Store store) {
         if (!this.storesTab.isSelected()) {
             return;
         }

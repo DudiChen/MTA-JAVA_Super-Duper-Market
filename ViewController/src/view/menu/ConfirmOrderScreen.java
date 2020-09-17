@@ -17,15 +17,15 @@ import java.util.function.Consumer;
 
 public class ConfirmOrderScreen implements Initializable, Navigatable {
     private final OrderInvoice orderInvoice;
+    private final Consumer<Integer> onOrderAccepted;
     @FXML
     private ListView invoiceProductsContents;
-    @FXML
-    private Button confirmButton;
     @FXML
     private Label shipmentCostLabel;
     @FXML
     private Label totalLabel;
-    private Consumer<ActionEvent> onBack;
+    @FXML
+    private Button approveButton;
     private Parent content;
 
     // TODO: move to utils
@@ -41,10 +41,10 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
         return null;
     }
 
-    public ConfirmOrderScreen(OrderInvoice orderInvoice) {
+    public ConfirmOrderScreen(OrderInvoice orderInvoice, Consumer<Integer> onOrderAccepted) {
+        this.onOrderAccepted = onOrderAccepted;
         this.orderInvoice = orderInvoice;
         this.content = loadFXML("confirmOrder");
-//        this.onBack.accept(new ActionEvent());
     }
 
     @Override
@@ -54,6 +54,7 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.approveButton.setOnAction(e -> this.onOrderAccepted.accept(orderInvoice.getOrderId()));
         this.shipmentCostLabel.setText(this.shipmentCostLabel.getText() + orderInvoice.getShipmentPrice());
         this.totalLabel.setText(this.totalLabel.getText() + orderInvoice.getTotalPrice());
         this.invoiceProductsContents.setCellFactory(param -> new InvoiceProductContent());

@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListCell?>
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
+<?import javafx.scene.text.Font?>
 <fx:root prefHeight="69.0" prefWidth="40.0" type="javafx.scene.control.ListCell" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <graphic>
         <HBox prefHeight="61.0" prefWidth="601.0">
@@ -23,29 +20,19 @@
                                 <Font size="10.0" />
                             </font>
                         </Label>
-                        <Label fx:id="numberOfSellingStoresLabel" text="Total Selling Stores: ">
-                            <font>
-                                <Font size="10.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="averagePriceLabel" text="Average Price: ">
-                            <font>
-                                <Font size="10.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="numberOfTotalProductSalesLabel" text="Total Sales: ">
+                        <Label fx:id="priceLabel" text="Price: ">
                             <font>
                                 <Font size="10.0" />
                             </font>
                         </Label>
                     </children>
                 </VBox>
-            <HBox prefHeight="100.0" prefWidth="800.0">
-               <children>
-                      <Slider prefWidth="400.0" fx:id="quantitySlider" />
-                      <Label fx:id="quantityLabel" />
-               </children>
-            </HBox>
+                <HBox prefHeight="100.0" prefWidth="800.0">
+                    <children>
+                        <Slider prefWidth="400.0" fx:id="quantitySlider" />
+                        <Label fx:id="quantityLabel" />
+                    </children>
+                </HBox>
             </children>
         </HBox>
     </graphic>

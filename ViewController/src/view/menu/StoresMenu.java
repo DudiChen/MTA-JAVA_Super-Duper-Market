@@ -1,11 +1,7 @@
 package view.menu;
 
-import command.store.GetAllStoresCommand;
-import controller.Controller;
 import entity.Product;
 import entity.Store;
-import entity.market.OrderInvoice;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -15,7 +11,10 @@ import javafx.scene.control.ListView;
 import javafx.util.Pair;
 import view.ApplicationContext;
 import view.TriConsumer;
+import view.menu.item.ProductsContentFactory;
 import view.menu.item.StoreContent;
+import view.menu.item.StoreProductContent;
+
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
@@ -37,7 +36,6 @@ public class StoresMenu implements Initializable, Navigatable {
     public void setOnOrderPlaced(TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced) {
         this.onOrderPlaced = onOrderPlaced;
     }
-
 
     public StoresMenu(List<Store> storesDataList, Consumer<Integer> onStoreIdChoice, ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -71,10 +69,8 @@ public class StoresMenu implements Initializable, Navigatable {
     }
 
     public void orderFromStore(List<Product> products, Store store) {
-        ProductsMenu storeProductsMenu = new ProductsMenu(products, store);
-        storeProductsMenu.setOnOrderPlaced((d, p, id) -> {
-            this.onOrderPlaced.apply(d, p, id);
-        });
+        ProductsMenu<StoreProductContent> storeProductsMenu = new ProductsMenu<>(products, new ProductsContentFactory(store));
+        storeProductsMenu.setOnOrderPlaced(this.onOrderPlaced);
         this.applicationContext.navigate(storeProductsMenu);
     }
 }

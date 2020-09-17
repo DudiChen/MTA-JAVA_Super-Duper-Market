@@ -41,5 +41,5 @@ public abstract class View {
 
     public abstract void displayStoresList(List<Store> stores);
 
-    public abstract void displayProductsList(List<Product> products, Store stores);
+    public abstract void displayProductsForStore(List<Product> products, Store stores);
 }

@@ -10,23 +10,26 @@
     <graphic>
         <VBox prefWidth="100.0">
             <Separator />
-            <Label fx:id="nameLabel">
-            <font>
-               <Font name="System Bold" size="15.0" />
-            </font></Label>
             <Separator />
-            <Label fx:id="idLabel" text="ID: " />
-            <Separator />
-
-            <Label fx:id="purchaseMethodLabel" text="Purchase Method: " />
+            <Label fx:id="idLabel" text="Order ID: ">
+                <font>
+                    <Font name="System Bold" size="15.0" />
+                </font></Label>
             <Separator />
 
-            <Label fx:id="priceLabel" text="Price: " />
+            <Label fx:id="deliveryDateLabel" text="Delivery Date: " />
             <Separator />
 
-            <Label fx:id="quantityLabel" text="Quantity: " />
+            <Label fx:id="providingStoreLabel" text="Providing Store: " />
             <Separator />
 
+            <Label fx:id="numberOfItemsLabel" text="Number Of Items: " />
+            <Separator />
+
+            <Label fx:id="totalProductsPriceLabel" text="Total Products Price: " />
+            <Separator />
+            <Label fx:id="shipmentPriceLabel" text="Shipment Price: " />
+            <Separator />
             <Label fx:id="totalPriceLabel" text="Total Price: " />
             <Separator />
         </VBox>
