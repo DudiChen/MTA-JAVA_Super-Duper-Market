@@ -13,7 +13,7 @@
     <children>
         <VBox>
             <VBox>
-                <Label text="Order Summary"/>
+                <Label fx:id="storeNameLabel" text="Order Summary - "/>
                 <ListView fx:id="invoiceProductsContents" layoutY="23.0" prefHeight="240.0" prefWidth="600.0"/>
             </VBox>
             <VBox>

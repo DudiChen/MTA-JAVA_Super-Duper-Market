@@ -38,13 +38,13 @@ public class ProductContent extends AbstractProductContent {
                     .filter(storeProduct -> storeProduct.getId() == product.getId())
                     .map(StoreProduct::getPrice)
                     .reduce((double) 0, (acc, curr) -> acc += curr);
-        this.averagePriceLabel.setText(this.averagePriceLabel.getText() + averagePrice);
+        this.averagePriceLabel.setText("Average Price: "+ String.format("%.2f", averagePrice));
         int numberOfSellingStores = (int) allStores.stream()
                     .filter(store -> store.isProductSold(product.getId())).count();
         this.numberOfSellingStoresLabel.setText( this.numberOfSellingStoresLabel.getText() + numberOfSellingStores);
         int numberOfTotalProductSales = allStores.stream()
                     .map(store -> store.getTotalProductSales(product.getId()))
                     .reduce(0, (acc, curr) -> acc += curr);
-        this.numberOfTotalProductSalesLabel.setText(this.numberOfTotalProductSalesLabel.getText() + numberOfTotalProductSales);
+        this.numberOfTotalProductSalesLabel.setText("Total Sales: " + numberOfTotalProductSales);
     }
 }

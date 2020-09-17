@@ -18,6 +18,7 @@ import java.util.function.Consumer;
 public class ConfirmOrderScreen implements Initializable, Navigatable {
     private final OrderInvoice orderInvoice;
     private final Consumer<Integer> onOrderAccepted;
+    private final String storeName;
     @FXML
     private ListView invoiceProductsContents;
     @FXML
@@ -26,6 +27,8 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
     private Label totalLabel;
     @FXML
     private Button approveButton;
+    @FXML
+    private Label storeNameLabel;
     private Parent content;
 
     // TODO: move to utils
@@ -41,9 +44,10 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
         return null;
     }
 
-    public ConfirmOrderScreen(OrderInvoice orderInvoice, Consumer<Integer> onOrderAccepted) {
+    public ConfirmOrderScreen(String storeName, OrderInvoice orderInvoice, Consumer<Integer> onOrderAccepted) {
         this.onOrderAccepted = onOrderAccepted;
         this.orderInvoice = orderInvoice;
+        this.storeName = storeName;
         this.content = loadFXML("confirmOrder");
     }
 
@@ -54,6 +58,7 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.storeNameLabel.setText(this.storeNameLabel.getText() + this.storeName);
         this.approveButton.setOnAction(e -> this.onOrderAccepted.accept(orderInvoice.getOrderId()));
         this.shipmentCostLabel.setText(this.shipmentCostLabel.getText() + orderInvoice.getShipmentPrice());
         this.totalLabel.setText(this.totalLabel.getText() + orderInvoice.getTotalPrice());

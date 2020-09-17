@@ -34,7 +34,7 @@ public class ApplicationContext {
         contentPart.getChildren().add(content);
     }
 
-    private void navigateBack() {
+    public void navigateBack() {
         if(this.pagesStack.empty()) {
             this.backPage = null;
             return;

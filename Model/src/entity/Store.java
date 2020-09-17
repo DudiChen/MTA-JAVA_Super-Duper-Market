@@ -7,6 +7,7 @@ import exception.ProductIdNotFoundException;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class Store {
     private Point coordinate;
@@ -52,6 +53,9 @@ public class Store {
 
 
     public double getPriceOfProduct(int productId) {
+        if(!this.stock.doesProductIdExist(productId)) {
+            throw new NoSuchElementException();
+        }
         return this.stock.getProductPrice(productId);
     }
 

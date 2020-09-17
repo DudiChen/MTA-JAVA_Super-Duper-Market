@@ -3,6 +3,7 @@ package controller;
 import builder.MarketBuilder;
 import command.Executor;
 import entity.Product;
+import entity.StoreProduct;
 import entity.market.Market;
 import entity.Order;
 import entity.Store;
@@ -103,38 +104,64 @@ public class Controller {
 
     private void registerOnDynamicOrder() {
         view.onDynamicOrder = (date, destination, productQuantityPairs) -> {
-            // validate the user is not in a point where a store is
-            if (productQuantityPairs.size() == 0) {
-                view.showMainMenu();
-                // make order dynamic
-//                int orderInvoiceId = market.receiveOrder(new Order(productQuantityPairs, destination, date, chosenStore.get().getId()));
-//                view.summarizeOrder(market.getOrderInvoice(orderInvoiceId));
-            }
-            else {
-                Map<Integer,List<Pair<Integer, Double>>> storeIdToOrder = new HashMap<>();
-//                Pair<Integer, Double> pair;
-                for (Pair<Integer,Double> pair : productQuantityPairs) {
-                    int storeId = findStoreIdOfLowestProductPrice(pair.getKey(), destination);
-                    storeIdToOrder.computeIfAbsent(storeId, k -> new ArrayList<Pair<Integer, Double>>());
-                    storeIdToOrder.get(storeId).add(pair);
-                }
-//                productQuantityPairs.stream().map((pair) -> )
-            }
+            this.market.getAllStores()
+                    .forEach(store -> {
+                        Optional<List<Pair<Integer, Double>>> maybeOrder = findCheapestOrderForStore(store, productQuantityPairs);
+                        if(maybeOrder.isPresent()) {
+                            this.chosenStore.set(store);
+                            List<Pair<Integer, Double>> orderPairs = maybeOrder.get();
+                            try {
+                                List<Pair<Integer, Double>> toDelete = new ArrayList<>();
+                                for(Pair<Integer, Double> pair : productQuantityPairs) {
+                                    for(Pair<Integer, Double> pair1: orderPairs) {
+                                        if(pair.getKey() == pair1.getKey()){
+                                            toDelete.add(pair);
+                                            break;
+                                        }
+                                    }
+                                }
+                                productQuantityPairs.removeAll(toDelete);
+                                makeOrderForChosenStore(date, destination, orderPairs);
+                            } catch (OrderValidationException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
         };
     }
 
-    private int findStoreIdOfLowestProductPrice(int productId, Point destination) {
-        int storeIDofLowestPrice = 0;
-        int lowestProductPrice = 0;
-        List<Store> stores = market.getAllStores();
-        for (Store store : stores) {
-            if (storeIDofLowestPrice == 0) {
-                storeIDofLowestPrice = store.getId();
-//                lowestProductPrice = store.get
-            }
+    private Optional<List<Pair<Integer, Double>>> findCheapestOrderForStore(Store store, List<Pair<Integer, Double>> productQuantityPairs) {
 
+        List<Pair<Integer, Double>> res = new ArrayList<>();
+        productQuantityPairs
+                .forEach(pair -> {
+                    this.market.getAllStores().stream()
+                            .mapToDouble(storeToCheckPriceIn -> {
+                                double price;
+                                try {
+                                    price = store.getPriceOfProduct(pair.getKey());
+                                } catch (NoSuchElementException e) {
+                                    price = Double.MAX_VALUE;
+                                }
+                                return price;
+                            })
+                            .min()
+                            .ifPresent(minPrice -> {
+                                try {
+                                    double priceInCurrentStore = store.getPriceOfProduct(pair.getKey());
+                                    if (minPrice == priceInCurrentStore) {
+                                        res.add(new Pair<>(pair.getKey(), pair.getValue()));
+                                    }
+                                } catch (NoSuchElementException e) {
+
+                                }
+                            });
+                });
+        if (res.isEmpty()) {
+            return Optional.empty();
         }
-        return storeIDofLowestPrice;
+        System.out.println(res);
+        return Optional.of(res);
     }
 
     private void registerOnOrderAccepted() {
@@ -154,29 +181,31 @@ public class Controller {
     }
 
     private void registerOnOrderPlaced() {
-        view.onOrderPlaced = (date, destination, productQuantityPairs) -> {
-            StringBuilder err = new StringBuilder();
-            // validate store coordinate is not the same as customer coordinate
-            assert false;
-            if (destination.equals(chosenStore.get().getCoordinate())) {
-                err.append("cannot make order from same coordinate as store").append(System.lineSeparator());
+        view.onOrderPlaced = this::makeOrderForChosenStore;
+    }
+
+    private void makeOrderForChosenStore(Date date, Point destination, List<Pair<Integer, Double>> productQuantityPairs) throws OrderValidationException {
+        StringBuilder err = new StringBuilder();
+        // validate store coordinate is not the same as customer coordinate
+        assert false;
+        if (destination.equals(chosenStore.get().getCoordinate())) {
+            err.append("cannot make order from same coordinate as store").append(System.lineSeparator());
+        }
+        // validate chosen products are sold by the chosen store
+        for (Pair<Integer, Double> productToQuantity : productQuantityPairs) {
+            int productId = productToQuantity.getKey();
+            if (!chosenStore.get().isProductSold(productId)) {
+                err.append(market.getProductById(productId).getName()).append(" is not sold by ").append(market.getStoreById(chosenStore.get().getId()).getName()).append(System.lineSeparator());
             }
-            // validate chosen products are sold by the chosen store
-            for (Pair<Integer, Double> productToQuantity : productQuantityPairs) {
-                int productId = productToQuantity.getKey();
-                if (!chosenStore.get().isProductSold(productId)) {
-                    err.append(market.getProductById(productId).getName()).append(" is not sold by ").append(market.getStoreById(chosenStore.get().getId()).getName()).append(System.lineSeparator());
-                }
-            }
-            if (err.length() > 0) {
-                throw new OrderValidationException(err.toString());
-            }
-            if (productQuantityPairs.size() == 0) {
-                view.showMainMenu();
-            }
-            int orderInvoiceId = market.receiveOrder(new Order(productQuantityPairs, destination, date, chosenStore.get().getId()));
-            view.summarizeOrder(market.getOrderInvoice(orderInvoiceId));
-        };
+        }
+        if (err.length() > 0) {
+            throw new OrderValidationException(err.toString());
+        }
+        if (productQuantityPairs.size() == 0) {
+            view.showMainMenu();
+        }
+        int orderInvoiceId = market.receiveOrder(new Order(productQuantityPairs, destination, date, chosenStore.get().getId()));
+        view.summarizeOrder(market.getOrderInvoice(orderInvoiceId));
     }
 
     public void makeDynamicOrder() {
@@ -238,17 +267,15 @@ public class Controller {
         }
         try {
             List<OrderInvoice> history = market.getOrdersHistory();
-            if(history.size() == 0) {
+            if (history.size() == 0) {
                 view.displayError("No History To Show");
-            }
-            else{
+            } else {
                 String outputPath = view.promptUserFilePath();
                 try (OutputStream outputStream = new FileOutputStream(outputPath)) {
                     ObjectOutputStream out = new ObjectOutputStream(outputStream);
                     out.writeObject(history);
                     view.fileLoadedSuccessfully();
-                }
-                catch (FileNotFoundException e) {
+                } catch (FileNotFoundException e) {
                     view.displayError("File Not Found");
 
                 } catch (IOException e) {

@@ -73,15 +73,17 @@ public class DesktopView extends View {
 
     @Override
     public void summarizeOrder(OrderInvoice orderInvoice) {
-        if (!this.storesTab.isSelected()) {
-            return;
-        }
-        this.appContext.navigate(new ConfirmOrderScreen(orderInvoice, id -> {
+        this.appContext.navigate(new ConfirmOrderScreen(this.controller.getStoreNameByID(orderInvoice.getStoreId()), orderInvoice, id -> {
             onOrderAccepted.accept(id);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText("Order ID " + id + " Received");
             alert.show();
-            this.executeOperation(new GetAllStoresCommand());
+            if(this.storesTab.isSelected()) {
+                this.executeOperation(new GetAllStoresCommand());
+            }
+            else if(this.productsTab.isSelected()){
+                this.appContext.navigateBack();
+            }
         }));
     }
 
