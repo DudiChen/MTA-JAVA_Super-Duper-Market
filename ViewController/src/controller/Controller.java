@@ -16,6 +16,7 @@ import javafx.util.Pair;
 import jaxb.JaxbHandler;
 import jaxb.generated.SuperDuperMarketDescriptor;
 import view.View;
+import view.menu.item.StoreMapElement;
 
 import javax.management.modelmbean.XMLParseException;
 import javax.xml.bind.ValidationException;
@@ -43,7 +44,6 @@ public class Controller {
         registerToViewEvents();
     }
 
-    @FXML
     public void fetchAllStoresToUI() {
         List<Store> stores = new ArrayList<>();
         if (market == null || market.isEmpty()) {
@@ -239,7 +239,6 @@ public class Controller {
         view.displayProductsForStore(products, chosenStore.get());
     }
 
-    @FXML
     public void fetchOrdersHistoryToUI() {
         try {
             view.showOrdersHistory(market.getOrdersHistory());
@@ -306,5 +305,14 @@ public class Controller {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public Store getStoreById(int storeId) {
+        return this.market.getStoreById(storeId);
+    }
+
+    public void fetchMapToUI() {
+        this.view.showMap(this.market.getAllStores().stream()
+                .map(store -> new StoreMapElement(store)).collect(Collectors.toList()));
     }
 }

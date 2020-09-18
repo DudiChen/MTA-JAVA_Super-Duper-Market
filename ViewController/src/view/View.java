@@ -7,6 +7,7 @@ import entity.Store;
 import entity.market.OrderInvoice;
 import exception.OrderValidationException;
 import javafx.util.Pair;
+import view.menu.item.MapElement;
 
 import java.awt.*;
 import java.util.Date;
@@ -40,6 +41,8 @@ public abstract class View {
     public abstract void setController(Controller controller);
 
     public abstract void displayStoresList(List<Store> stores);
+
+    public abstract void showMap(List<MapElement> mapElements);
 
     public abstract void displayProductsForStore(List<Product> products, Store stores);
 }

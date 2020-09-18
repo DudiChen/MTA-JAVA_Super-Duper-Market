@@ -1,7 +1,6 @@
 package view.menu;
 
 import entity.Product;
-import entity.Store;
 import exception.OrderValidationException;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -15,12 +14,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.util.Pair;
 import view.TriConsumer;
-import view.menu.item.AbstractProductContent;
-import view.menu.item.ProductContent;
-import view.menu.item.ProductsContentFactory;
-import view.menu.item.StoreProductContent;
+import view.menu.item.*;
 
 import java.awt.*;
 import java.io.IOException;
@@ -30,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class ProductsMenu<T extends AbstractProductContent> implements Initializable, Navigatable {

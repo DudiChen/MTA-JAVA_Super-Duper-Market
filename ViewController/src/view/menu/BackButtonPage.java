@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import view.menu.Navigatable;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class BackButtonPage implements Initializable, Navigatable {
     @FXML
     private Button backButton;
     @FXML
-    private AnchorPane mainContent;
+    private GridPane mainContent;
 
     public BackButtonPage(Runnable navigateBack) {
         this.navigateBack = navigateBack;
@@ -40,7 +41,7 @@ public class BackButtonPage implements Initializable, Navigatable {
         return null;
     }
 
-    public AnchorPane getMainContent() {
+    public GridPane getMainContent() {
         return mainContent;
     }
 

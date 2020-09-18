@@ -1,5 +1,6 @@
 package view.menu;
 
+import entity.Store;
 import entity.market.OrderInvoice;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,7 +19,7 @@ import java.util.function.Consumer;
 public class ConfirmOrderScreen implements Initializable, Navigatable {
     private final OrderInvoice orderInvoice;
     private final Consumer<Integer> onOrderAccepted;
-    private final String storeName;
+    private final Store store;
     @FXML
     private ListView invoiceProductsContents;
     @FXML
@@ -44,10 +45,10 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
         return null;
     }
 
-    public ConfirmOrderScreen(String storeName, OrderInvoice orderInvoice, Consumer<Integer> onOrderAccepted) {
+    public ConfirmOrderScreen(Store store, OrderInvoice orderInvoice, Consumer<Integer> onOrderAccepted) {
         this.onOrderAccepted = onOrderAccepted;
         this.orderInvoice = orderInvoice;
-        this.storeName = storeName;
+        this.store = store;
         this.content = loadFXML("confirmOrder");
     }
 
@@ -58,7 +59,7 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.storeNameLabel.setText(this.storeNameLabel.getText() + this.storeName);
+        this.storeNameLabel.setText(this.storeNameLabel.getText() + "ID: " + this.store.getId() + this.store.getName() + "At: x: " + store.getCoordinate().getX() + " y: " + store.getCoordinate().getY());
         this.approveButton.setOnAction(e -> this.onOrderAccepted.accept(orderInvoice.getOrderId()));
         this.shipmentCostLabel.setText(this.shipmentCostLabel.getText() + orderInvoice.getShipmentPrice());
         this.totalLabel.setText(this.totalLabel.getText() + orderInvoice.getTotalPrice());

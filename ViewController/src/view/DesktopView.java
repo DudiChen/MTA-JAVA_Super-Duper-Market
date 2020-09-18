@@ -1,6 +1,7 @@
 package view;
 
 import command.Command;
+import command.ShowMapCommand;
 import command.store.GetAllProductsCommand;
 import command.store.GetAllStoresCommand;
 import command.store.ShowOrdersHistoryCommand;
@@ -17,15 +18,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Tab;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import view.menu.ConfirmOrderScreen;
-import view.menu.OrdersMenu;
-import view.menu.ProductsMenu;
-import view.menu.StoresMenu;
+import view.menu.*;
+import view.menu.item.MapElement;
 import view.menu.item.ProductContent;
 import view.menu.item.ProductsContentFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DesktopView extends View {
 
@@ -41,6 +41,9 @@ public class DesktopView extends View {
     private Tab productsTab;
     @FXML
     private Tab ordersTab;
+    @FXML
+    private Tab mapTab;
+
 
     public DesktopView(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -73,7 +76,7 @@ public class DesktopView extends View {
 
     @Override
     public void summarizeOrder(OrderInvoice orderInvoice) {
-        this.appContext.navigate(new ConfirmOrderScreen(this.controller.getStoreNameByID(orderInvoice.getStoreId()), orderInvoice, id -> {
+        this.appContext.navigate(new ConfirmOrderScreen(this.controller.getStoreById(orderInvoice.getStoreId()), orderInvoice, id -> {
             onOrderAccepted.accept(id);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText("Order ID " + id + " Received");
@@ -89,7 +92,9 @@ public class DesktopView extends View {
 
     @Override
     public void displayError(String message) {
-        System.out.println(message);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setContentText(message);
+        alert.show();
     }
 
     @Override
@@ -132,6 +137,24 @@ public class DesktopView extends View {
     }
 
     @Override
+    public void showMap(List<MapElement> mapElements) {
+        if (!mapTab.isSelected()) {
+            return;
+        }
+        this.appContext.setRoot(mapTab);
+        AtomicReference<Integer> maxYPoint = new AtomicReference<>(0);
+        AtomicReference<Integer> maxXPoint = new AtomicReference<>(0);
+
+// calculating max points plus added frame
+        (mapElements.stream()
+                .mapToInt(mapElement -> (int) (mapElement.getPoint().getY())).max()).ifPresent(maxY -> maxYPoint.updateAndGet(v -> v + maxY + 3));
+        (mapElements.stream()
+                .mapToInt(mapElement -> (int) (mapElement.getPoint()).getX()).max()).ifPresent(maxX -> maxXPoint.updateAndGet(v -> v + maxX + 3));
+        MapMenu mapMenu = new MapMenu(mapElements);
+        this.appContext.navigate(mapMenu);
+    }
+
+    @Override
     public void displayProductsForStore(List<Product> products, Store store) {
         if (!this.storesTab.isSelected()) {
             return;
@@ -163,6 +186,8 @@ public class DesktopView extends View {
     public void fetchOrdersHistoryToUI(Event event) {
         executeOperation(new ShowOrdersHistoryCommand());
     }
+
+    public void fetchMapToUI(Event event) { executeOperation(new ShowMapCommand());}
 
     void executeOperation(Command command) {
         this.controller.getExecutor().executeOperation(command);
