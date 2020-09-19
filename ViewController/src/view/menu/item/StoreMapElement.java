@@ -1,7 +1,8 @@
 package view.menu.item;
 
 import entity.Store;
-import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.layout.Pane;
 
 import java.awt.*;
 
@@ -21,4 +22,8 @@ public class StoreMapElement implements MapElement {
         return "store.png";
     }
 
+    @Override
+    public Node getContent() {
+        return new Pane();
+    }
 }

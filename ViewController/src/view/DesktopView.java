@@ -142,14 +142,6 @@ public class DesktopView extends View {
             return;
         }
         this.appContext.setRoot(mapTab);
-        AtomicReference<Integer> maxYPoint = new AtomicReference<>(0);
-        AtomicReference<Integer> maxXPoint = new AtomicReference<>(0);
-
-// calculating max points plus added frame
-        (mapElements.stream()
-                .mapToInt(mapElement -> (int) (mapElement.getPoint().getY())).max()).ifPresent(maxY -> maxYPoint.updateAndGet(v -> v + maxY + 3));
-        (mapElements.stream()
-                .mapToInt(mapElement -> (int) (mapElement.getPoint()).getX()).max()).ifPresent(maxX -> maxXPoint.updateAndGet(v -> v + maxX + 3));
         MapMenu mapMenu = new MapMenu(mapElements);
         this.appContext.navigate(mapMenu);
     }
