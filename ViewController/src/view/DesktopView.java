@@ -48,7 +48,7 @@ public class DesktopView extends View {
     public DesktopView(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.fileChooser = new FileChooser();
-        this.appContext = new ApplicationContext();
+        this.appContext = ApplicationContext.getInstance();
     }
 
     @Override
@@ -148,9 +148,9 @@ public class DesktopView extends View {
 
     @Override
     public void displayProductsForStore(List<Product> products, Store store) {
-        if (!this.storesTab.isSelected()) {
-            return;
-        }
+//        if (!this.storesTab.isSelected()) {
+//            return;
+//        }
         this.storesMenu.orderFromStore(products, store);
     }
 

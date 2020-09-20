@@ -19,13 +19,13 @@ import view.menu.item.MapElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 
 public class MapMenu extends StackPane implements Navigatable {
 
     private final List<MapElement> mapElements;
-    Canvas canvas;
-
+    private Canvas canvas;
     private List<Pair<Rectangle2D, Popup>> popups;
 
     public MapMenu(List<MapElement> mapElements) {
@@ -36,8 +36,6 @@ public class MapMenu extends StackPane implements Navigatable {
         getChildren().add(canvas);
         widthProperty().addListener((observable, oldValue, newValue) -> canvas.setWidth(newValue.intValue()));
         heightProperty().addListener((observable, oldValue, newValue) -> canvas.setHeight(newValue.intValue()));
-
-
         canvas.setOnMouseMoved(
                 e -> {
                     for(Pair<Rectangle2D, Popup> pair : this.popups) {
@@ -57,8 +55,8 @@ public class MapMenu extends StackPane implements Navigatable {
                 });
     }
 
-    private Popup createPopup() {
-        StackPane content = new StackPane(new Label("Hello, World!"));
+    private Popup createPopup(MapElement mapElement) {
+        StackPane content = new StackPane(mapElement.getContent());
         content.setPadding(new Insets(10, 5, 10, 5));
         content.setBackground(
                 new Background(new BackgroundFill(Color.WHITE, new CornerRadii(10), null)));
@@ -66,7 +64,7 @@ public class MapMenu extends StackPane implements Navigatable {
 
         Popup popup = new Popup();
         popup.getContent().add(content);
-
+        mapElement.setParent(popup);
         return popup;
     }
 
@@ -115,8 +113,8 @@ public class MapMenu extends StackPane implements Navigatable {
             gc.drawImage(image, x , y);
 
             Rectangle2D bounds = new Rectangle2D(x, y, hSpacing + 20, vSpacing + 20);
-            Popup popup = createPopup();
-
+            Popup popup = createPopup(mapElement);
+            mapElement.setParent(popup);
             this.popups.add(new Pair<>(bounds, popup));
         }
     }

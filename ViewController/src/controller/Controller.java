@@ -313,6 +313,6 @@ public class Controller {
 
     public void fetchMapToUI() {
         this.view.showMap(this.market.getAllStores().stream()
-                .map(store -> new StoreMapElement(store)).collect(Collectors.toList()));
+                .map(store -> new StoreMapElement(store, view.onStoreIdChoice)).collect(Collectors.toList()));
     }
 }

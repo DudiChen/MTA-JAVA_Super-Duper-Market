@@ -15,7 +15,6 @@ import java.util.function.Consumer;
 
 public class StoreContent extends ListCell<Store> {
 
-    private final ApplicationContext applicationContext;
     private Consumer<Integer> onStoreIdChoice;
 
     @FXML
@@ -34,8 +33,7 @@ public class StoreContent extends ListCell<Store> {
     private Button orderButton;
 
 
-    public StoreContent(Consumer<Integer> onStoreIdChoice, ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public StoreContent(Consumer<Integer> onStoreIdChoice) {
         this.onStoreIdChoice = onStoreIdChoice;
         loadFXML();
     }

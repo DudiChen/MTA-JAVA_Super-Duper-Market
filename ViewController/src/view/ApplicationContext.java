@@ -11,9 +11,16 @@ public class ApplicationContext {
     private Tab rootTab;
     private Stack<Navigatable> pagesStack;
     private BackButtonPage backPage;
-
-    public ApplicationContext() {
+    private static ApplicationContext instance;
+    private ApplicationContext() {
         this.pagesStack = new Stack<>();
+    }
+
+    public static ApplicationContext getInstance() {
+        if(instance == null) {
+            instance = new ApplicationContext();
+        }
+        return instance;
     }
 
     public void navigate(Navigatable navigatable) {

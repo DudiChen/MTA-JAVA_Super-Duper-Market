@@ -64,7 +64,7 @@ public class StoresMenu implements Initializable, Navigatable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.storesContentsList.setCellFactory(param -> new StoreContent(onStoreIdChoice, applicationContext));
+        this.storesContentsList.setCellFactory(param -> new StoreContent(onStoreIdChoice));
         this.storesContentsList.getItems().addAll(storesDataList);
     }
 
