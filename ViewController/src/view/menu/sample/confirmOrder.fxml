@@ -9,16 +9,13 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox>
-            <Label fx:id="storeNameLabel" text="Order Summary" />
+            <Label fx:id="storeNameLabel" text="Order Summary: " />
         </VBox>
-        <ListView fx:id="invoiceProductsContents" prefHeight="240.0" prefWidth="600.0" />
-      <Pane prefHeight="200.0" prefWidth="200.0" />
-      <Pane layoutX="10.0" layoutY="10.0" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: grey;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-         <children>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+        <ListView fx:id="invoiceProductsContents" />
+            <HBox >
                <children>
                     <VBox>
                         <Label fx:id="shipmentCostLabel" text="Shipment Cost: " />
@@ -27,7 +24,5 @@
                      <Button fx:id="approveButton" text="Approve Order" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
-         </children>
-      </Pane>
     </children>
-</AnchorPane>
+</VBox>

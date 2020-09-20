@@ -52,8 +52,8 @@ public class InvoiceProductContent extends ListCell<InvoiceProduct> {
             this.idLabel.setText(this.idLabel.getText() + invoiceProduct.getId());
             this.purchaseMethodLabel.setText(this.purchaseMethodLabel.getText() + invoiceProduct.getPurchaseMethod());
             this.priceLabel.setText(this.priceLabel.getText() + invoiceProduct.getPrice());
-            this.quantityLabel.setText(this.quantityLabel.getText() + invoiceProduct.getQuantity());
-            this.totalPriceLabel.setText(this.totalPriceLabel.getText() + invoiceProduct.getTotalPrice());
+            this.quantityLabel.setText(this.quantityLabel.getText() + String.format("%.2f", invoiceProduct.getQuantity()));
+            this.totalPriceLabel.setText(this.totalPriceLabel.getText() + String.format("%.2f", invoiceProduct.getTotalPrice()));
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         }
     }

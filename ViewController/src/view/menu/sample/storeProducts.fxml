@@ -12,8 +12,8 @@
     <children>
         <VBox>
             <VBox>
-                <ListView fx:id="productsList" layoutY="50.0" prefHeight="300.0" prefWidth="610.0"/>
-                <HBox>
+                <ListView fx:id="productsList" layoutY="50.0" />
+                <HBox >
                     <HBox>
                         <Label text="Delivery Date: "/>
                         <DatePicker fx:id="deliveryDatePicker" prefWidth="100.0"/>

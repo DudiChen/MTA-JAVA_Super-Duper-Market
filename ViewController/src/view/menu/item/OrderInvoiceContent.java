@@ -37,7 +37,6 @@ public class OrderInvoiceContent extends ListCell<OrderInvoice> {
         this.loadFXML();
     }
 
-
     // TODO: move to utils
     private void loadFXML() {
         try {
@@ -64,7 +63,7 @@ public class OrderInvoiceContent extends ListCell<OrderInvoice> {
             this.deliveryDateLabel.setText(this.deliveryDateLabel.getText() + s);
             this.providingStoreLabel.setText(this.providingStoreLabel.getText() + this.controller.getStoreNameByID(orderInvoice.getStoreId()) + ", ID: " + orderInvoice.getStoreId());
             this.numberOfItemsLabel.setText(this.numberOfItemsLabel.getText() + orderInvoice.getInvoiceProducts().size());
-            this.totalPriceLabel.setText(this.totalPriceLabel + Double.toString(orderInvoice.getTotalPrice() - orderInvoice.getShipmentPrice()));
+            this.totalPriceLabel.setText(this.totalPriceLabel + String.format("%.2f", orderInvoice.getTotalPrice() - orderInvoice.getShipmentPrice()));
             this.shipmentPriceLabel.setText(this.shipmentPriceLabel.getText() + String.format("%.2f", orderInvoice.getShipmentPrice()));
             this.totalPriceLabel.setText("Total Price: " + String.format("%.2f", orderInvoice.getTotalPrice()));
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);

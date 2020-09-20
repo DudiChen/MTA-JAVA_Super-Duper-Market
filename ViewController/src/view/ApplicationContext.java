@@ -3,6 +3,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import view.menu.BackButtonPage;
 import view.menu.Navigatable;
 import java.util.Stack;
@@ -37,7 +38,7 @@ public class ApplicationContext {
     }
 
     private void setContainerContent(Node content) {
-        GridPane contentPart = this.backPage.getMainContent();
+        VBox contentPart = this.backPage.getMainContent();
         contentPart.getChildren().clear();
         contentPart.getChildren().add(content);
     }
