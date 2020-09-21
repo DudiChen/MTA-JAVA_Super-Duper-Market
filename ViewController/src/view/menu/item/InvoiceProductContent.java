@@ -49,11 +49,11 @@ public class InvoiceProductContent extends ListCell<InvoiceProduct> {
             setContentDisplay(ContentDisplay.TEXT_ONLY);
         } else {
             this.nameLabel.setText(invoiceProduct.getName());
-            this.idLabel.setText(this.idLabel.getText() + invoiceProduct.getId());
-            this.purchaseMethodLabel.setText(this.purchaseMethodLabel.getText() + invoiceProduct.getPurchaseMethod());
-            this.priceLabel.setText(this.priceLabel.getText() + invoiceProduct.getPrice());
-            this.quantityLabel.setText(this.quantityLabel.getText() + String.format("%.2f", invoiceProduct.getQuantity()));
-            this.totalPriceLabel.setText(this.totalPriceLabel.getText() + String.format("%.2f", invoiceProduct.getTotalPrice()));
+            this.idLabel.setText("ID: " + invoiceProduct.getId());
+            this.purchaseMethodLabel.setText("Purchase Method: " + invoiceProduct.getPurchaseMethod());
+            this.priceLabel.setText("Price: " + invoiceProduct.getPrice());
+            this.quantityLabel.setText("Quantity: " + String.format("%.2f", invoiceProduct.getQuantity()));
+            this.totalPriceLabel.setText("Total Price: " + String.format("%.2f", invoiceProduct.getTotalPrice()));
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         }
     }

@@ -1,6 +1,7 @@
 package view;
 
 import command.Command;
+import command.LoadFromXMLCommand;
 import command.ShowMapCommand;
 import command.store.GetAllProductsCommand;
 import command.store.GetAllStoresCommand;
@@ -9,23 +10,25 @@ import controller.Controller;
 import entity.Product;
 import entity.Store;
 import entity.market.OrderInvoice;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Tab;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import view.menu.*;
 import view.menu.item.MapElement;
 import view.menu.item.ProductContent;
 import view.menu.item.ProductsContentFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class DesktopView extends View {
 
@@ -35,6 +38,9 @@ public class DesktopView extends View {
     private StoresMenu storesMenu;
     private Controller controller;
     private ApplicationContext appContext;
+
+    @FXML
+    private TabPane tabPane;
     @FXML
     private Tab storesTab;
     @FXML
@@ -43,7 +49,12 @@ public class DesktopView extends View {
     private Tab ordersTab;
     @FXML
     private Tab mapTab;
-
+    @FXML
+    private Button loadXmlButton;
+    @FXML
+    private ProgressBar loadXmlProgressBar;
+    @FXML
+    private Label xmlProgressLabel;
 
     public DesktopView(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -81,10 +92,9 @@ public class DesktopView extends View {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText("Order ID " + id + " Received");
             alert.show();
-            if(this.storesTab.isSelected()) {
+            if (this.storesTab.isSelected()) {
                 this.executeOperation(new GetAllStoresCommand());
-            }
-            else if(this.productsTab.isSelected()){
+            } else if (this.productsTab.isSelected()) {
                 this.appContext.navigateBack();
             }
         }));
@@ -99,7 +109,9 @@ public class DesktopView extends View {
 
     @Override
     public void fileLoadedSuccessfully() {
-        System.out.println("file loaded successfuly");
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setContentText("File Loaded Successfully");
+        alert.show();
     }
 
     @Override
@@ -154,6 +166,16 @@ public class DesktopView extends View {
         this.storesMenu.orderFromStore(products, store);
     }
 
+    @Override
+    public StringProperty xmlProgressStateProperty() {
+        return this.xmlProgressLabel.textProperty();
+    }
+
+    @Override
+    public DoubleProperty xmlProgressBarProperty() {
+        return loadXmlProgressBar.progressProperty();
+    }
+
     // TODO: move to utils
     private Parent loadFXML(String name) {
         try {
@@ -179,7 +201,13 @@ public class DesktopView extends View {
         executeOperation(new ShowOrdersHistoryCommand());
     }
 
-    public void fetchMapToUI(Event event) { executeOperation(new ShowMapCommand());}
+    public void fetchMapToUI(Event event) {
+        executeOperation(new ShowMapCommand());
+    }
+
+    public void loadXMLDataToUI(Event event) {
+        executeOperation(new LoadFromXMLCommand());
+    }
 
     void executeOperation(Command command) {
         this.controller.getExecutor().executeOperation(command);

@@ -56,15 +56,15 @@ public class OrderInvoiceContent extends ListCell<OrderInvoice> {
             setText(null);
             setContentDisplay(ContentDisplay.TEXT_ONLY);
         } else {
-            this.idLabel.setText(this.idLabel.getText() + orderInvoice.getOrderId());
+            this.idLabel.setText("ID: " + orderInvoice.getOrderId());
             SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
             Date dt = orderInvoice.getDeliveryDate();
             String s = sdf.format(dt);
-            this.deliveryDateLabel.setText(this.deliveryDateLabel.getText() + s);
-            this.providingStoreLabel.setText(this.providingStoreLabel.getText() + this.controller.getStoreNameByID(orderInvoice.getStoreId()) + ", ID: " + orderInvoice.getStoreId());
-            this.numberOfItemsLabel.setText(this.numberOfItemsLabel.getText() + orderInvoice.getInvoiceProducts().size());
-            this.totalPriceLabel.setText(this.totalPriceLabel + String.format("%.2f", orderInvoice.getTotalPrice() - orderInvoice.getShipmentPrice()));
-            this.shipmentPriceLabel.setText(this.shipmentPriceLabel.getText() + String.format("%.2f", orderInvoice.getShipmentPrice()));
+            this.deliveryDateLabel.setText("Delivery Date: " + s);
+            this.providingStoreLabel.setText("Providing Store: " + this.controller.getStoreNameByID(orderInvoice.getStoreId()) + ", ID: " + orderInvoice.getStoreId());
+            this.numberOfItemsLabel.setText("Number of Items: " + orderInvoice.getInvoiceProducts().size());
+            this.totalPriceLabel.setText("Total Price: " + String.format("%.2f", orderInvoice.getTotalPrice() - orderInvoice.getShipmentPrice()));
+            this.shipmentPriceLabel.setText("Shipment Cost: " + String.format("%.2f", orderInvoice.getShipmentPrice()));
             this.totalPriceLabel.setText("Total Price: " + String.format("%.2f", orderInvoice.getTotalPrice()));
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         }

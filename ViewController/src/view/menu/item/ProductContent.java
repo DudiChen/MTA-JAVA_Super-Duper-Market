@@ -38,10 +38,10 @@ public class ProductContent extends AbstractProductContent {
                     .filter(storeProduct -> storeProduct.getId() == product.getId())
                     .map(StoreProduct::getPrice)
                     .reduce((double) 0, (acc, curr) -> acc += curr);
-        this.averagePriceLabel.setText("Average Price: "+ String.format("%.2f", averagePrice));
+        this.averagePriceLabel.setText("Average Price: " + String.format("%.2f", averagePrice));
         int numberOfSellingStores = (int) allStores.stream()
                     .filter(store -> store.isProductSold(product.getId())).count();
-        this.numberOfSellingStoresLabel.setText( this.numberOfSellingStoresLabel.getText() + numberOfSellingStores);
+        this.numberOfSellingStoresLabel.setText( "Total Selling Stores: " + numberOfSellingStores);
         int numberOfTotalProductSales = allStores.stream()
                     .map(store -> store.getTotalProductSales(product.getId()))
                     .reduce(0, (acc, curr) -> acc += curr);

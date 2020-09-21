@@ -32,7 +32,6 @@ public class StoreContent extends ListCell<Store> {
     @FXML
     private Button orderButton;
 
-
     public StoreContent(Consumer<Integer> onStoreIdChoice) {
         this.onStoreIdChoice = onStoreIdChoice;
         loadFXML();
@@ -61,9 +60,9 @@ public class StoreContent extends ListCell<Store> {
         }
         else {
             nameLabel.setText(store.getName());
-            idLabel.setText(idLabel.getText() + store.getId());
-            ppkLabel.setText(ppkLabel.getText() + store.getPpk());
-            shipmentIncomesLabel.setText(shipmentIncomesLabel.getText() + store.getTotalShipmentIncome());
+            idLabel.setText("ID: " + store.getId());
+            ppkLabel.setText("Price Per Kilometer: " + store.getPpk());
+            shipmentIncomesLabel.setText("Total Shipments Incomes: " + store.getTotalShipmentIncome());
             orderButton.setOnAction(event -> this.onStoreIdChoice.accept(store.getId()));
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         }

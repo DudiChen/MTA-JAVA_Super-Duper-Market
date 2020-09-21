@@ -23,13 +23,13 @@ public class StoreProductContent extends AbstractProductContent {
     @Override
     protected void bind(Product product) {
         StringBuilder price = new StringBuilder();
-        price.append(this.priceLabel.getText()).append(chosenStore.getPriceOfProduct(product.getId())).append(" per ");
+        price.append("Price: ").append(chosenStore.getPriceOfProduct(product.getId())).append(" per ");
         switch (product.getPurchaseMethod()) {
             case QUANTITY:
-                price.append("unit");
+                price.append("Unit");
                 break;
             case WEIGHT:
-                price.append("kilo");
+                price.append("Kilo");
                 break;
         }
         priceLabel.setText(price.toString());

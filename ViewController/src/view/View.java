@@ -5,10 +5,10 @@ import controller.Controller;
 import entity.Product;
 import entity.Store;
 import entity.market.OrderInvoice;
-import exception.OrderValidationException;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.StringProperty;
 import javafx.util.Pair;
 import view.menu.item.MapElement;
-
 import java.awt.*;
 import java.util.Date;
 import java.util.List;
@@ -45,4 +45,8 @@ public abstract class View {
     public abstract void showMap(List<MapElement> mapElements);
 
     public abstract void displayProductsForStore(List<Product> products, Store stores);
+
+    public abstract StringProperty xmlProgressStateProperty();
+
+    public abstract DoubleProperty xmlProgressBarProperty();
 }

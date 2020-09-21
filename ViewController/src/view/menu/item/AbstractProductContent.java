@@ -71,7 +71,7 @@ public abstract class AbstractProductContent extends ListCell<Product> implement
             this.product = product;
             this.productIdProperty.setValue(this.product.getId());
             nameLabel.setText(product.getName());
-            idLabel.setText(idLabel.getText() + product.getId());
+            idLabel.setText("ID: " + product.getId());
             quantitySlider.setMin(0);
             quantitySlider.setValue(0);
             quantitySlider.setMax(20);

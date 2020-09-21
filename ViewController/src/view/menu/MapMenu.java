@@ -1,4 +1,5 @@
 package view.menu;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -16,6 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 import javafx.util.Pair;
 import view.menu.item.MapElement;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,17 +30,17 @@ public class MapMenu extends StackPane implements Navigatable {
     private Canvas canvas;
     private List<Pair<Rectangle2D, Popup>> popups;
 
+
     public MapMenu(List<MapElement> mapElements) {
         this.popups = new ArrayList<>();
         this.mapElements = mapElements;
-        setStyle("-fx-background-color: white;");
         canvas = new Canvas(getWidth(), getHeight());
         getChildren().add(canvas);
         widthProperty().addListener((observable, oldValue, newValue) -> canvas.setWidth(newValue.intValue()));
         heightProperty().addListener((observable, oldValue, newValue) -> canvas.setHeight(newValue.intValue()));
         canvas.setOnMouseMoved(
                 e -> {
-                    for(Pair<Rectangle2D, Popup> pair : this.popups) {
+                    for (Pair<Rectangle2D, Popup> pair : this.popups) {
                         Rectangle2D bounds = pair.getKey();
                         Popup popup = pair.getValue();
                         // test if local mouse coordinates are within rectangle
@@ -61,7 +63,6 @@ public class MapMenu extends StackPane implements Navigatable {
         content.setBackground(
                 new Background(new BackgroundFill(Color.WHITE, new CornerRadii(10), null)));
         content.setEffect(new DropShadow());
-
         Popup popup = new Popup();
         popup.getContent().add(content);
         mapElement.setParent(popup);
@@ -91,8 +92,8 @@ public class MapMenu extends StackPane implements Navigatable {
         gc.clearRect(0, 0, getWidth(), getHeight());
         gc.setLineWidth(1); // change the line width
 
-        final int hSpacing = (int)(getWidth() / maxXPoint.get());
-        final int vSpacing = (int)(getHeight() / maxYPoint.get());
+        final int hSpacing = (int) (canvas.getWidth() / maxXPoint.get());
+        final int vSpacing = (int) (canvas.getHeight() / maxYPoint.get());
         final int hLineCount = (int) Math.floor((height + 1) / hSpacing);
         final int vLineCount = (int) Math.floor((width + 1) / vSpacing);
 
@@ -106,12 +107,11 @@ public class MapMenu extends StackPane implements Navigatable {
             gc.strokeLine(snap((i + 1) * vSpacing), 0, snap((i + 1) * vSpacing), height);
         }
 
-        for(MapElement mapElement : mapElements) {
-            Image image = new Image(getClass().getResourceAsStream("resource/" + mapElement.getIconName()), hSpacing + 20, vSpacing + 20,  true, true);
-            int x = (int)(hSpacing * mapElement.getPoint().getX()) + 1;
-            int y = (int)(vSpacing * mapElement.getPoint().getY()) + 1;
-            gc.drawImage(image, x , y);
-
+        for (MapElement mapElement : mapElements) {
+            Image image = new Image(getClass().getResourceAsStream("resource/" + mapElement.getIconName()), hSpacing + 20, vSpacing + 20, true, true);
+            int x = (int) (hSpacing * mapElement.getPoint().getX()) + 1;
+            int y = (int) (vSpacing * mapElement.getPoint().getY()) + 1;
+            gc.drawImage(image, x, y);
             Rectangle2D bounds = new Rectangle2D(x, y, hSpacing + 20, vSpacing + 20);
             Popup popup = createPopup(mapElement);
             mapElement.setParent(popup);

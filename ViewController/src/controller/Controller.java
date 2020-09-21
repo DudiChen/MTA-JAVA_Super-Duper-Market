@@ -1,9 +1,7 @@
 package controller;
 
-import builder.MarketBuilder;
 import command.Executor;
 import entity.Product;
-import entity.StoreProduct;
 import entity.market.Market;
 import entity.Order;
 import entity.Store;
@@ -11,10 +9,10 @@ import entity.market.OrderInvoice;
 import exception.MarketIsEmptyException;
 import exception.OrderValidationException;
 import exception.XMLException;
-import javafx.fxml.FXML;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.Pair;
-import jaxb.JaxbHandler;
-import jaxb.generated.SuperDuperMarketDescriptor;
 import view.View;
 import view.menu.item.StoreMapElement;
 
@@ -24,21 +22,21 @@ import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class Controller {
-    private Market market;
     private View view;
     private Executor executor;
     private AtomicReference<Store> chosenStore;
     private boolean loaded = false;
+    private Market market;
 
     public Controller(View view) {
         this.view = view;
         view.setController(this);
         this.market = new Market();
-        this.loadXMLDataToUI();
         this.executor = new Executor(this);
         this.chosenStore = new AtomicReference<>();
         registerToViewEvents();
@@ -50,7 +48,7 @@ public class Controller {
             view.displayStores(stores);
             return;
         }
-        stores = market.getAllStores();
+        stores = this.market.getAllStores();
         view.displayStores(stores);
     }
 
@@ -60,19 +58,43 @@ public class Controller {
     }
 
     public void loadXMLData(String fullFilePath) {
-        JaxbHandler jaxbHandler = new JaxbHandler();
-        SuperDuperMarketDescriptor sdpMarketDescriptor = null;
-        try {
-            sdpMarketDescriptor = jaxbHandler.extractXMLData(fullFilePath);
-            this.market = new MarketBuilder().build(sdpMarketDescriptor);
+
+        LoadXmlTask loadXmlTask = new LoadXmlTask(fullFilePath);
+        loadXmlTask.setOnSucceeded(event -> {
+            try {
+                this.market = loadXmlTask.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
             view.fileLoadedSuccessfully();
-        } catch (ValidationException e) {
-            view.displayError(e.getMessage());
-        } catch (XMLParseException | XMLException | FileNotFoundException e) {
-            view.displayError("File Not Found");
-        } catch (Exception e) {
-            System.out.println(e.getMessage() + "unknown exception while loading xml file"); // TODO : figure out what to do with the exception
-        }
+            view.showMainMenu();
+        });
+        loadXmlTask.setOnFailed(event -> {
+            Throwable exception = loadXmlTask.getException();
+            if (exception instanceof ValidationException) {
+                view.displayError(exception.getMessage());
+            }
+            if (exception instanceof XMLParseException || exception instanceof XMLException || exception instanceof FileNotFoundException) {
+                view.displayError("File Not Found");
+            } else {
+                System.out.println(exception.getMessage() + "unknown exception while loading xml file"); // TODO : figure out what to do with the exception
+            }
+        });
+        this.bindTaskToUIComponents(loadXmlTask);
+        new Thread(loadXmlTask).start();
+    }
+
+    private void bindTaskToUIComponents(LoadXmlTask loadXmlTask) {
+        // task message
+        view.xmlProgressStateProperty().bind(loadXmlTask.messageProperty());
+        view.xmlProgressBarProperty().bind(loadXmlTask.progressProperty());
+
+        loadXmlTask.valueProperty().addListener((observable, oldValue, newValue) -> {
+            view.xmlProgressStateProperty().unbind();
+            view.xmlProgressBarProperty().unbind();
+        });
     }
 
     public void addNewProduct() {
@@ -107,14 +129,14 @@ public class Controller {
             this.market.getAllStores()
                     .forEach(store -> {
                         Optional<List<Pair<Integer, Double>>> maybeOrder = findCheapestOrderForStore(store, productQuantityPairs);
-                        if(maybeOrder.isPresent()) {
+                        if (maybeOrder.isPresent()) {
                             this.chosenStore.set(store);
                             List<Pair<Integer, Double>> orderPairs = maybeOrder.get();
                             try {
                                 List<Pair<Integer, Double>> toDelete = new ArrayList<>();
-                                for(Pair<Integer, Double> pair : productQuantityPairs) {
-                                    for(Pair<Integer, Double> pair1: orderPairs) {
-                                        if(pair.getKey() == pair1.getKey()){
+                                for (Pair<Integer, Double> pair : productQuantityPairs) {
+                                    for (Pair<Integer, Double> pair1 : orderPairs) {
+                                        if (pair.getKey() == pair1.getKey()) {
                                             toDelete.add(pair);
                                             break;
                                         }
