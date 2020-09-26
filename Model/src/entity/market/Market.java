@@ -79,6 +79,8 @@ public class Market {
         return order.getId();
     }
 
+//    public getOrderDiscounts
+
     public void approveOrder(int orderReceiptId) {
         OrderInvoice orderFinalization = this.idToOrderInvoice.get(orderReceiptId);
         Store providingStore = this.idToStore.get(orderFinalization.getStoreId());
