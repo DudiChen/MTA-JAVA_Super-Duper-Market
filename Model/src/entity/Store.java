@@ -1,6 +1,7 @@
 package entity;
 
 
+import com.sun.istack.internal.Nullable;
 import entity.market.OrderInvoice;
 import exception.ProductIdNotFoundException;
 import javafx.util.Pair;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 public class Store {
     private Point coordinate;
@@ -117,9 +119,30 @@ public class Store {
         return totalShipmentIncome;
     }
 
-    public List<Discount> getDiscountsPerPurchase(int productId, double quantity) {
-        List<Discount> result = new ArrayList<>();
+    // TODO: Check which Discount methods are not in use and remove
+//    public List<Discount> getDiscountsPerPurchase(int productId, double quantity) {
+//        List<Discount> result = new ArrayList<>();
+//
+//        return result;
+//    }
 
-        return result;
+    public Discount getDiscountByProductId(int productId) {
+        return this.productIdToDiscount.get(productId);
+    }
+
+    public List<Discount> getDiscountsByProductIdList(List<Integer> productIds) {
+        List<Discount> result = new ArrayList<>();
+        return productIds.stream()
+                .filter(productId -> this.productIdToDiscount.get(productId) != null)
+                .map(productId -> this.productIdToDiscount.get(productId))
+                .collect(Collectors.toList());
+    }
+
+    public List<Discount> getDiscountsByProductIdQuantityPairs(List<Pair<Integer, Double>> productIdQuantityPairs) {
+        List<Discount> result = new ArrayList<>();
+        return productIdQuantityPairs.stream()
+                .filter(pair -> this.productIdToDiscount.get(pair.getKey()) != null && this.productIdToDiscount.get(pair.getKey()).isDiscountMatch(pair.getKey(), pair.getValue()))
+                .map(pair -> this.productIdToDiscount.get(pair.getKey()))
+                .collect(Collectors.toList());
     }
 }

@@ -1,9 +1,11 @@
 package entity.market;
 
+import entity.Discount;
 import entity.Order;
 import entity.Product;
 import entity.Store;
 import exception.MarketIsEmptyException;
+import javafx.util.Pair;
 
 import java.util.*;
 import java.util.function.Function;
@@ -79,7 +81,9 @@ public class Market {
         return order.getId();
     }
 
-//    public getOrderDiscounts
+    public List<Discount> getStoreDiscountsByProductIdQuantityPairs(int storeId, List<Pair<Integer, Double>> productIdQuantityPairs) {
+        return this.idToStore.get(storeId).getDiscountsByProductIdQuantityPairs(productIdQuantityPairs);
+    }
 
     public void approveOrder(int orderReceiptId) {
         OrderInvoice orderFinalization = this.idToOrderInvoice.get(orderReceiptId);
@@ -87,6 +91,14 @@ public class Market {
         providingStore.addOrder(orderFinalization);
         orderFinalization.getInvoiceProducts().forEach(invoiceProduct -> providingStore.addToTotalShipmentIncome(invoiceProduct.getShipmentCost()));
         this.idToOrderInvoice.get(orderReceiptId).setStatus(OrderInvoice.OrderStatus.ACCEPTED);
+    }
+
+    public void addStoreOfferPurchasesToOrderInvoice(int storeId, int orderInvoiceId, List<Discount.Offer> acceptedOffers) {
+        this.getOrderInvoice(storeId).setDiscountProducts(
+                acceptedOffers.stream()
+                .map(offer -> new InvoiceDiscountProduct(offer, this.idToProduct.get(offer.getProductId()).getName()))
+                .collect(Collectors.toList())
+        );
     }
 
     public OrderInvoice getOrderInvoice(int orderInvoiceId) {

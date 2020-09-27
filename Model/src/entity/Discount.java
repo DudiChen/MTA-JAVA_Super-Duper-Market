@@ -51,14 +51,32 @@ public class Discount {
     }
 
     public static class Offer {
+        String relatedDiscountName;
         private int productId;
         private double quantity;
         private int forAdditional;
 
-        public Offer(int productId, double quantity, int forAdditional) {
+        public Offer(String discountName, int productId, double quantity, int forAdditional) {
+            this.relatedDiscountName = discountName;
             this.productId = productId;
             this.quantity = quantity;
             this.forAdditional = forAdditional;
+        }
+
+        public String getRelatedDiscountName() {
+            return this.relatedDiscountName;
+        }
+
+        public int getProductId() {
+            return productId;
+        }
+
+        public double getQuantity() {
+            return quantity;
+        }
+
+        public int getForAdditional() {
+            return forAdditional;
         }
     }
 }

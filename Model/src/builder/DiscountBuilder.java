@@ -17,7 +17,7 @@ public class DiscountBuilder implements Builder<SDMDiscount, Discount> {
                 Discount.DiscountOperator.getOperatorByString(source.getThenYouGet().getOperator()),
                 source.getThenYouGet().getSDMOffer()
                         .stream()
-                        .map(sdmOffer -> new Discount.Offer(sdmOffer.getItemId(), sdmOffer.getQuantity(), sdmOffer.getForAdditional()))
+                        .map(sdmOffer -> new Discount.Offer(source.getName(), sdmOffer.getItemId(), sdmOffer.getQuantity(), sdmOffer.getForAdditional()))
                         .collect(Collectors.toList())
         );
     }
