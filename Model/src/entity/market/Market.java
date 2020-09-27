@@ -8,7 +8,6 @@ import exception.MarketIsEmptyException;
 import javafx.util.Pair;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 // TODO : handle errors with proper exceptions
@@ -82,7 +81,7 @@ public class Market {
     }
 
     public List<Discount> getStoreDiscountsByProductIdQuantityPairs(int storeId, List<Pair<Integer, Double>> productIdQuantityPairs) {
-        return this.idToStore.get(storeId).getDiscountsByProductIdQuantityPairs(productIdQuantityPairs);
+        return this.idToStore.get(storeId).getMatchingDiscountsByProductIdQuantityPairs(productIdQuantityPairs);
     }
 
     public void approveOrder(int orderReceiptId) {

@@ -7,8 +7,10 @@ import jaxb.generated.SDMDiscount;
 import jaxb.generated.SDMStore;
 
 import javax.xml.bind.ValidationException;
-import java.awt.*;
+//import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -32,16 +34,14 @@ public class StoreBuilder implements Builder<SDMStore, Store> {
         );
     }
 
-    private Map<Integer, Discount> getDiscountMap(SDMStore source) {
-        Map<Integer, Discount> result;
-        if  (source.getSDMDiscounts() == null || source.getSDMDiscounts().getSDMDiscount().isEmpty()) {
-            result = new HashMap<>();
-        }
-        else {
+    private Map<Integer, List<Discount>> getDiscountMap(SDMStore source) {
+        Map<Integer, List<Discount>> result = new HashMap<>();
+        if  (source.getSDMDiscounts() != null && !source.getSDMDiscounts().getSDMDiscount().isEmpty()) {
             result = source.getSDMDiscounts().getSDMDiscount()
                     .stream()
                     .map(sdmDiscount -> new DiscountBuilder().build(sdmDiscount))
-                    .collect(Collectors.toMap(Discount::getProductId,discount -> discount));
+                    .collect(Collectors.groupingBy(Discount::getProductId,Collectors.toList()));
+//                    .collect(Collectors.toMap(Discount::getProductId,discount -> discount));
         }
 
         return result;

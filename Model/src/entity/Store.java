@@ -1,7 +1,6 @@
 package entity;
 
 
-import com.sun.istack.internal.Nullable;
 import entity.market.OrderInvoice;
 import exception.ProductIdNotFoundException;
 import javafx.util.Pair;
@@ -27,9 +26,9 @@ public class Store {
     private String name;
     private double totalShipmentIncome;
     private List<OrderInvoice> ordersHistory;
-    private Map<Integer, Discount> productIdToDiscount;
+    private Map<Integer, List<Discount>> productIdToDiscounts;
 
-    public Store(Point point, Stock stock, int ppk, int id, String name, Map<Integer, Discount> productIdToDiscount) {
+    public Store(Point point, Stock stock, int ppk, int id, String name, Map<Integer, List<Discount>> productIdToDiscounts) {
         this.coordinate = point;
         this.stock = stock;
         this.ppk = ppk;
@@ -37,7 +36,7 @@ public class Store {
         this.name = name;
         this.totalShipmentIncome = 0;
         this.ordersHistory = new ArrayList<>();
-        this.productIdToDiscount = productIdToDiscount;
+        this.productIdToDiscounts = productIdToDiscounts;
     }
 
     public void addToTotalShipmentIncome(double shipmentCost) {
@@ -126,23 +125,37 @@ public class Store {
 //        return result;
 //    }
 
-    public Discount getDiscountByProductId(int productId) {
-        return this.productIdToDiscount.get(productId);
+    public List<Discount> getDiscountsByProductId(int productId) {
+        return this.productIdToDiscounts.get(productId);
     }
 
-    public List<Discount> getDiscountsByProductIdList(List<Integer> productIds) {
+    public Map<Integer,List<Discount>> getDiscountsMapByProductIdList(List<Integer> productIds) {
         List<Discount> result = new ArrayList<>();
         return productIds.stream()
-                .filter(productId -> this.productIdToDiscount.get(productId) != null)
-                .map(productId -> this.productIdToDiscount.get(productId))
-                .collect(Collectors.toList());
+                .filter(productId -> getDiscountsByProductId(productId)  != null)
+//                .flatMap(productId -> this.productIdToDiscounts.get(productId).stream())
+                .collect(Collectors.toMap(productId -> productId, this::getDiscountsByProductId));
     }
 
-    public List<Discount> getDiscountsByProductIdQuantityPairs(List<Pair<Integer, Double>> productIdQuantityPairs) {
-        List<Discount> result = new ArrayList<>();
-        return productIdQuantityPairs.stream()
-                .filter(pair -> this.productIdToDiscount.get(pair.getKey()) != null && this.productIdToDiscount.get(pair.getKey()).isDiscountMatch(pair.getKey(), pair.getValue()))
-                .map(pair -> this.productIdToDiscount.get(pair.getKey()))
-                .collect(Collectors.toList());
+    public List<Discount> getMatchingDiscountsByProductIdQuantityPairs(List<Pair<Integer, Double>> productIdQuantityPairs) {
+        Map<Integer,List<Discount>> discountsMap = getDiscountsMapByProductIdList(
+                productIdQuantityPairs.stream()
+                .map(pair -> pair.getKey())
+                .collect(Collectors.toList()));
+
+        return matchDiscountsByProductIdQuantityPairs(discountsMap, productIdQuantityPairs);
+    }
+
+    private List<Discount> matchDiscountsByProductIdQuantityPairs(Map<Integer,List<Discount>> discountsMap, List<Pair<Integer, Double>> productIdQuantityPairs) {
+        List<Discount> matchingDiscounts = new ArrayList<>();
+        for (Pair<Integer,Double> pair : productIdQuantityPairs) {
+            matchingDiscounts.addAll(
+                    discountsMap.get(pair.getKey()).stream()
+                    .filter(discount -> discount.isDiscountMatch(pair.getKey(), pair.getValue()))
+                    .collect(Collectors.toList())
+            );
+        }
+
+        return matchingDiscounts;
     }
 }
