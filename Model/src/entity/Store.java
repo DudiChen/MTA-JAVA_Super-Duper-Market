@@ -6,10 +6,8 @@ import exception.ProductIdNotFoundException;
 import javafx.util.Pair;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 public class Store {
@@ -152,6 +150,13 @@ public class Store {
             matchingDiscounts.addAll(
                     discountsMap.get(pair.getKey()).stream()
                     .filter(discount -> discount.isDiscountMatch(pair.getKey(), pair.getValue()))
+                    .map(discount -> {
+                        List<Discount> instancesOfDiscounts = new ArrayList<>();
+                        for (int i = 0; i < discount.discountMatchInstances(pair.getKey(), pair.getValue()); i++) {
+                            instancesOfDiscounts.add(discount);
+                        }
+                        return instancesOfDiscounts;
+                    }).flatMap(Collection::stream)
                     .collect(Collectors.toList())
             );
         }

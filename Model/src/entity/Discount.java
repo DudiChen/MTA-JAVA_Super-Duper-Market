@@ -24,7 +24,15 @@ public class Discount {
     public int getProductId() { return this.productIdQuantityPair.getKey(); }
 
     public boolean isDiscountMatch(int productId, double quantity) {
-        return productId == this.productIdQuantityPair.getKey() && quantity == this.productIdQuantityPair.getValue();
+        return productId == this.productIdQuantityPair.getKey() && quantity <= this.productIdQuantityPair.getValue();
+    }
+
+    public int discountMatchInstances(int productId, double quantity) {
+        int result = 0;
+        if (productId == this.productIdQuantityPair.getKey() && quantity <= this.productIdQuantityPair.getValue()) {
+            result =  (int)(this.productIdQuantityPair.getValue() / quantity);
+        }
+        return result;
     }
 
     public enum DiscountOperator {
