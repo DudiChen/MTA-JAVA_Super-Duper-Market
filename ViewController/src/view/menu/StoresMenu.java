@@ -1,5 +1,6 @@
 package view.menu;
 
+import controller.Controller;
 import entity.Product;
 import entity.Store;
 import javafx.fxml.FXML;
@@ -8,10 +9,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ListView;
+import javafx.stage.Stage;
 import javafx.util.Pair;
 import view.ApplicationContext;
 import view.TriConsumer;
-import view.menu.item.ProductsContentFactory;
 import view.menu.item.StoreContent;
 import view.menu.item.StoreProductContent;
 
@@ -25,6 +26,7 @@ import java.util.function.Consumer;
 
 public class StoresMenu implements Initializable, Navigatable {
 
+    private final Stage primaryStage;
     @FXML
     private ListView storesContentsList;
     private List<Store> storesDataList;
@@ -32,16 +34,19 @@ public class StoresMenu implements Initializable, Navigatable {
     private Consumer<Integer> onStoreIdChoice;
     private ApplicationContext applicationContext;
     private TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced;
+    private Controller controller;
 
     public void setOnOrderPlaced(TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced) {
         this.onOrderPlaced = onOrderPlaced;
     }
 
-    public StoresMenu(List<Store> storesDataList, Consumer<Integer> onStoreIdChoice, ApplicationContext applicationContext) {
+    public StoresMenu(List<Store> storesDataList, Consumer<Integer> onStoreIdChoice, ApplicationContext applicationContext, Stage primaryStage, Controller controller) {
+        this.controller = controller;
         this.applicationContext = applicationContext;
         this.storesDataList = storesDataList;
         this.onStoreIdChoice = onStoreIdChoice;
         this.content = loadFXML("storesMenu");
+        this.primaryStage = primaryStage;
     }
 
     // TODO: move to utils
@@ -69,8 +74,8 @@ public class StoresMenu implements Initializable, Navigatable {
     }
 
     public void orderFromStore(List<Product> products, Store store) {
-        ProductsMenu<StoreProductContent> storeProductsMenu = new ProductsMenu<>(products, new ProductsContentFactory(store));
-        storeProductsMenu.setOnOrderPlaced(this.onOrderPlaced);
+        StoreProductsMenu<StoreProductContent> storeProductsMenu = new StoreProductsMenu<>(products, store, this.onOrderPlaced, this.primaryStage, this.controller);
         this.applicationContext.navigate(storeProductsMenu);
     }
+
 }

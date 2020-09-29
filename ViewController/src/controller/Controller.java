@@ -337,4 +337,8 @@ public class Controller {
         this.view.showMap(this.market.getAllStores().stream()
                 .map(store -> new StoreMapElement(store, view.onStoreIdChoice)).collect(Collectors.toList()));
     }
+
+    public Product getProductById(int productId) {
+        return this.market.getProductById(productId);
+    }
 }

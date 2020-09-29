@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 public class ProductsMenu<T extends AbstractProductContent> implements Initializable, Navigatable {
 
-    private final ProductsContentFactory productsContentFactory;
+    protected final ProductsContentFactory productsContentFactory;
     private Parent content;
     private List<Product> products;
     private TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced;

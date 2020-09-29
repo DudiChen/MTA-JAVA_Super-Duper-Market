@@ -68,7 +68,7 @@ public class DesktopView extends View {
             return;
         }
         this.appContext.setRoot(storesTab);
-        this.storesMenu = new StoresMenu(allStores, onStoreIdChoice, this.appContext);
+        this.storesMenu = new StoresMenu(allStores, onStoreIdChoice, this.appContext, primaryStage, controller);
         this.storesMenu.setOnOrderPlaced(onOrderPlaced);
         this.appContext.navigate(this.storesMenu);
     }

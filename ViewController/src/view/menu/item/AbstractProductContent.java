@@ -102,4 +102,8 @@ public abstract class AbstractProductContent extends ListCell<Product> implement
     }
     protected abstract String getFXMLName();
     protected abstract void bind(Product product);
+
+    protected Product getProduct(){
+        return this.product;
+    }
 }

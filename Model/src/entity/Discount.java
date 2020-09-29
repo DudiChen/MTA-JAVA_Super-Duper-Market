@@ -21,6 +21,10 @@ public class Discount {
         return this.offers;
     }
 
+    public double getQuantity() {
+        return this.productIdQuantityPair.getValue();
+    }
+
     public int getProductId() { return this.productIdQuantityPair.getKey(); }
 
     public boolean isDiscountMatch(int productId, double quantity) {
