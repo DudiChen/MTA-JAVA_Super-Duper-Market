@@ -90,6 +90,7 @@ public class StoreProductsMenu<T> extends ProductsMenu {
         content.setEffect(new DropShadow());
         Popup popup = new Popup();
         popup.getContent().add(content);
+        content.setMinWidth(500);
         this.currentPopup = popup;
         return popup;
     }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<fx:root type="javafx.scene.control.ListCell" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+    <graphic>
+        <HBox>
+            <Label fx:id="offerLabel"/>
+            <Button fx:id="offerButton" text="Get Discount" visible="false"/>
+        </HBox>
+    </graphic>
+</fx:root>

@@ -5,6 +5,10 @@ import javafx.util.Pair;
 import java.util.List;
 
 public class Discount {
+    public String getName() {
+        return name;
+    }
+
     private String name;
     private Pair<Integer, Double> productIdQuantityPair;
     private DiscountOperator operator;
@@ -37,6 +41,10 @@ public class Discount {
             result =  (int)(this.productIdQuantityPair.getValue() / quantity);
         }
         return result;
+    }
+
+    public DiscountOperator getOperator() {
+        return operator;
     }
 
     public enum DiscountOperator {

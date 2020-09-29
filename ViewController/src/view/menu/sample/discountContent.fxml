@@ -7,20 +7,21 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root prefHeight="591.0" prefWidth="347.0" type="javafx.scene.control.ListCell" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.control.Button?>
+<fx:root type="javafx.scene.control.ListCell" xmlns="http://javafx.com/javafx/8.0.171"
+         xmlns:fx="http://javafx.com/fxml/1">
     <graphic>
-      <VBox>
-         <children>
-            <SplitPane dividerPositions="0.5" prefHeight="50.0">
-               <items>
-                  <Label text="Label" />
-                  <Label layoutX="10.0" layoutY="10.0" text="Label" />
-               </items></SplitPane>
-              <HBox>
-                  <Label fx:id="quantityLabel" />
-                  <ListView fx:id="productsInDiscountList" />
-              </HBox>
-         </children>
-      </VBox>
+        <VBox>
+            <children>
+                <VBox>
+                    <Label fx:id="nameLabel"/>
+                    <HBox>
+                        <Label fx:id="quantityLabel"/>
+                        <ListView prefWidth="300.0" prefHeight="100.0" fx:id="productsInDiscountList"/>
+                    </HBox>
+                    <Button fx:id="discountButton" visible="false"/>
+                </VBox>
+            </children>
+        </VBox>
     </graphic>
 </fx:root>
