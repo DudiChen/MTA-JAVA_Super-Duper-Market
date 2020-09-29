@@ -1,12 +1,11 @@
 package builder;
 
+import entity.Customer;
 import entity.market.Market;
 import entity.Product;
 import entity.Store;
-import jaxb.generated.SDMItem;
-import jaxb.generated.SDMSell;
-import jaxb.generated.SDMStore;
-import jaxb.generated.SuperDuperMarketDescriptor;
+import jaxb.generated.*;
+import util.ErrorMessage;
 
 import javax.xml.bind.ValidationException;
 import java.util.*;
@@ -16,26 +15,42 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
 
     Map<Integer, Product> idToProduct;
     Map<Integer, Store> idToStore;
+    Map<Integer, Customer> idToCustomer;
 
     @Override
     public Market build(SuperDuperMarketDescriptor source) throws ValidationException {
         idToProduct = getIdToProduct(source.getSDMItems().getSDMItem());
         idToStore = getIdToStore(source.getSDMStores().getSDMStore());
-        return new Market(idToStore, idToProduct);
+        idToCustomer = getIdToCustomer(source.getSDMCustomers().getSDMCustomer());
+        return new Market(idToStore, idToProduct, idToCustomer);
+    }
+
+    private Map<Integer, Customer> getIdToCustomer(List<SDMCustomer> sdmCustomers) throws ValidationException {
+        List<Integer> ids = sdmCustomers.stream().map(SDMCustomer::getId).collect(Collectors.toList());
+        ErrorMessage dupIdErrors = new ErrorMessage("");
+        boolean foundDuplicateIds = handleDuplicateIds(dupIdErrors, ids);
+        if (foundDuplicateIds)
+            throw new ValidationException(dupIdErrors.getMessage());
+        return constructIdToCustomer(new HashSet<>(sdmCustomers));
     }
 
     private Map<Integer, Product> getIdToProduct(List<SDMItem> sdmItems) throws ValidationException {
         List<Integer> ids = sdmItems.stream().map(SDMItem::getId).collect(Collectors.toList());
-        Set<Integer> dupIds = findDuplicates(ids);
-        if (dupIds.size() > 0) {
-            String dupIdErrors = dupIds.stream().map(Object::toString)
-                    .reduce("", (acc, current) -> acc + "duplicate id for item " + current.toString() + System.lineSeparator());
-            throw new ValidationException(dupIdErrors);
-        } else {
+//        Set<Integer> dupIds = findDuplicates(ids);
+//        if (dupIds.size() > 0) {
+//            String dupIdErrors = dupIds.stream().map(Object::toString)
+//                    .reduce("", (acc, current) -> acc + "duplicate id for item " + current.toString() + System.lineSeparator());
+//            throw new ValidationException(dupIdErrors);
+//        } else {
+            ErrorMessage dupIdErrors = new ErrorMessage("");
+            boolean foundDuplicateIds = handleDuplicateIds(dupIdErrors, ids);
+            if (foundDuplicateIds)
+                throw new ValidationException(dupIdErrors.getMessage());
             return constructIdToProduct(new HashSet<>(sdmItems));
-        }
+//        }
     }
 
+    // TODO: Refactor; split checks to separated methods for reuse
     private Map<Integer, Store> getIdToStore(List<SDMStore> sdmStores) throws ValidationException {
 
         List<Integer> ids = sdmStores.stream().map(SDMStore::getId).collect(Collectors.toList());
@@ -97,8 +112,12 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         return sdmItems.stream().collect(Collectors.toMap(SDMItem::getId, item -> new ProductBuilder().build(item)));
     }
 
-    private Map<Integer, Store> constructIdToStore(Set<SDMStore> sdmStores) throws ValidationException {
+    private Map<Integer, Store> constructIdToStore(Set<SDMStore> sdmStores) {
         return sdmStores.stream().collect(Collectors.toMap(SDMStore::getId, store -> new StoreBuilder(idToProduct).build(store)));
+    }
+
+    private Map<Integer, Customer> constructIdToCustomer(HashSet<SDMCustomer> sdmCustomers) {
+        return sdmCustomers.stream().collect(Collectors.toMap(SDMCustomer::getId, sdmCustomer -> new CustomerBuilder().build(sdmCustomer)));
     }
 
     private List<Product> getNonSoldProducts(Set<SDMStore> sdmStores) {
@@ -155,5 +174,17 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
             }
         }
         return duplicates;
+    }
+
+    private boolean handleDuplicateIds(ErrorMessage dupIdErrors, List<Integer> ids) {
+        boolean foundDuplicates = false;
+        Set<Integer> dupIds = findDuplicates(ids);
+        if (dupIds.size() > 0) {
+            dupIdErrors.setMessage(dupIds.stream().map(Object::toString)
+                    .reduce("", (acc, current) -> acc + "duplicate id for item " + current.toString() + System.lineSeparator()));
+//            throw new ValidationException(dupIdErrors.getMessage());
+            foundDuplicates = true;
+        }
+        return foundDuplicates;
     }
 }

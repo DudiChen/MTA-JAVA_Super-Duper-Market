@@ -1,9 +1,6 @@
 package entity.market;
 
-import entity.Discount;
-import entity.Order;
-import entity.Product;
-import entity.Store;
+import entity.*;
 import exception.MarketIsEmptyException;
 import javafx.util.Pair;
 
@@ -15,16 +12,18 @@ public class Market {
 
     private Map<Integer, Store> idToStore;
     private Map<Integer, Product> idToProduct;
+    private Map<Integer, Customer> idToCustomer;
     private Map<Integer, OrderInvoice> idToOrderInvoice;
 
     public Market() {
         this.idToOrderInvoice = new HashMap<>();
     }
 
-    public Market(Map<Integer, Store> idToStore, Map<Integer, Product> idToProduct) {
+    public Market(Map<Integer, Store> idToStore, Map<Integer, Product> idToProduct, Map<Integer,Customer> idToCustomer) {
         this.idToStore = idToStore;
         this.idToProduct = idToProduct;
         this.idToOrderInvoice = new HashMap<>();
+        this.idToCustomer = idToCustomer;
     }
 
     public void addStore(Store store) {
