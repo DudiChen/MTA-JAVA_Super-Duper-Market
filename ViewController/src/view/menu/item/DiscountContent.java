@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 
 import java.io.IOException;
+import java.util.function.BiConsumer;
 
 public class DiscountContent extends ListCell<Discount> {
 
@@ -19,8 +20,11 @@ public class DiscountContent extends ListCell<Discount> {
     private ListView<Discount.Offer> productsInDiscountList;
     @FXML
     private Button discountButton;
-    public DiscountContent(Controller controller) {
+    private BiConsumer<Discount, Discount.Offer> onDiscountChoice;
+
+    public DiscountContent(Controller controller, BiConsumer<Discount, Discount.Offer> onDiscountChoice) {
         this.controller = controller;
+        this.onDiscountChoice = onDiscountChoice;
         loadFXML();
     }
 
@@ -47,17 +51,13 @@ public class DiscountContent extends ListCell<Discount> {
             this.quantityLabel.setText("If You Buy " + discount.getQuantity() + " Then You Get: ");
             this.productsInDiscountList.getItems().addAll(discount.getOffers());
             this.nameLabel.setText(discount.getName());
-            this.productsInDiscountList.setCellFactory(param -> new OfferContent(discount, controller, this::onDiscountChoice));
+            this.productsInDiscountList.setCellFactory(param -> new OfferContent(discount, controller, this.onDiscountChoice));
             if(discount.getOperator().equals(Discount.DiscountOperator.ALL_OR_NOTHING)) {
                 discountButton.setVisible(true);
                 discountButton.setText("Get For Additional " + discount.getOffers().get(0).getForAdditional());
-                discountButton.setOnAction(e -> onDiscountChoice(discount, null));
+                discountButton.setOnAction(e -> onDiscountChoice.accept(discount, null));
             }
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         }
-    }
-
-    private void onDiscountChoice(Discount discount, Discount.Offer offer) {
-        System.out.println(offer);
     }
 }

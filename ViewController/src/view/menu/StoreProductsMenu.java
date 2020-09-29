@@ -1,11 +1,11 @@
 package view.menu;
-
 import controller.Controller;
 import entity.Discount;
 import entity.Product;
 import entity.Store;
+import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -17,12 +17,14 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import view.TriConsumer;
-import view.menu.item.DiscountContent;
 import view.menu.item.ProductsContentFactory;
 
 import java.awt.*;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class StoreProductsMenu<T> extends ProductsMenu {
 
@@ -32,6 +34,9 @@ public class StoreProductsMenu<T> extends ProductsMenu {
     private Popup currentPopup;
     private boolean currentPopupFocused = true;
     private boolean hovered = true;
+    private List discounts;
+    @FXML
+    private Label chosenDiscountsLabel;
 
     public StoreProductsMenu(List<Product> products, Store store, TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced, Stage primaryStage, Controller controller) {
         super(products, new ProductsContentFactory(store));
@@ -40,6 +45,7 @@ public class StoreProductsMenu<T> extends ProductsMenu {
         this.productsContentFactory.setOnUnHover(this::onProductUnHover);
         this.setOnOrderPlaced(onOrderPlaced);
         this.primaryStage = primaryStage;
+        this.discounts = new ArrayList();
         this.store = store;
     }
 
@@ -47,7 +53,7 @@ public class StoreProductsMenu<T> extends ProductsMenu {
         if (this.currentPopup == null) {
             List<Discount> discounts = this.store.getDiscountsByProductId(product.getId());
             if (discounts != null) {
-                DiscountsMenu discountsMenu = new DiscountsMenu(discounts, this.controller);
+                DiscountsMenu discountsMenu = new DiscountsMenu(discounts, this.controller, this::onDiscountChoice);
                 discountsMenu.getContent().addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, event -> {
                     onPopupUnHover();
                 });
@@ -60,6 +66,21 @@ public class StoreProductsMenu<T> extends ProductsMenu {
         }
 
     }
+
+    // TODO:: look here
+    private void onDiscountChoice(Discount discount, Discount.Offer offer) {
+        if(!this.isAvailableDiscount()) {
+            return;
+        }
+        this.chosenDiscountsLabel.setText(this.chosenDiscountsLabel.getText() + ", " + discount.getName());
+        this.discounts.add(discount);
+    }
+
+
+    private boolean isAvailableDiscount() {
+        return true;
+    }
+    //
 
     public void onProductUnHover(Product product, Point mousePos) {
         if (currentPopup != null) {
@@ -93,5 +114,11 @@ public class StoreProductsMenu<T> extends ProductsMenu {
         content.setMinWidth(500);
         this.currentPopup = popup;
         return popup;
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        super.initialize(location, resources);
+//        this.chosenDiscountsLabel.setText("Chosen Products:");
     }
 }

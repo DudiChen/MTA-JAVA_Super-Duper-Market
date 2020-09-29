@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.BiConsumer;
 
 public class DiscountsMenu implements Navigatable, Initializable {
 
@@ -21,9 +22,11 @@ public class DiscountsMenu implements Navigatable, Initializable {
     private final Controller controller;
     @FXML
     private ListView<Discount> discountsContentsList;
+    private BiConsumer<Discount, Discount.Offer> onDiscountChoice;
 
-    public DiscountsMenu(List<Discount> discounts, Controller controller) {
+    public DiscountsMenu(List<Discount> discounts, Controller controller, BiConsumer<Discount, Discount.Offer> onDiscountChoice) {
         this.controller = controller;
+        this.onDiscountChoice = onDiscountChoice;
         this.discounts = discounts;
         this.content = loadFXML("discountsMenu");
     }
@@ -49,6 +52,6 @@ public class DiscountsMenu implements Navigatable, Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         discountsContentsList.getItems().addAll(discounts);
-        discountsContentsList.setCellFactory(param  -> new DiscountContent(controller));
+        discountsContentsList.setCellFactory(param  -> new DiscountContent(controller, this.onDiscountChoice));
     }
 }

@@ -10,6 +10,7 @@
 <VBox xmlns="http://javafx.com/javafx/8.0.171"
           xmlns:fx="http://javafx.com/fxml/1">
     <children>
+        <Label text="Chosen Discounts:" fx:id="chosenDiscountsLabel" />
         <VBox>
             <VBox>
                 <ListView fx:id="productsList" layoutY="50.0" />
