@@ -37,7 +37,6 @@ public class StoreProductsMenu extends ProductsMenu {
 
     private final Stage primaryStage;
     private final Store store;
-    private final Controller controller;
     private Popup currentPopup;
     private boolean currentPopupFocused = true;
     private boolean hovered = true;
@@ -47,10 +46,9 @@ public class StoreProductsMenu extends ProductsMenu {
     private ComboBox<String> newProductBox;
 
     public StoreProductsMenu(List<Product> products, Store store, TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced, Stage primaryStage, Controller controller) {
-        super(products, new ProductsContentFactory(store), controller.getAllCustomers());
+        super(products, new ProductsContentFactory(store), controller);
         this.productsContentFactory.setOnDelete(this::onProductDelete);
         this.productsContentFactory.setOnPriceChange(this::onProductPriceChange);
-        this.controller = controller;
         this.productsContentFactory.setOnHover(this::onProductHover);
         this.productsContentFactory.setOnUnHover(this::onProductUnHover);
         this.setOnOrderPlaced(onOrderPlaced);
@@ -128,8 +126,8 @@ public class StoreProductsMenu extends ProductsMenu {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-        Stream<Product> productStream = this.products.stream();
-        this.newProductBox.getItems().addAll(productStream.map(product -> product.getId() + ": " + product.getName()).collect(Collectors.toList()));
+        List<Product> products = controller.getAllProducts();
+        this.newProductBox.getItems().addAll(products.stream().map(product -> product.getId() + ": " + product.getName()).collect(Collectors.toList()));
         this.newProductBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             this.onProductAdd(Integer.parseInt(newVal.split(":")[0]));
         });

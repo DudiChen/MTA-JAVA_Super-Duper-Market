@@ -367,4 +367,8 @@ public class Controller {
     public void changePriceForProduct(int storeId, int productId, double newPrice) {
         this.market.changePriceForProduct(storeId, productId, newPrice);
     }
+
+    public List<Product> getAllProducts() {
+        return this.market.getAllProducts();
+    }
 }

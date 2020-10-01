@@ -1,5 +1,6 @@
 package view.menu;
 
+import controller.Controller;
 import entity.Customer;
 import entity.Discount;
 import entity.Product;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 public class ProductsMenu<T extends AbstractProductContent> implements Initializable, Navigatable {
 
     protected final ProductsContentFactory productsContentFactory;
+    protected final Controller controller;
     private Parent content;
     protected List<Product> products;
     private List<Customer> allCustomers;
@@ -51,12 +53,13 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
     protected List<Pair<Integer, Double>> orderProducts;
     private int chosenCustomerId;
 
-    public ProductsMenu(List<Product> products, ProductsContentFactory productsContentFactory, List<Customer> allCustomers) {
+    public ProductsMenu(List<Product> products, ProductsContentFactory productsContentFactory, Controller controller) {
         this.productsContentFactory = productsContentFactory;
         this.products = products;
         this.chosenProductToQuantity = new ArrayList<>();
-        this.allCustomers = allCustomers;
+        this.allCustomers = controller.getAllCustomers();
         this.chosenCustomerId = -1;
+        this.controller = controller;
         this.content = loadFXML("storeProducts");
     }
 
