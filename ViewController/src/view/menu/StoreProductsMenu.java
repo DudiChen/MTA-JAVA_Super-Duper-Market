@@ -1,10 +1,15 @@
 package view.menu;
+
 import controller.Controller;
+import entity.Customer;
 import entity.Discount;
 import entity.Product;
 import entity.Store;
+import exception.OrderValidationException;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
@@ -25,27 +30,30 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class StoreProductsMenu<T> extends ProductsMenu {
+public class StoreProductsMenu extends ProductsMenu {
 
     private final Stage primaryStage;
     private final Store store;
-    private final Controller controller;
     private Popup currentPopup;
     private boolean currentPopupFocused = true;
     private boolean hovered = true;
-    private List discounts;
     @FXML
     private Label chosenDiscountsLabel;
+    @FXML
+    private ComboBox<String> newProductBox;
 
-    public StoreProductsMenu(List<Product> products, Store store, TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced, Stage primaryStage, Controller controller) {
-        super(products, new ProductsContentFactory(store));
-        this.controller = controller;
+    public StoreProductsMenu(List<Product> products, Store store, TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced, Stage primaryStage, Controller controller) {
+        super(products, new ProductsContentFactory(store), controller);
+        this.productsContentFactory.setOnDelete(this::onProductDelete);
+        this.productsContentFactory.setOnPriceChange(this::onProductPriceChange);
         this.productsContentFactory.setOnHover(this::onProductHover);
         this.productsContentFactory.setOnUnHover(this::onProductUnHover);
         this.setOnOrderPlaced(onOrderPlaced);
         this.primaryStage = primaryStage;
-        this.discounts = new ArrayList();
+        this.chosenDiscounts = new ArrayList();
         this.store = store;
     }
 
@@ -61,24 +69,23 @@ public class StoreProductsMenu<T> extends ProductsMenu {
                     onPopupHover();
                 });
                 Popup popup = createPopup(discountsMenu);
-                popup.show(primaryStage, this.primaryStage.getX() + mousePos.getX(), this.primaryStage.getY() + mousePos.getY() + 150);
+                popup.show(primaryStage, this.primaryStage.getX() + mousePos.getX(), this.primaryStage.getY() + mousePos.getY() + 180);
             }
         }
-
     }
 
     // TODO:: look here
     private void onDiscountChoice(Discount discount, Discount.Offer offer) {
-        if(!this.isAvailableDiscount()) {
+        if (!this.isAvailableDiscount(discount)) {
             return;
         }
         this.chosenDiscountsLabel.setText(this.chosenDiscountsLabel.getText() + ", " + discount.getName());
-        this.discounts.add(discount);
+        this.chosenDiscounts.add(discount);
     }
 
-
-    private boolean isAvailableDiscount() {
-        return true;
+    private boolean isAvailableDiscount(Discount discount) {
+        this.getOrderDetails();
+        return controller.isAvailableDiscount(this.orderProducts, this.chosenDiscounts);
     }
     //
 
@@ -119,6 +126,28 @@ public class StoreProductsMenu<T> extends ProductsMenu {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
+        List<Product> products = controller.getAllProducts();
+        this.newProductBox.getItems().addAll(products.stream().map(product -> product.getId() + ": " + product.getName()).collect(Collectors.toList()));
+        this.newProductBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            this.onProductAdd(Integer.parseInt(newVal.split(":")[0]));
+        });
 //        this.chosenDiscountsLabel.setText("Chosen Products:");
+    }
+
+
+    private void onProductDelete(int productId) {
+        controller.deleteProduct(productId, store.getId());
+        this.productsList.getItems().clear();
+        Stream<Product> productStream = this.products.stream();
+        this.products = productStream.filter(product -> product.getId() != productId).collect(Collectors.toList());
+        this.productsList.getItems().addAll(products);
+    }
+
+    private void onProductPriceChange(int productId, double newPrice) {
+        controller.changePriceForProduct(store.getId(), productId, newPrice);
+    }
+
+    private void onProductAdd(int productId) {
+        this.controller.addNewProduct(store.getId(), productId);
     }
 }

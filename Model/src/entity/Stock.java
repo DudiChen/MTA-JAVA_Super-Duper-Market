@@ -21,4 +21,12 @@ public class Stock {
     public double getProductPrice(int productId) {
         return soldProducts.get(productId).getPrice();
     }
+
+    public void delete(int productId) {
+        this.soldProducts.remove(productId);
+    }
+
+//    TODO:: IMPLEMENT - called by Store - you may change parameters - just add it to the stock
+    public void addSoldProduct() {
+    }
 }

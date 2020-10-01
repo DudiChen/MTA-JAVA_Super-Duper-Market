@@ -28,7 +28,8 @@ public class StoreContent extends ListCell<Store> {
 
     @FXML
     private Label shipmentIncomesLabel;
-
+    @FXML
+    private Label locationLabel;
     @FXML
     private Button orderButton;
 
@@ -64,6 +65,7 @@ public class StoreContent extends ListCell<Store> {
             ppkLabel.setText("Price Per Kilometer: " + store.getPpk());
             shipmentIncomesLabel.setText("Total Shipments Incomes: " + store.getTotalShipmentIncome());
             orderButton.setOnAction(event -> this.onStoreIdChoice.accept(store.getId()));
+            locationLabel.setText(locationLabel.getText() + " X: " + store.getCoordinate().getX() + " Y: " + store.getCoordinate().getY());
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         }
     }

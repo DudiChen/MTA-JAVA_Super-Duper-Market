@@ -52,4 +52,9 @@ public class Customer {
     private double calcAverageValue(double averageVariable, int prevTotalInstances, double newValue) {
         return ((averageVariable * prevTotalInstances) + newValue) / (prevTotalInstances + 1);
     }
+
+    @Override
+    public String toString() {
+        return this.id + ": " + this.name;
+    }
 }

@@ -10,6 +10,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class ProductsContentFactory {
+    private Optional<Consumer<Integer>> onProductDelete;
+    private Optional<BiConsumer<Integer, Double>> onProductPriceChange;
     private Optional<BiConsumer<Product, Point>> onUnHover;
     private Optional<BiConsumer<Product, Point>> onHover;
     private Store store;
@@ -27,11 +29,16 @@ public class ProductsContentFactory {
         AbstractProductContent item = null;
         if(this.store != null) {
             item = new StoreProductContent(store);
-            if(this.onHover.isPresent()) {
-                ((StoreProductContent)item).setOnHover(this.onHover.get());
+            this.onHover.ifPresent(((StoreProductContent) item)::setOnHover);
+            this.onUnHover.ifPresent(((StoreProductContent) item)::setOnUnHover);
+            if(this.onProductDelete.isPresent()) {
+                ((StoreProductContent)item).setOnDelete(this.onProductDelete.get());
             }
-            if(this.onUnHover.isPresent()) {
-                ((StoreProductContent)item).setOnUnHover(this.onUnHover.get());
+            if(this.onProductPriceChange.isPresent()) {
+                ((StoreProductContent)item).setOnPriceChange(this.onProductPriceChange.get());
+            }
+            if (this.onProductPriceChange.isPresent()) {
+
             }
         }
         else if(this.allStores != null) {
@@ -46,5 +53,13 @@ public class ProductsContentFactory {
 
     public void setOnHover(BiConsumer<Product, Point> onHover) {
         this.onHover = Optional.of(onHover);
+    }
+
+    public void setOnDelete(Consumer<Integer> onProductDelete) {
+        this.onProductDelete = Optional.of(onProductDelete);
+    }
+
+    public void setOnPriceChange(BiConsumer<Integer, Double> onProductPriceChange) {
+        this.onProductPriceChange = Optional.of(onProductPriceChange);
     }
 }

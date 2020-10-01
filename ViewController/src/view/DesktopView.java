@@ -80,7 +80,7 @@ public class DesktopView extends View {
             return;
         }
         this.appContext.setRoot(productsTab);
-        ProductsMenu<ProductContent> productsMenu = new ProductsMenu<>(allProducts, new ProductsContentFactory(allStores));
+        ProductsMenu<ProductContent> productsMenu = new ProductsMenu<>(allProducts, new ProductsContentFactory(allStores), controller);
         productsMenu.setOnOrderPlaced(this.onDynamicOrder);
         this.appContext.navigate(productsMenu);
     }
