@@ -18,10 +18,10 @@ import java.util.function.Consumer;
 public abstract class View {
 
     public Consumer<Integer> onStoreIdChoice;
-    public TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced;
+    public TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount.Offer>>> onOrderPlaced;
     public Consumer<Integer> onOrderAccepted;
     public Consumer<Integer> onOrderCanceled;
-    public TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount>>> onDynamicOrder;
+    public TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount.Offer>>> onDynamicOrder;
 
     public abstract void displayStores(List<Store> allStores);
 

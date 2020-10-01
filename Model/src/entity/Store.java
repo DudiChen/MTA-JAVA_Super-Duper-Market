@@ -4,7 +4,6 @@ package entity;
 import entity.market.OrderInvoice;
 import exception.ProductIdNotFoundException;
 import javafx.util.Pair;
-
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -17,9 +16,7 @@ public class Store {
     public int getPpk() {
         return ppk;
     }
-
     private int ppk;
-    //    private List<Discount> discounts;
     private int id;
     private String name;
     private double totalShipmentIncome;
@@ -173,6 +170,7 @@ public class Store {
     }
 
     public void addProductToStock(int productId, int price) {
+        // TODO :: DUDI :: IMPLEMENT !
         this.stock.addSoldProduct();
     }
 }

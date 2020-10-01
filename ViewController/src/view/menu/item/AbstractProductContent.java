@@ -10,7 +10,6 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.Slider;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;

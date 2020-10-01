@@ -17,12 +17,12 @@
                 <ListView fx:id="productsList" layoutY="50.0" />
                 <ComboBox fx:id="newProductBox"
                         style="-fx-background-color: cornflowerblue; -fx-background-radius: 50; -fx-cursor: hand"
-                          promptText="+"/>
+                          promptText="Add a New Product"/>
                 <HBox>
                     <HBox>
                         <Label text="Delivery Date: "/>
                         <DatePicker fx:id="deliveryDatePicker" prefWidth="100.0"/>
-                        <ComboBox fx:id="customers"/>
+                        <ComboBox promptText="Ordering Customer" fx:id="customers"/>
                     </HBox>
                     <Button fx:id="orderButton" mnemonicParsing="false" prefHeight="27.0" text="Finalize Order"/>
                 </HBox>

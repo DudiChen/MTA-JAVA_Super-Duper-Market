@@ -15,9 +15,6 @@ import javafx.util.Pair;
 import view.ApplicationContext;
 import view.TriConsumer;
 import view.menu.item.StoreContent;
-import view.menu.item.StoreProductContent;
-
-import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
@@ -34,10 +31,10 @@ public class StoresMenu implements Initializable, Navigatable {
     private Parent content;
     private Consumer<Integer> onStoreIdChoice;
     private ApplicationContext applicationContext;
-    private TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced;
+    private TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount.Offer>>> onOrderPlaced;
     private Controller controller;
 
-    public void setOnOrderPlaced(TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced) {
+    public void setOnOrderPlaced(TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount.Offer>>> onOrderPlaced) {
         this.onOrderPlaced = onOrderPlaced;
     }
 

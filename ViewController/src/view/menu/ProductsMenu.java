@@ -1,5 +1,6 @@
 package view.menu;
 
+import controller.Controller;
 import entity.Customer;
 import entity.Discount;
 import entity.Product;
@@ -32,12 +33,14 @@ import java.util.stream.Collectors;
 public class ProductsMenu<T extends AbstractProductContent> implements Initializable, Navigatable {
 
     protected final ProductsContentFactory productsContentFactory;
+    protected final Controller controller;
     private Parent content;
     protected List<Product> products;
     private List<Customer> allCustomers;
-    protected TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced;
+    protected TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount.Offer>>> onOrderPlaced;
     private List<Pair<SimpleIntegerProperty, SimpleDoubleProperty>> chosenProductToQuantity;
-    protected List chosenDiscounts;
+    protected List<Discount.Offer> chosenOffers;
+
     protected Date date;
     @FXML
     private Button orderButton;
@@ -51,12 +54,14 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
     protected List<Pair<Integer, Double>> orderProducts;
     private int chosenCustomerId;
 
-    public ProductsMenu(List<Product> products, ProductsContentFactory productsContentFactory, List<Customer> allCustomers) {
+    public ProductsMenu(List<Product> products, ProductsContentFactory productsContentFactory, Controller controller) {
         this.productsContentFactory = productsContentFactory;
         this.products = products;
         this.chosenProductToQuantity = new ArrayList<>();
-        this.allCustomers = allCustomers;
+        this.allCustomers = controller.getAllCustomers();
+        this.controller = controller;
         this.chosenCustomerId = -1;
+        this.chosenOffers = new ArrayList<>();
         this.content = loadFXML("storeProducts");
     }
 
@@ -102,7 +107,6 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
         if(this.customers.getValue() != null) {
             this.chosenCustomerId = Integer.parseInt(this.customers.getValue().split(":")[0]);
         }
-        System.out.println(chosenCustomerId);
         this.date = date;
         this.orderProducts = chosenProductToQuantity;
     }
@@ -133,14 +137,14 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
         getOrderDetails();
         if (validateOrder()) {
             try {
-                onOrderPlaced.apply(date, this.chosenCustomerId, new Pair(this.orderProducts, this.chosenDiscounts));
+                onOrderPlaced.apply(date, this.chosenCustomerId, new Pair<List<Pair<Integer, Double>>, List<Discount.Offer>>(this.orderProducts, this.chosenOffers));
             } catch (OrderValidationException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void setOnOrderPlaced(TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced) {
+    public void setOnOrderPlaced(TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount.Offer>>> onOrderPlaced) {
         this.onOrderPlaced = onOrderPlaced;
     }
 

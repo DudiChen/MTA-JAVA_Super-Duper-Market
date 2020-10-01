@@ -7,17 +7,12 @@ import entity.market.OrderInvoice;
 import exception.MarketIsEmptyException;
 import exception.OrderValidationException;
 import exception.XMLException;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.Pair;
 import view.View;
 import view.menu.item.CustomerMapElement;
 import view.menu.item.StoreMapElement;
-
 import javax.management.modelmbean.XMLParseException;
 import javax.xml.bind.ValidationException;
-import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -208,17 +203,17 @@ public class Controller {
         view.onOrderPlaced = this::makeOrderForChosenStore;
     }
 
-    private void makeOrderForChosenStore(Date date, Integer customerId, Pair<List<Pair<Integer, Double>>, List<Discount>> productQuantityPairsWithDiscounts) throws OrderValidationException {
+    private void makeOrderForChosenStore(Date date, Integer customerId, Pair<List<Pair<Integer, Double>>, List<Discount.Offer>> productQuantityPairsWithOffers) throws OrderValidationException {
         StringBuilder err = new StringBuilder();
-        // TODO :: use chosen discounts and customer id!
-        List<Discount> chosenDiscounts = productQuantityPairsWithDiscounts.getValue();
+        // TODO :: DUDI :: use chosen offers and customer id!
+        List<Discount.Offer> chosenOffers = productQuantityPairsWithOffers.getValue();
         // validate store coordinate is not the same as customer coordinate
         assert false;
         if (this.market.getCustomerById(customerId).getLocation().equals(chosenStore.get().getCoordinate())) {
             err.append("cannot make order from same coordinate as store").append(System.lineSeparator());
         }
         // validate chosen products are sold by the chosen store
-        for (Pair<Integer, Double> productToQuantity : productQuantityPairsWithDiscounts.getKey()) {
+        for (Pair<Integer, Double> productToQuantity : productQuantityPairsWithOffers.getKey()) {
             int productId = productToQuantity.getKey();
             if (!chosenStore.get().isProductSold(productId)) {
                 err.append(market.getProductById(productId).getName()).append(" is not sold by ").append(market.getStoreById(chosenStore.get().getId()).getName()).append(System.lineSeparator());
@@ -227,13 +222,15 @@ public class Controller {
         if (err.length() > 0) {
             throw new OrderValidationException(err.toString());
         }
-        if (productQuantityPairsWithDiscounts.getKey().size() == 0) {
+        if (productQuantityPairsWithOffers.getKey().size() == 0) {
             view.showMainMenu();
         }
-        int orderInvoiceId = market.receiveOrder(new Order(productQuantityPairsWithDiscounts.getKey(), this.market.getCustomerById(customerId).getLocation(), date, chosenStore.get().getId()));
+        int orderInvoiceId = market.receiveOrder(new Order(productQuantityPairsWithOffers.getKey(), this.market.getCustomerById(customerId).getLocation(), date, chosenStore.get().getId()));
         view.summarizeOrder(market.getOrderInvoice(orderInvoiceId));
     }
-
+    
+    
+    // TODO :: make an alert when dynamic order is more than 2 stores long
     public void makeDynamicOrder() {
         fetchAllProductsListToUI();
     }
@@ -352,7 +349,7 @@ public class Controller {
         return this.market.getProductById(productId);
     }
 
-    public boolean isAvailableDiscount(List orderProducts, List chosenDiscounts) {
+    public boolean isAvailableDiscount(Discount discount, List orderProducts, List chosenDiscounts) {
         return true;
     }
 
@@ -366,5 +363,9 @@ public class Controller {
 
     public void changePriceForProduct(int storeId, int productId, double newPrice) {
         this.market.changePriceForProduct(storeId, productId, newPrice);
+    }
+
+    public List<Product> getAllProducts() {
+        return this.market.getAllProducts();
     }
 }
