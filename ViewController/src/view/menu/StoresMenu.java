@@ -1,6 +1,7 @@
 package view.menu;
 
 import controller.Controller;
+import entity.Discount;
 import entity.Product;
 import entity.Store;
 import javafx.fxml.FXML;
@@ -33,10 +34,10 @@ public class StoresMenu implements Initializable, Navigatable {
     private Parent content;
     private Consumer<Integer> onStoreIdChoice;
     private ApplicationContext applicationContext;
-    private TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced;
+    private TriConsumer<Date, Point, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced;
     private Controller controller;
 
-    public void setOnOrderPlaced(TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced) {
+    public void setOnOrderPlaced(TriConsumer<Date, Point, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced) {
         this.onOrderPlaced = onOrderPlaced;
     }
 
@@ -74,7 +75,7 @@ public class StoresMenu implements Initializable, Navigatable {
     }
 
     public void orderFromStore(List<Product> products, Store store) {
-        StoreProductsMenu<StoreProductContent> storeProductsMenu = new StoreProductsMenu<>(products, store, this.onOrderPlaced, this.primaryStage, this.controller);
+        StoreProductsMenu storeProductsMenu = new StoreProductsMenu(products, store, this.onOrderPlaced, this.primaryStage, this.controller);
         this.applicationContext.navigate(storeProductsMenu);
     }
 

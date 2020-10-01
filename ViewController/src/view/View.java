@@ -2,6 +2,7 @@ package view;
 
 
 import controller.Controller;
+import entity.Discount;
 import entity.Product;
 import entity.Store;
 import entity.market.OrderInvoice;
@@ -17,10 +18,10 @@ import java.util.function.Consumer;
 public abstract class View {
 
     public Consumer<Integer> onStoreIdChoice;
-    public TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced;
+    public TriConsumer<Date, Point, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced;
     public Consumer<Integer> onOrderAccepted;
     public Consumer<Integer> onOrderCanceled;
-    public TriConsumer<Date, Point, List<Pair<Integer, Double>>> onDynamicOrder;
+    public TriConsumer<Date, Point, Pair<List<Pair<Integer, Double>>, List<Discount>>> onDynamicOrder;
 
     public abstract void displayStores(List<Store> allStores);
 

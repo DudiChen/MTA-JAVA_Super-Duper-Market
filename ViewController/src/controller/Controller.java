@@ -1,6 +1,7 @@
 package controller;
 
 import command.Executor;
+import entity.Discount;
 import entity.Product;
 import entity.market.Market;
 import entity.Order;
@@ -128,13 +129,13 @@ public class Controller {
         view.onDynamicOrder = (date, destination, productQuantityPairs) -> {
             this.market.getAllStores()
                     .forEach(store -> {
-                        Optional<List<Pair<Integer, Double>>> maybeOrder = findCheapestOrderForStore(store, productQuantityPairs);
+                        Optional<List<Pair<Integer, Double>>> maybeOrder = findCheapestOrderForStore(store, productQuantityPairs.getKey());
                         if (maybeOrder.isPresent()) {
                             this.chosenStore.set(store);
                             List<Pair<Integer, Double>> orderPairs = maybeOrder.get();
                             try {
                                 List<Pair<Integer, Double>> toDelete = new ArrayList<>();
-                                for (Pair<Integer, Double> pair : productQuantityPairs) {
+                                for (Pair<Integer, Double> pair : productQuantityPairs.getKey()) {
                                     for (Pair<Integer, Double> pair1 : orderPairs) {
                                         if (pair.getKey() == pair1.getKey()) {
                                             toDelete.add(pair);
@@ -142,8 +143,8 @@ public class Controller {
                                         }
                                     }
                                 }
-                                productQuantityPairs.removeAll(toDelete);
-                                makeOrderForChosenStore(date, destination, orderPairs);
+                                productQuantityPairs.getKey().removeAll(toDelete);
+                                makeOrderForChosenStore(date, destination, new Pair(orderPairs, productQuantityPairs.getValue()));
                             } catch (OrderValidationException e) {
                                 e.printStackTrace();
                             }
@@ -206,15 +207,17 @@ public class Controller {
         view.onOrderPlaced = this::makeOrderForChosenStore;
     }
 
-    private void makeOrderForChosenStore(Date date, Point destination, List<Pair<Integer, Double>> productQuantityPairs) throws OrderValidationException {
+    private void makeOrderForChosenStore(Date date, Point destination, Pair<List<Pair<Integer, Double>>, List<Discount>> productQuantityPairsWithDiscounts) throws OrderValidationException {
         StringBuilder err = new StringBuilder();
+        // TODO :: use chosen discounts!
+        List<Discount> chosenDiscounts = productQuantityPairsWithDiscounts.getValue();
         // validate store coordinate is not the same as customer coordinate
         assert false;
         if (destination.equals(chosenStore.get().getCoordinate())) {
             err.append("cannot make order from same coordinate as store").append(System.lineSeparator());
         }
         // validate chosen products are sold by the chosen store
-        for (Pair<Integer, Double> productToQuantity : productQuantityPairs) {
+        for (Pair<Integer, Double> productToQuantity : productQuantityPairsWithDiscounts.getKey()) {
             int productId = productToQuantity.getKey();
             if (!chosenStore.get().isProductSold(productId)) {
                 err.append(market.getProductById(productId).getName()).append(" is not sold by ").append(market.getStoreById(chosenStore.get().getId()).getName()).append(System.lineSeparator());
@@ -223,10 +226,10 @@ public class Controller {
         if (err.length() > 0) {
             throw new OrderValidationException(err.toString());
         }
-        if (productQuantityPairs.size() == 0) {
+        if (productQuantityPairsWithDiscounts.getKey().size() == 0) {
             view.showMainMenu();
         }
-        int orderInvoiceId = market.receiveOrder(new Order(productQuantityPairs, destination, date, chosenStore.get().getId()));
+        int orderInvoiceId = market.receiveOrder(new Order(productQuantityPairsWithDiscounts.getKey(), destination, date, chosenStore.get().getId()));
         view.summarizeOrder(market.getOrderInvoice(orderInvoiceId));
     }
 
@@ -340,5 +343,9 @@ public class Controller {
 
     public Product getProductById(int productId) {
         return this.market.getProductById(productId);
+    }
+
+    public boolean isAvailableDiscount(List orderProducts, List chosenDiscounts) {
+        return true;
     }
 }

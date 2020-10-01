@@ -1,5 +1,6 @@
 package view.menu;
 
+import entity.Discount;
 import entity.Product;
 import exception.OrderValidationException;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -12,10 +13,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
 import javafx.util.Pair;
 import view.TriConsumer;
 import view.menu.item.*;
@@ -28,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class ProductsMenu<T extends AbstractProductContent> implements Initializable, Navigatable {
@@ -36,14 +32,17 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
     protected final ProductsContentFactory productsContentFactory;
     private Parent content;
     private List<Product> products;
-    private TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced;
+    protected TriConsumer<Date, Point, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced;
     private List<Pair<SimpleIntegerProperty, SimpleDoubleProperty>> chosenProductToQuantity;
+    protected Date date;
     @FXML
     private Button orderButton;
     @FXML
     private DatePicker deliveryDatePicker;
     @FXML
     private ListView productsList;
+    protected Point point;
+    protected List<Pair<Integer, Double>> orderProducts;
 
     public ProductsMenu(List<Product> products, ProductsContentFactory productsContentFactory) {
         this.productsContentFactory = productsContentFactory;
@@ -85,7 +84,7 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
         this.productsList.getItems().addAll(products);
     }
 
-    private void onOrder(ActionEvent actionEvent) {
+    protected void getOrderDetails() {
         StringBuilder err = new StringBuilder();
         Date date = null;
         // validate everything
@@ -94,8 +93,6 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
         } else {
             date = Date.from(this.deliveryDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
         }
-
-        Point point = new Point(0, 0);
 
         // filter all 0 quantities and transform from binding properties to values
         List<Pair<Integer, Double>> chosenProductToQuantity =
@@ -114,14 +111,21 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
             invalidInputAlert.show();
             return;
         }
+        this.date = date;
+        this.orderProducts = chosenProductToQuantity;
+        this.point = new Point(0,0);
+    }
+
+    protected void onOrder(ActionEvent actionEvent) {
+        getOrderDetails();
         try {
-            onOrderPlaced.apply(date, point, chosenProductToQuantity);
+            onOrderPlaced.apply(date, point, new Pair(this.orderProducts, null));
         } catch (OrderValidationException e) {
             e.printStackTrace();
         }
     }
 
-    public void setOnOrderPlaced(TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced) {
+    public void setOnOrderPlaced(TriConsumer<Date, Point, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced) {
         this.onOrderPlaced = onOrderPlaced;
     }
 

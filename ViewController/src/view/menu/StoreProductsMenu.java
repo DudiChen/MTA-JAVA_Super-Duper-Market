@@ -3,6 +3,8 @@ import controller.Controller;
 import entity.Discount;
 import entity.Product;
 import entity.Store;
+import exception.OrderValidationException;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -26,7 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class StoreProductsMenu<T> extends ProductsMenu {
+public class StoreProductsMenu extends ProductsMenu {
 
     private final Stage primaryStage;
     private final Store store;
@@ -34,18 +36,18 @@ public class StoreProductsMenu<T> extends ProductsMenu {
     private Popup currentPopup;
     private boolean currentPopupFocused = true;
     private boolean hovered = true;
-    private List discounts;
+    private List chosenDiscounts;
     @FXML
     private Label chosenDiscountsLabel;
 
-    public StoreProductsMenu(List<Product> products, Store store, TriConsumer<Date, Point, List<Pair<Integer, Double>>> onOrderPlaced, Stage primaryStage, Controller controller) {
+    public StoreProductsMenu(List<Product> products, Store store, TriConsumer<Date, Point, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced, Stage primaryStage, Controller controller) {
         super(products, new ProductsContentFactory(store));
         this.controller = controller;
         this.productsContentFactory.setOnHover(this::onProductHover);
         this.productsContentFactory.setOnUnHover(this::onProductUnHover);
         this.setOnOrderPlaced(onOrderPlaced);
         this.primaryStage = primaryStage;
-        this.discounts = new ArrayList();
+        this.chosenDiscounts = new ArrayList();
         this.store = store;
     }
 
@@ -69,16 +71,26 @@ public class StoreProductsMenu<T> extends ProductsMenu {
 
     // TODO:: look here
     private void onDiscountChoice(Discount discount, Discount.Offer offer) {
-        if(!this.isAvailableDiscount()) {
+        if(!this.isAvailableDiscount(discount)) {
             return;
         }
         this.chosenDiscountsLabel.setText(this.chosenDiscountsLabel.getText() + ", " + discount.getName());
-        this.discounts.add(discount);
+        this.chosenDiscounts.add(discount);
     }
 
+    @Override
+    protected void onOrder(ActionEvent actionEvent) {
+        getOrderDetails();
+        try {
+            onOrderPlaced.apply(date, point, new Pair(this.orderProducts, this.chosenDiscounts));
+        } catch (OrderValidationException e) {
+            e.printStackTrace();
+        }
+    }
 
-    private boolean isAvailableDiscount() {
-        return true;
+    private boolean isAvailableDiscount(Discount discount) {
+        this.getOrderDetails();
+        return controller.isAvailableDiscount(this.orderProducts, this.chosenDiscounts);
     }
     //
 
