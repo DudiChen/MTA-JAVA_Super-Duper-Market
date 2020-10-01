@@ -32,6 +32,8 @@ public class Controller {
     private AtomicReference<Store> chosenStore;
     private boolean loaded = false;
     private Market market;
+//    private AtomicReference<Integer> currentCustomerId;
+    private int currentCustomerId;
 
     public Controller(View view) {
         this.view = view;

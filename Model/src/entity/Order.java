@@ -12,6 +12,7 @@ public class Order {
     Point destination;
     Date deliveryDate;
     int storeId;
+    int customerId;
     int id;
 
     public Order(List<Pair<Integer, Double>> productIdsToQuantity, Point destination, Date deliveryDate, int storeId) {

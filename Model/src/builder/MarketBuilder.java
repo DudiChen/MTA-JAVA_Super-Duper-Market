@@ -28,7 +28,7 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
     private Map<Integer, Customer> getIdToCustomer(List<SDMCustomer> sdmCustomers) throws ValidationException {
         List<Integer> ids = sdmCustomers.stream().map(SDMCustomer::getId).collect(Collectors.toList());
         ErrorMessage dupIdErrors = new ErrorMessage("");
-        boolean foundDuplicateIds = handleDuplicateIds(dupIdErrors, ids);
+        boolean foundDuplicateIds = handleDuplicateIds(dupIdErrors, ids, "Customer");
         if (foundDuplicateIds)
             throw new ValidationException(dupIdErrors.getMessage());
         return constructIdToCustomer(new HashSet<>(sdmCustomers));
@@ -43,7 +43,7 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
 //            throw new ValidationException(dupIdErrors);
 //        } else {
             ErrorMessage dupIdErrors = new ErrorMessage("");
-            boolean foundDuplicateIds = handleDuplicateIds(dupIdErrors, ids);
+            boolean foundDuplicateIds = handleDuplicateIds(dupIdErrors, ids, "Product");
             if (foundDuplicateIds)
                 throw new ValidationException(dupIdErrors.getMessage());
             return constructIdToProduct(new HashSet<>(sdmItems));
@@ -176,12 +176,12 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         return duplicates;
     }
 
-    private boolean handleDuplicateIds(ErrorMessage dupIdErrors, List<Integer> ids) {
+    private boolean handleDuplicateIds(ErrorMessage dupIdErrors, List<Integer> ids, String entityName) {
         boolean foundDuplicates = false;
         Set<Integer> dupIds = findDuplicates(ids);
         if (dupIds.size() > 0) {
             dupIdErrors.setMessage(dupIds.stream().map(Object::toString)
-                    .reduce("", (acc, current) -> acc + "duplicate id for item " + current.toString() + System.lineSeparator()));
+                    .reduce("", (acc, current) -> acc + "duplicate id for " + entityName + " " + current.toString() + System.lineSeparator()));
 //            throw new ValidationException(dupIdErrors.getMessage());
             foundDuplicates = true;
         }
