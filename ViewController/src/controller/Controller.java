@@ -1,11 +1,8 @@
 package controller;
 
 import command.Executor;
-import entity.Discount;
-import entity.Product;
+import entity.*;
 import entity.market.Market;
-import entity.Order;
-import entity.Store;
 import entity.market.OrderInvoice;
 import exception.MarketIsEmptyException;
 import exception.OrderValidationException;
@@ -15,6 +12,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.Pair;
 import view.View;
+import view.menu.item.CustomerMapElement;
 import view.menu.item.StoreMapElement;
 
 import javax.management.modelmbean.XMLParseException;
@@ -26,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Controller {
     private View view;
@@ -126,7 +125,7 @@ public class Controller {
     }
 
     private void registerOnDynamicOrder() {
-        view.onDynamicOrder = (date, destination, productQuantityPairs) -> {
+        view.onDynamicOrder = (date, customerId, productQuantityPairs) -> {
             this.market.getAllStores()
                     .forEach(store -> {
                         Optional<List<Pair<Integer, Double>>> maybeOrder = findCheapestOrderForStore(store, productQuantityPairs.getKey());
@@ -144,7 +143,7 @@ public class Controller {
                                     }
                                 }
                                 productQuantityPairs.getKey().removeAll(toDelete);
-                                makeOrderForChosenStore(date, destination, new Pair(orderPairs, productQuantityPairs.getValue()));
+                                makeOrderForChosenStore(date, customerId, new Pair(orderPairs, productQuantityPairs.getValue()));
                             } catch (OrderValidationException e) {
                                 e.printStackTrace();
                             }
@@ -207,13 +206,13 @@ public class Controller {
         view.onOrderPlaced = this::makeOrderForChosenStore;
     }
 
-    private void makeOrderForChosenStore(Date date, Point destination, Pair<List<Pair<Integer, Double>>, List<Discount>> productQuantityPairsWithDiscounts) throws OrderValidationException {
+    private void makeOrderForChosenStore(Date date, Integer customerId, Pair<List<Pair<Integer, Double>>, List<Discount>> productQuantityPairsWithDiscounts) throws OrderValidationException {
         StringBuilder err = new StringBuilder();
-        // TODO :: use chosen discounts!
+        // TODO :: use chosen discounts and customer id!
         List<Discount> chosenDiscounts = productQuantityPairsWithDiscounts.getValue();
         // validate store coordinate is not the same as customer coordinate
         assert false;
-        if (destination.equals(chosenStore.get().getCoordinate())) {
+        if (this.market.getCustomerById(customerId).getLocation().equals(chosenStore.get().getCoordinate())) {
             err.append("cannot make order from same coordinate as store").append(System.lineSeparator());
         }
         // validate chosen products are sold by the chosen store
@@ -229,7 +228,7 @@ public class Controller {
         if (productQuantityPairsWithDiscounts.getKey().size() == 0) {
             view.showMainMenu();
         }
-        int orderInvoiceId = market.receiveOrder(new Order(productQuantityPairsWithDiscounts.getKey(), destination, date, chosenStore.get().getId()));
+        int orderInvoiceId = market.receiveOrder(new Order(productQuantityPairsWithDiscounts.getKey(), this.market.getCustomerById(customerId).getLocation(), date, chosenStore.get().getId()));
         view.summarizeOrder(market.getOrderInvoice(orderInvoiceId));
     }
 
@@ -337,8 +336,14 @@ public class Controller {
     }
 
     public void fetchMapToUI() {
-        this.view.showMap(this.market.getAllStores().stream()
-                .map(store -> new StoreMapElement(store, view.onStoreIdChoice)).collect(Collectors.toList()));
+        this.view.showMap(
+                Stream.concat(
+                        this.market.getAllStores().stream()
+                                .map(store -> new StoreMapElement(store, view.onStoreIdChoice)),
+                        this.market.getAllCustomers().stream()
+                                .map(customer -> new CustomerMapElement(customer))
+                )
+                        .collect(Collectors.toList()));
     }
 
     public Product getProductById(int productId) {
@@ -347,5 +352,9 @@ public class Controller {
 
     public boolean isAvailableDiscount(List orderProducts, List chosenDiscounts) {
         return true;
+    }
+
+    public List<Customer> getAllCustomers() {
+        return this.market.getAllCustomers();
     }
 }

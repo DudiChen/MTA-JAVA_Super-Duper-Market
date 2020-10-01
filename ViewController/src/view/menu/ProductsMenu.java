@@ -1,8 +1,10 @@
 package view.menu;
 
+import entity.Customer;
 import entity.Discount;
 import entity.Product;
 import exception.OrderValidationException;
+import javafx.beans.binding.DoubleExpression;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
@@ -32,8 +34,10 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
     protected final ProductsContentFactory productsContentFactory;
     private Parent content;
     private List<Product> products;
-    protected TriConsumer<Date, Point, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced;
+    private List<Customer> allCustomers;
+    protected TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced;
     private List<Pair<SimpleIntegerProperty, SimpleDoubleProperty>> chosenProductToQuantity;
+    protected List chosenDiscounts;
     protected Date date;
     @FXML
     private Button orderButton;
@@ -41,13 +45,18 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
     private DatePicker deliveryDatePicker;
     @FXML
     private ListView productsList;
+    @FXML
+    private ComboBox<String> customers;
     protected Point point;
     protected List<Pair<Integer, Double>> orderProducts;
+    private int chosenCustomerId;
 
-    public ProductsMenu(List<Product> products, ProductsContentFactory productsContentFactory) {
+    public ProductsMenu(List<Product> products, ProductsContentFactory productsContentFactory, List<Customer> allCustomers) {
         this.productsContentFactory = productsContentFactory;
         this.products = products;
         this.chosenProductToQuantity = new ArrayList<>();
+        this.allCustomers = allCustomers;
+        this.chosenCustomerId = -1;
         this.content = loadFXML("storeProducts");
     }
 
@@ -69,30 +78,19 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
         this.orderButton.setOnAction(this::onOrder);
         this.productsList.setCellFactory(param -> {
             AbstractProductContent productContent = this.productsContentFactory.getItem();
-//
-//            if (this.chosenStore != null) {
-//                ProductContent storeProductContent = new StoreProductContent(chosenStore);
-//            } else {
-//                productContent = new ProductContent();
-//            }
             Pair<SimpleIntegerProperty, SimpleDoubleProperty> bindings = new Pair<>(new SimpleIntegerProperty(), new SimpleDoubleProperty());
             this.chosenProductToQuantity.add(bindings);
             bindings.getKey().bindBidirectional(productContent.getProductIdProperty());
             bindings.getValue().bindBidirectional(productContent.getQuantityProperty());
             return productContent;
         });
+        this.customers.getItems().addAll(allCustomers.stream().map(Object::toString).collect(Collectors.toList()));
         this.productsList.getItems().addAll(products);
     }
 
     protected void getOrderDetails() {
-        StringBuilder err = new StringBuilder();
         Date date = null;
         // validate everything
-        if (this.deliveryDatePicker.getValue() == null) {
-            err.append("Please enter a delivery date first").append(System.lineSeparator());
-        } else {
-            date = Date.from(this.deliveryDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-        }
 
         // filter all 0 quantities and transform from binding properties to values
         List<Pair<Integer, Double>> chosenProductToQuantity =
@@ -101,31 +99,48 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
                         .map(pair -> new Pair<>(pair.getKey().get(), pair.getValue().get()))
                         .distinct()
                         .collect(Collectors.toList());
+        if(this.customers.getValue() != null) {
+            this.chosenCustomerId = Integer.parseInt(this.customers.getValue().split(":")[0]);
+        }
+        System.out.println(chosenCustomerId);
+        this.date = date;
+        this.orderProducts = chosenProductToQuantity;
+    }
 
-        if (chosenProductToQuantity.stream().map(Pair::getValue).mapToDouble(Double::doubleValue).sum() == 0) {
+    protected boolean validateOrder() {
+        StringBuilder err = new StringBuilder();
+        if (this.deliveryDatePicker.getValue() == null) {
+            err.append("Please enter a delivery date first").append(System.lineSeparator());
+        } else {
+            date = Date.from(this.deliveryDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        }
+        if (chosenProductToQuantity.stream().map(Pair::getValue).mapToDouble(DoubleExpression::doubleValue).sum() == 0) {
             err.append("Please choose products to order").append(System.lineSeparator());
+        }
+        if(chosenCustomerId == -1) {
+            err.append("Please choose a customer to serve");
         }
         if (!err.toString().isEmpty()) {
             Alert invalidInputAlert = new Alert(Alert.AlertType.WARNING);
             invalidInputAlert.setContentText(err.toString());
             invalidInputAlert.show();
-            return;
+            return false;
         }
-        this.date = date;
-        this.orderProducts = chosenProductToQuantity;
-        this.point = new Point(0,0);
+        return true;
     }
 
     protected void onOrder(ActionEvent actionEvent) {
         getOrderDetails();
-        try {
-            onOrderPlaced.apply(date, point, new Pair(this.orderProducts, null));
-        } catch (OrderValidationException e) {
-            e.printStackTrace();
+        if (validateOrder()) {
+            try {
+                onOrderPlaced.apply(date, this.chosenCustomerId, new Pair(this.orderProducts, this.chosenDiscounts));
+            } catch (OrderValidationException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public void setOnOrderPlaced(TriConsumer<Date, Point, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced) {
+    public void setOnOrderPlaced(TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced) {
         this.onOrderPlaced = onOrderPlaced;
     }
 

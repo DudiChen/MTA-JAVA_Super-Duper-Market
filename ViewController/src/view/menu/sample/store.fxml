@@ -8,42 +8,48 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<fx:root type="javafx.scene.control.ListCell" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root type="javafx.scene.control.ListCell" xmlns="http://javafx.com/javafx/8.0.171"
+         xmlns:fx="http://javafx.com/fxml/1">
     <graphic>
         <AnchorPane>
-         <Pane AnchorPane.leftAnchor="0.0">
-            <children>
-               <VBox >
-                  <children>
+            <Pane AnchorPane.leftAnchor="0.0">
+                <children>
+                    <VBox>
+                        <children>
                             <Label fx:id="nameLabel" alignment="TOP_LEFT" text="name">
                                 <font>
-                                    <Font name="System Bold Italic" size="17.0" />
+                                    <Font name="System Bold Italic" size="17.0"/>
                                 </font>
                             </Label>
                             <Label fx:id="idLabel" text="ID: ">
                                 <font>
-                                    <Font size="10.0" />
+                                    <Font size="10.0"/>
                                 </font>
                             </Label>
                             <Label fx:id="ppkLabel" text="PPK: ">
                                 <font>
-                                    <Font size="10.0" />
+                                    <Font size="10.0"/>
+                                </font>
+                            </Label>
+                            <Label fx:id="locationLabel" text="Location: ">
+                                <font>
+                                    <Font size="10.0"/>
                                 </font>
                             </Label>
                             <Label fx:id="shipmentIncomesLabel" text="Shipment Incomes Total: ">
                                 <font>
-                                    <Font size="10.0" />
+                                    <Font size="10.0"/>
                                 </font>
                             </Label>
-                  </children>
-               </VBox>
-            </children>
-         </Pane>
-         <Pane layoutX="157.0" AnchorPane.rightAnchor="0.0">
-            <children>
-                    <Button fx:id="orderButton" mnemonicParsing="false" text="Order" />
-            </children>
-         </Pane>
+                        </children>
+                    </VBox>
+                </children>
+            </Pane>
+            <Pane layoutX="157.0" AnchorPane.rightAnchor="0.0">
+                <children>
+                    <Button fx:id="orderButton" mnemonicParsing="false" text="Order"/>
+                </children>
+            </Pane>
         </AnchorPane>
     </graphic>
 </fx:root>

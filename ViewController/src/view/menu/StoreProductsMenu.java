@@ -1,5 +1,6 @@
 package view.menu;
 import controller.Controller;
+import entity.Customer;
 import entity.Discount;
 import entity.Product;
 import entity.Store;
@@ -36,12 +37,11 @@ public class StoreProductsMenu extends ProductsMenu {
     private Popup currentPopup;
     private boolean currentPopupFocused = true;
     private boolean hovered = true;
-    private List chosenDiscounts;
     @FXML
     private Label chosenDiscountsLabel;
 
-    public StoreProductsMenu(List<Product> products, Store store, TriConsumer<Date, Point, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced, Stage primaryStage, Controller controller) {
-        super(products, new ProductsContentFactory(store));
+    public StoreProductsMenu(List<Product> products, Store store, TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced, Stage primaryStage, Controller controller) {
+        super(products, new ProductsContentFactory(store), controller.getAllCustomers());
         this.controller = controller;
         this.productsContentFactory.setOnHover(this::onProductHover);
         this.productsContentFactory.setOnUnHover(this::onProductUnHover);
@@ -76,16 +76,6 @@ public class StoreProductsMenu extends ProductsMenu {
         }
         this.chosenDiscountsLabel.setText(this.chosenDiscountsLabel.getText() + ", " + discount.getName());
         this.chosenDiscounts.add(discount);
-    }
-
-    @Override
-    protected void onOrder(ActionEvent actionEvent) {
-        getOrderDetails();
-        try {
-            onOrderPlaced.apply(date, point, new Pair(this.orderProducts, this.chosenDiscounts));
-        } catch (OrderValidationException e) {
-            e.printStackTrace();
-        }
     }
 
     private boolean isAvailableDiscount(Discount discount) {

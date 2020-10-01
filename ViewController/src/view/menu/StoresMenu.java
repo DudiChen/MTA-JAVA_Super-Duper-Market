@@ -34,10 +34,10 @@ public class StoresMenu implements Initializable, Navigatable {
     private Parent content;
     private Consumer<Integer> onStoreIdChoice;
     private ApplicationContext applicationContext;
-    private TriConsumer<Date, Point, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced;
+    private TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced;
     private Controller controller;
 
-    public void setOnOrderPlaced(TriConsumer<Date, Point, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced) {
+    public void setOnOrderPlaced(TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced) {
         this.onOrderPlaced = onOrderPlaced;
     }
 

@@ -125,4 +125,12 @@ public class Market {
     public boolean isEmpty() {
         return (idToProduct == null || idToProduct.isEmpty()) || (idToStore == null || idToStore.isEmpty()) ;
     }
+
+    public List<Customer> getAllCustomers() {
+        return new ArrayList<>(idToCustomer.values());
+    }
+
+    public Customer getCustomerById(int customerId) {
+        return this.idToCustomer.get(customerId);
+    }
 }

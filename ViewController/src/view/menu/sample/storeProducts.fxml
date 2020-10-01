@@ -7,8 +7,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ComboBox?>
 <VBox xmlns="http://javafx.com/javafx/8.0.171"
-          xmlns:fx="http://javafx.com/fxml/1">
+      xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Label text="Chosen Discounts:" fx:id="chosenDiscountsLabel" />
         <VBox>
@@ -18,6 +19,7 @@
                     <HBox>
                         <Label text="Delivery Date: "/>
                         <DatePicker fx:id="deliveryDatePicker" prefWidth="100.0"/>
+                        <ComboBox fx:id="customers"/>
                     </HBox>
                     <Button fx:id="orderButton" mnemonicParsing="false" prefHeight="27.0" text="Finalize Order"/>
                 </HBox>
