@@ -15,7 +15,10 @@
         <VBox>
             <VBox>
                 <ListView fx:id="productsList" layoutY="50.0" />
-                <HBox >
+                <ComboBox fx:id="newProductBox"
+                        style="-fx-background-color: cornflowerblue; -fx-background-radius: 50; -fx-cursor: hand"
+                          promptText="+"/>
+                <HBox>
                     <HBox>
                         <Label text="Delivery Date: "/>
                         <DatePicker fx:id="deliveryDatePicker" prefWidth="100.0"/>

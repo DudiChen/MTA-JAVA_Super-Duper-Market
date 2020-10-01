@@ -97,7 +97,9 @@ public class Controller {
         });
     }
 
-    public void addNewProduct() {
+    public void addNewProduct(int storeId, int productId) {
+        this.market.addProductToStore(storeId, productId, 0);
+        this.view.onStoreIdChoice.accept(storeId);
     }
 
     public void fetchAllProductsToUI() {
@@ -356,5 +358,13 @@ public class Controller {
 
     public List<Customer> getAllCustomers() {
         return this.market.getAllCustomers();
+    }
+
+    public void deleteProduct(int productId, int storeId) {
+        this.market.deleteProductForStore(productId, storeId);
+    }
+
+    public void changePriceForProduct(int storeId, int productId, double newPrice) {
+        this.market.changePriceForProduct(storeId, productId, newPrice);
     }
 }

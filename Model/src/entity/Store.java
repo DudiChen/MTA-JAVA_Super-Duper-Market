@@ -163,4 +163,16 @@ public class Store {
 
         return matchingDiscounts;
     }
+
+    public void removeProduct(int productId) {
+        this.stock.delete(productId);
+    }
+
+    public void updateProductPrice(int productId, double newPrice) {
+        this.stock.getSoldProducts().get(productId).setPrice(newPrice);
+    }
+
+    public void addProductToStock(int productId, int price) {
+        this.stock.addSoldProduct();
+    }
 }

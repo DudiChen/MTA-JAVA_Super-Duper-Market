@@ -33,7 +33,7 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
 
     protected final ProductsContentFactory productsContentFactory;
     private Parent content;
-    private List<Product> products;
+    protected List<Product> products;
     private List<Customer> allCustomers;
     protected TriConsumer<Date, Integer, Pair<List<Pair<Integer, Double>>, List<Discount>>> onOrderPlaced;
     private List<Pair<SimpleIntegerProperty, SimpleDoubleProperty>> chosenProductToQuantity;
@@ -44,7 +44,7 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
     @FXML
     private DatePicker deliveryDatePicker;
     @FXML
-    private ListView productsList;
+    protected ListView productsList;
     @FXML
     private ComboBox<String> customers;
     protected Point point;

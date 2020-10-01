@@ -133,4 +133,19 @@ public class Market {
     public Customer getCustomerById(int customerId) {
         return this.idToCustomer.get(customerId);
     }
+
+    public void deleteProductForStore(int productId, int storeId) {
+        // TODO:: validate all validations e.g not only selling store !
+        Store sellingStore = this.idToStore.get(storeId);
+        sellingStore.removeProduct(productId);
+    }
+
+    public void changePriceForProduct(int storeId, int productId, double newPrice) {
+        Store sellingStore = this.idToStore.get(storeId);
+        sellingStore.updateProductPrice(productId, newPrice);
+    }
+
+    public void addProductToStore(int storeId, int productId, int price) {
+        this.idToStore.get(storeId).addProductToStock(productId, price);
+    }
 }
