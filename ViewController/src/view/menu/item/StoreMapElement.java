@@ -3,7 +3,6 @@ package view.menu.item;
 import entity.Store;
 import javafx.scene.Node;
 import javafx.scene.control.ListView;
-import javafx.scene.text.Text;
 import javafx.stage.Popup;
 
 import java.awt.*;
@@ -22,7 +21,7 @@ public class StoreMapElement implements MapElement {
 
     @Override
     public Point getPoint() {
-        return this.store.getCoordinate();
+        return this.store.getLocation();
     }
 
     @Override

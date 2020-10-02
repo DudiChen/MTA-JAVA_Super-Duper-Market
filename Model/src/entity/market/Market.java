@@ -132,13 +132,13 @@ public class Market {
         return (idToProduct == null || idToProduct.isEmpty()) || (idToStore == null || idToStore.isEmpty()) ;
     }
 
-    public List<Customer> getAllCustomers() {
-        return new ArrayList<>(idToCustomer.values());
-    }
+//    public List<Customer> getAllCustomers() {
+//        return new ArrayList<>(idToCustomer.values());
+//    }
 
-    public Customer getCustomerById(int customerId) {
-        return this.idToCustomer.get(customerId);
-    }
+//    public Customer getCustomerById(int customerId) {
+//        return this.idToCustomer.get(customerId);
+//    }
 
     public void deleteProductForStore(int productId, int storeId) {
         // TODO:: validate all validations e.g not only selling store !

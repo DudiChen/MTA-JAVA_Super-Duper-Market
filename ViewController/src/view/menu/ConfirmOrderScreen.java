@@ -2,7 +2,6 @@ package view.menu;
 
 import entity.Store;
 import entity.market.OrderInvoice;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -59,7 +58,7 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.storeNameLabel.setText(this.storeNameLabel.getText() + this.store.getName() + " ID: " + this.store.getId() + " At: x: " + store.getCoordinate().getX() + " y: " + store.getCoordinate().getY());
+        this.storeNameLabel.setText(this.storeNameLabel.getText() + this.store.getName() + " ID: " + this.store.getId() + " At: x: " + store.getLocation().getX() + " y: " + store.getLocation().getY());
         this.approveButton.setOnAction(e -> this.onOrderAccepted.accept(orderInvoice.getOrderId()));
         this.shipmentCostLabel.setText(this.shipmentCostLabel.getText() + String.format("%.2f", orderInvoice.getShipmentPrice()));
         this.totalLabel.setText(this.totalLabel.getText() + String.format("%.2f",orderInvoice.getTotalPrice()));

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Store {
-    private Point coordinate;
+    private Point location;
     private Stock stock;
 
     public int getPpk() {
@@ -27,7 +27,7 @@ public class Store {
     private Map<Integer, List<Discount>> productIdToDiscounts;
 
     public Store(Point point, Stock stock, int ppk, int id, String name, Map<Integer, List<Discount>> productIdToDiscounts) {
-        this.coordinate = point;
+        this.location = point;
         this.stock = stock;
         this.ppk = ppk;
         this.id = id;
@@ -89,11 +89,11 @@ public class Store {
     }
 
     public double getShipmentCost(Point destinationForShipping) {
-        return this.ppk * this.coordinate.distance(destinationForShipping);
+        return this.ppk * this.location.distance(destinationForShipping);
     }
 
-    public Point getCoordinate() {
-        return coordinate;
+    public Point getLocation() {
+        return location;
     }
 
     public boolean isProductSold(int productId) {

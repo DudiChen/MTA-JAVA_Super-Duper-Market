@@ -7,9 +7,6 @@ import entity.market.OrderInvoice;
 import exception.MarketIsEmptyException;
 import exception.OrderValidationException;
 import exception.XMLException;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.Pair;
 import view.View;
 import view.menu.item.CustomerMapElement;
@@ -17,7 +14,6 @@ import view.menu.item.StoreMapElement;
 
 import javax.management.modelmbean.XMLParseException;
 import javax.xml.bind.ValidationException;
-import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -216,7 +212,7 @@ public class Controller {
         List<Discount> chosenDiscounts = productQuantityPairsWithDiscounts.getValue();
         // validate store coordinate is not the same as customer coordinate
         assert false;
-        if (this.market.getCustomerById(customerId).getLocation().equals(chosenStore.get().getCoordinate())) {
+        if (this.market.getCustomerById(customerId).getLocation().equals(chosenStore.get().getLocation())) {
             err.append("cannot make order from same coordinate as store").append(System.lineSeparator());
         }
         // validate chosen products are sold by the chosen store
