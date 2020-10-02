@@ -1,6 +1,8 @@
 package view.menu;
 
 import entity.Store;
+import entity.market.InvoiceDiscountProduct;
+import entity.market.InvoiceProduct;
 import entity.market.OrderInvoice;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,9 +12,11 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import view.menu.item.InvoiceDiscountProductContent;
 import view.menu.item.InvoiceProductContent;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
@@ -22,6 +26,8 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
     private final Store store;
     @FXML
     private ListView invoiceProductsContents;
+    @FXML
+    private ListView invoiceDiscountsContents;
     @FXML
     private Label shipmentCostLabel;
     @FXML
@@ -65,5 +71,10 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
         this.totalLabel.setText(this.totalLabel.getText() + String.format("%.2f",orderInvoice.getTotalPrice()));
         this.invoiceProductsContents.setCellFactory(param -> new InvoiceProductContent());
         this.invoiceProductsContents.getItems().addAll(orderInvoice.getInvoiceProducts());
+        List<InvoiceDiscountProduct> discountProducts = orderInvoice.getDiscountProducts();
+        if(discountProducts != null) {
+            this.invoiceDiscountsContents.getItems().addAll();
+            this.invoiceDiscountsContents.setCellFactory(param -> new InvoiceDiscountProductContent());
+        }
     }
 }

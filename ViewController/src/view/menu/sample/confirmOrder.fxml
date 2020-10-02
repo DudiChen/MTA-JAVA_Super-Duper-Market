@@ -15,6 +15,8 @@
             <Label fx:id="storeNameLabel" text="Order Summary: " />
         </VBox>
         <ListView fx:id="invoiceProductsContents" />
+        <Label text="From Discounts: "/>
+        <ListView fx:id="invoiceDiscountsContents"/>
             <HBox >
                <children>
                     <VBox>

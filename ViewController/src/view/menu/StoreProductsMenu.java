@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import view.ApplicationContext;
 import view.TriConsumer;
+import view.menu.item.AbstractProductContent;
 import view.menu.item.ProductsContentFactory;
 
 import java.awt.*;
@@ -122,7 +123,6 @@ public class StoreProductsMenu extends ProductsMenu {
         content.setEffect(new DropShadow());
         Popup popup = new Popup();
         popup.getContent().add(content);
-        content.setMinWidth(500);
         this.currentPopup = popup;
         return popup;
     }
@@ -130,8 +130,6 @@ public class StoreProductsMenu extends ProductsMenu {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-        Stream<Product> productStream = this.products.stream();
-        // TODO:: add all products not those !
         List<Product> productsThatAreNotSoldByThisStore = this.controller.getAllProducts().stream().filter(product -> !this.products.contains(product)).collect(Collectors.toList());
         this.newProductBox.getItems().addAll(productsThatAreNotSoldByThisStore.stream().map(product -> product.getId() + ": " + product.getName()).collect(Collectors.toList()));
         this.newProductBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
@@ -143,11 +141,10 @@ public class StoreProductsMenu extends ProductsMenu {
 
 
     private void onProductDelete(int productId) {
-        controller.deleteProduct(productId, store.getId());
-        this.productsList.getItems().clear();
+//        this.productsList.getItems().remove(controller.getProductById(productId));
         Stream<Product> productStream = this.products.stream();
         this.products = productStream.filter(product -> product.getId() != productId).collect(Collectors.toList());
-        this.productsList.getItems().addAll(products);
+        controller.deleteProduct(productId, store.getId());
     }
 
     private void onProductPriceChange(int productId, double newPrice) {

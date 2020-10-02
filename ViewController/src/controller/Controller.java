@@ -8,6 +8,7 @@ import exception.MarketIsEmptyException;
 import exception.OrderValidationException;
 import exception.XMLException;
 import javafx.util.Pair;
+import view.ApplicationContext;
 import view.View;
 import view.menu.item.CustomerMapElement;
 import view.menu.item.StoreMapElement;
@@ -359,6 +360,8 @@ public class Controller {
 
     public void deleteProduct(int productId, int storeId) {
         this.market.deleteProductForStore(productId, storeId);
+        ApplicationContext.getInstance().navigateBack();
+        this.view.onStoreIdChoice.accept(storeId);
     }
 
     public void changePriceForProduct(int storeId, int productId, double newPrice) {

@@ -50,6 +50,8 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
     protected ListView productsList;
     @FXML
     private ComboBox<String> customers;
+    @FXML
+    private ComboBox newProductBox;
     protected Point point;
     protected List<Pair<Integer, Double>> orderProducts;
     private int chosenCustomerId;
@@ -89,6 +91,9 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
             bindings.getValue().bindBidirectional(productContent.getQuantityProperty());
             return productContent;
         });
+        if(!(this instanceof StoreProductsMenu)){
+            newProductBox.setVisible(false);
+        }
         this.customers.getItems().addAll(allCustomers.stream().map(Object::toString).collect(Collectors.toList()));
         this.productsList.getItems().addAll(products);
     }

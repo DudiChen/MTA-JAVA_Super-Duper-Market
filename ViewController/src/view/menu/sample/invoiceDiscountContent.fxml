@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListCell?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<fx:root prefWidth="40.0" type="javafx.scene.control.ListCell" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+    <graphic>
+        <VBox prefWidth="100.0">
+            @FXML
+            private Label discountNameLabel;
+            <Separator />
+            <Label fx:id="nameLabel">
+                <font>
+                    <Font name="System Bold" size="15.0" />
+                </font></Label>
+            <Separator />
+            <Label fx:id="idLabel" text="ID: " />
+            <Separator />
+            <Label fx:id="discountNameLabel" text="As Part Of " />
+            <Separator />
+            <Label fx:id="quantityLabel" text="Quantity: " />
+            <Separator />
+            <Label fx:id="additionalCostLabel" text="Additional Cost: " />
+            <Separator />
+        </VBox>
+    </graphic>
+</fx:root>

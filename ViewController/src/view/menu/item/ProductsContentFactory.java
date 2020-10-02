@@ -37,9 +37,6 @@ public class ProductsContentFactory {
             if(this.onProductPriceChange.isPresent()) {
                 ((StoreProductContent)item).setOnPriceChange(this.onProductPriceChange.get());
             }
-            if (this.onProductPriceChange.isPresent()) {
-
-            }
         }
         else if(this.allStores != null) {
             item = new ProductContent(allStores);
