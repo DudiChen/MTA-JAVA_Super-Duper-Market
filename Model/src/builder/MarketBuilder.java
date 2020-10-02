@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market> {
-
     Map<Integer, Product> idToProduct;
     Map<Integer, Store> idToStore;
     Map<Integer, Customer> idToCustomer;
@@ -71,9 +70,12 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         // Check for Products ID duplicates in each Store:
         boolean foundStoreProductsDuplicates = checkStoreProductDuplicates(errorMessage, sdmStores);
 
+        // Check for Store Non-Existent Product Ids in Discounts:
+        boolean foundNonExistingDiscountsProductIdsInStoresByAllProducts = checkNonExistingDiscountsProductIdsInStores(errorMessage, sdmStores);
+
         // Check invalid conditions and throw exception accordingly:
         if (foundInvalidStoreCoordinates || foundInvalidCustomerCoordinates || foundLocationDuplicates
-                || foundCustomerIdDuplicates || foundStoreIdDuplicates || foundStoreProductsDuplicates) {
+                || foundCustomerIdDuplicates || foundStoreIdDuplicates || foundStoreProductsDuplicates || foundNonExistingDiscountsProductIdsInStoresByAllProducts) {
             throw new ValidationException(errorMessage.getMessage());
         }
     }
@@ -83,11 +85,63 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         Set<SDMStore> sdmStoresSet = new HashSet<>(sdmStores);
         boolean foundNonExistingStoresProducts = checkNonExistingStoresProducts(errorMessage, sdmStoresSet);
         boolean foundNonSoldProducts = checkProductsSoldByAtLeastOneStore(errorMessage, sdmStoresSet);
-//        TODO: DUDI:: Add check that all Discounts & Offers productIds are of existing products
-
+//        boolean foundNonExistingDiscountsProductIdsInStoresByAllProducts = checkNonExistingDiscountsProductIdsInStores(errorMessage, sdmStores);
         if (foundNonExistingStoresProducts || foundNonSoldProducts) {
             throw new ValidationException(errorMessage.getMessage());
         }
+    }
+
+    private boolean checkNonExistingDiscountsProductIdsInStores(ErrorMessage errorMessage, List<SDMStore> sdmStores) {
+        int itemId;
+        Map<Integer, Map<String,List<Integer>>> storeIdToMapDiscountNameToNonExistItemIds = new HashMap<>();
+        for (SDMStore sdmStore : sdmStores) {
+            List<Integer> storeProductIds = sdmStore.getSDMPrices().getSDMSell().stream().map(SDMSell::getItemId).collect(Collectors.toList());
+            for (SDMDiscount sdmDiscount : sdmStore.getSDMDiscounts().getSDMDiscount()) {
+                itemId = sdmDiscount.getIfYouBuy().getItemId();
+                if (!storeProductIds.contains(itemId)) {
+                    nonExistingDiscountsProductIdsInStoresMapHandler(
+                            storeIdToMapDiscountNameToNonExistItemIds,
+                            sdmStore.getId(),
+                            sdmDiscount.getName(),
+                            itemId);
+                }
+                for (SDMOffer sdmOffer : sdmDiscount.getThenYouGet().getSDMOffer()) {
+                    itemId = sdmOffer.getItemId();
+                    if (!storeProductIds.contains(itemId)) {
+                        nonExistingDiscountsProductIdsInStoresMapHandler(
+                                storeIdToMapDiscountNameToNonExistItemIds,
+                                sdmStore.getId(),
+                                sdmDiscount.getName(),
+                                itemId);
+                    }
+                }
+            }
+        }
+
+        boolean foundINonExistingProductsIds = !storeIdToMapDiscountNameToNonExistItemIds.isEmpty();
+        if (foundINonExistingProductsIds) {
+            StringBuilder lineBuilder = new StringBuilder();
+            for (Map.Entry<Integer, Map<String,List<Integer>>> storeEntry : storeIdToMapDiscountNameToNonExistItemIds.entrySet()) {
+                for (Map.Entry<String, List<Integer>> discountEntry : storeEntry.getValue().entrySet()) {
+                    lineBuilder.append("Store Id ").append(storeEntry.getKey()).append(" has Discount ").append("\"").append(discountEntry.getKey()).append("\"").append(" with the following Non-Existent Item Ids: ");
+                    for (int i = 0;  i < discountEntry.getValue().size(); i++) {
+                        if (i > 0) lineBuilder.append(", ");
+                        lineBuilder.append(discountEntry.getValue().get(i));
+                    }
+                }
+                lineBuilder.append(System.lineSeparator());
+                errorMessage.appendMessage(lineBuilder.toString());
+                lineBuilder = new StringBuilder();
+            }
+        }
+
+        return foundINonExistingProductsIds;
+    }
+
+    private void nonExistingDiscountsProductIdsInStoresMapHandler(Map<Integer, Map<String,List<Integer>>> storeIdToMapDiscountNameToNonExistItemIds, int storeId, String discountName, int itemId) {
+        storeIdToMapDiscountNameToNonExistItemIds.computeIfAbsent(storeId, k -> new HashMap<>());
+        storeIdToMapDiscountNameToNonExistItemIds.get(storeId).computeIfAbsent(discountName, k -> new ArrayList<>());
+        storeIdToMapDiscountNameToNonExistItemIds.get(storeId).get(discountName).add(itemId);
     }
 
     private boolean checkProductsSoldByAtLeastOneStore(ErrorMessage errorMessage, Set<SDMStore> sdmStores) {
@@ -127,7 +181,6 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         boolean foundDuplicates = false;
         Set<Point> dupPoints = findDuplicates(locations);
         if (dupPoints.size() > 0) {
-//            dupPointsErrors.appendMessage(dupPoints.stream().map(Object::toString)
             dupPointsErrors.appendMessage(dupPoints.stream().map(point -> "(" + (int)point.getX() + "," + (int)point.getY() + ")")
                     .reduce("", (acc, current) -> acc + "duplicate location coordinate for Point: " + current + System.lineSeparator()));
             foundDuplicates = true;
@@ -136,78 +189,15 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
     }
 
     private Map<Integer, Customer> getIdToCustomer(List<SDMCustomer> sdmCustomers) {
-//        List<Integer> ids = sdmCustomers.stream().map(SDMCustomer::getId).collect(Collectors.toList());
-//        ErrorMessage dupIdErrors = new ErrorMessage("");
-//        boolean foundDuplicateIds = handleDuplicateIds(dupIdErrors, ids, "Customer ID");
-//        if (foundDuplicateIds)
-//            throw new ValidationException(dupIdErrors.getMessage());
         return constructIdToCustomer(new HashSet<>(sdmCustomers));
     }
 
     private Map<Integer, Product> getIdToProduct(List<SDMItem> sdmItems) {
-//        List<Integer> ids = sdmItems.stream().map(SDMItem::getId).collect(Collectors.toList());
-////        Set<Integer> dupIds = findDuplicates(ids);
-////        if (dupIds.size() > 0) {
-////            String dupIdErrors = dupIds.stream().map(Object::toString)
-////                    .reduce("", (acc, current) -> acc + "duplicate id for item " + current.toString() + System.lineSeparator());
-////            throw new ValidationException(dupIdErrors);
-////        } else {
-//            ErrorMessage dupIdErrors = new ErrorMessage("");
-//            boolean foundDuplicateIds = handleDuplicateIds(dupIdErrors, ids, "Product ID");
-//            if (foundDuplicateIds)
-//                throw new ValidationException(dupIdErrors.getMessage());
-            return constructIdToProduct(new HashSet<>(sdmItems));
-//        }
+        return constructIdToProduct(new HashSet<>(sdmItems));
     }
 
     // TODO: Refactor; split checks to separated methods for reuse
     private Map<Integer, Store> getIdToStore(List<SDMStore> sdmStores) {
-
-//        List<Integer> ids = sdmStores.stream().map(SDMStore::getId).collect(Collectors.toList());
-//        Set<Integer> dupIds = findDuplicates(ids);
-//        StringBuilder errors = new StringBuilder();
-
-//        Set<Integer> badCoordinatesStoresIds = getBadCoordinatesStoresIds(new HashSet<>(sdmStores));
-//        if(badCoordinatesStoresIds.size() > 0) {
-//            badCoordinatesStoresIds
-//                    .forEach(storeId -> errors.append("store id ").append(storeId).append(" has illegal location - coordinates must be in the range of [0, 50]").append(System.lineSeparator()));
-//        }
-//
-//        // check for duplicate product sell of each store
-//        Map<Integer, List<Integer>> nonValidStoreIdsToDuplicateProds = getDuplicateProducts(sdmStores);
-//        nonValidStoreIdsToDuplicateProds
-//                .forEach((storeId, productIds) -> {
-//                    if (productIds.size() > 0) {
-//                        productIds
-//                                .forEach(productId -> errors.append("product id ").append(productId).append(" sold by store id ").append(storeId).append(" more then once").append(System.lineSeparator()));
-//                    }
-//                });
-//        // check for duplicate ids stores
-//        errors.append(dupIds.stream().map(Object::toString)
-//                .reduce("", (acc, current) -> acc + "duplicate id for store " + current.toString() + System.lineSeparator()));
-
-
-//        // check for non existing products sold by stores
-//        Map<Integer, List<Integer>> nonValidStoresToNonExistingProds = getNonExistingProducts(new HashSet<>(sdmStores));
-//        nonValidStoresToNonExistingProds
-//                .forEach((storeId, productIds) -> {
-//                    if (productIds.size() > 0) {
-//                        productIds
-//                                .forEach(productId -> errors.append("product id ").append(productId).append(" sold by store id ").append(storeId).append(" but doesn't exist").append(System.lineSeparator()));
-//                    }
-//                });
-//
-//
-//
-//        // 3.5 validation - all the products are sold by at least one store
-//        List<Product> nonSoldProducts = getNonSoldProducts(new HashSet<>(sdmStores));
-//        errors.append(nonSoldProducts.stream().map(Product::getId).map(Object::toString)
-//                .reduce("", (acc, currProductId) -> acc + "item id " + currProductId + " is not sold by any store" + System.lineSeparator()));
-//
-//
-//        if (errors.length() > 0) {
-//            throw new ValidationException("Errors:" + System.lineSeparator() + errors.toString());
-//        }
         return constructIdToStore(new HashSet<>(sdmStores));
     }
 
@@ -341,7 +331,6 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         if (dupIds.size() > 0) {
             dupIdErrors.appendMessage(dupIds.stream().map(Object::toString)
                     .reduce("", (acc, current) -> acc + "duplicate id for " + entityName + " " + current + System.lineSeparator()));
-//            throw new ValidationException(dupIdErrors.getMessage());
             foundDuplicates = true;
         }
         return foundDuplicates;
