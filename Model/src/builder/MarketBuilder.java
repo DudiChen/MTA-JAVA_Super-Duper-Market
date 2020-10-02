@@ -313,7 +313,6 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
     }
 
     private <T> Set<T> findDuplicates(Collection<T> collection) {
-
         Set<T> duplicates = new LinkedHashSet<>();
         Set<T> uniques = new HashSet<>();
 
