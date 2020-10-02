@@ -28,6 +28,8 @@ public class Controller {
     private AtomicReference<Store> chosenStore;
     private boolean loaded = false;
     private Market market;
+//    private AtomicReference<Integer> currentCustomerId;
+    private int currentCustomerId;
 
     public Controller(View view) {
         this.view = view;
@@ -59,9 +61,7 @@ public class Controller {
         loadXmlTask.setOnSucceeded(event -> {
             try {
                 this.market = loadXmlTask.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
             view.fileLoadedSuccessfully();
@@ -141,7 +141,7 @@ public class Controller {
                                     }
                                 }
                                 productQuantityPairs.getKey().removeAll(toDelete);
-                                makeOrderForChosenStore(date, customerId, new Pair(orderPairs, productQuantityPairs.getValue()));
+                                makeOrderForChosenStore(date, customerId, new Pair<>(orderPairs, productQuantityPairs.getValue()));
                             } catch (OrderValidationException e) {
                                 e.printStackTrace();
                             }
@@ -210,7 +210,7 @@ public class Controller {
         List<Discount.Offer> chosenOffers = productQuantityPairsWithOffers.getValue();
         // validate store coordinate is not the same as customer coordinate
         assert false;
-        if (this.market.getCustomerById(customerId).getLocation().equals(chosenStore.get().getCoordinate())) {
+        if (this.market.getCustomerById(customerId).getLocation().equals(chosenStore.get().getLocation())) {
             err.append("cannot make order from same coordinate as store").append(System.lineSeparator());
         }
         // validate chosen products are sold by the chosen store
@@ -319,7 +319,7 @@ public class Controller {
         String inputPath = view.promptUserFilePath();
         try (InputStream inputStream = new FileInputStream(inputPath)) {
             ObjectInputStream in = new ObjectInputStream(inputStream);
-            List history = (ArrayList<OrderInvoice>) in.readObject();
+            List<OrderInvoice> history = (ArrayList<OrderInvoice>) in.readObject();
             market.setOrdersHistory(history);
             view.fileLoadedSuccessfully();
         } catch (FileNotFoundException e) {
@@ -350,7 +350,7 @@ public class Controller {
         return this.market.getProductById(productId);
     }
 
-    public boolean isAvailableDiscount(Discount discount, List orderProducts, List chosenDiscounts) {
+    public boolean isAvailableDiscount(Discount discount, List<Pair<Integer, Double>> orderProducts, List<Discount> chosenDiscounts) {
         return true;
     }
 

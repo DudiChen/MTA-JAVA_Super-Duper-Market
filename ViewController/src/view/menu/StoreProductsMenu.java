@@ -40,6 +40,7 @@ public class StoreProductsMenu extends ProductsMenu {
 
     private final Stage primaryStage;
     private final Store store;
+//    private final Controller controller;
     private Popup currentPopup;
     private boolean currentPopupFocused = true;
     private boolean hovered = true;
@@ -58,7 +59,7 @@ public class StoreProductsMenu extends ProductsMenu {
         this.productsContentFactory.setOnUnHover(this::onProductUnHover);
         this.setOnOrderPlaced(onOrderPlaced);
         this.primaryStage = primaryStage;
-        this.chosenDiscounts = new ArrayList();
+        this.chosenDiscounts = new ArrayList<>();
         this.store = store;
     }
 

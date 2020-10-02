@@ -1,6 +1,5 @@
 package view.menu.item;
 
-import controller.Controller;
 import entity.Store;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,7 +7,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import view.ApplicationContext;
 
 import java.io.IOException;
 import java.util.function.Consumer;
@@ -65,7 +63,7 @@ public class StoreContent extends ListCell<Store> {
             ppkLabel.setText("Price Per Kilometer: " + store.getPpk());
             shipmentIncomesLabel.setText("Total Shipments Incomes: " + store.getTotalShipmentIncome());
             orderButton.setOnAction(event -> this.onStoreIdChoice.accept(store.getId()));
-            locationLabel.setText(locationLabel.getText() + " X: " + store.getCoordinate().getX() + " Y: " + store.getCoordinate().getY());
+            locationLabel.setText(locationLabel.getText() + " X: " + store.getLocation().getX() + " Y: " + store.getLocation().getY());
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         }
     }

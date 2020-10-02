@@ -112,6 +112,7 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
         if(this.customers.getValue() != null) {
             this.chosenCustomerId = Integer.parseInt(this.customers.getValue().split(":")[0]);
         }
+        // System.out.println(chosenCustomerId);
         this.date = date;
         this.orderProducts = chosenProductToQuantity;
     }
@@ -142,7 +143,7 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
         getOrderDetails();
         if (validateOrder()) {
             try {
-                onOrderPlaced.apply(date, this.chosenCustomerId, new Pair<List<Pair<Integer, Double>>, List<Discount.Offer>>(this.orderProducts, this.chosenOffers));
+                onOrderPlaced.apply(date, this.chosenCustomerId, new Pair<>(this.orderProducts, this.chosenOffers));
             } catch (OrderValidationException e) {
                 e.printStackTrace();
             }

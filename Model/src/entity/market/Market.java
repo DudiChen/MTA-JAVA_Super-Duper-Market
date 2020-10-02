@@ -42,6 +42,10 @@ public class Market {
         return Collections.unmodifiableList(new ArrayList<>(idToProduct.values()));
     }
 
+    public List<Customer> getAllCustomers() {
+        return new ArrayList<>(this.idToCustomer.values());
+    }
+
     public Store getStoreById(int id) {
         return idToStore.get(id);
     }
@@ -49,6 +53,8 @@ public class Market {
     public Product getProductById(int id) {
         return this.idToProduct.get(id);
     }
+
+    public Customer getCustomerById(int id) { return this.idToCustomer.get(id); }
 
     public int receiveOrder(Order order) {
         List<InvoiceProduct> invoiceProducts = order.getProductIdsToQuantity().stream()
@@ -126,13 +132,13 @@ public class Market {
         return (idToProduct == null || idToProduct.isEmpty()) || (idToStore == null || idToStore.isEmpty()) ;
     }
 
-    public List<Customer> getAllCustomers() {
-        return new ArrayList<>(idToCustomer.values());
-    }
+//    public List<Customer> getAllCustomers() {
+//        return new ArrayList<>(idToCustomer.values());
+//    }
 
-    public Customer getCustomerById(int customerId) {
-        return this.idToCustomer.get(customerId);
-    }
+//    public Customer getCustomerById(int customerId) {
+//        return this.idToCustomer.get(customerId);
+//    }
 
     public void deleteProductForStore(int productId, int storeId) {
         // TODO:: validate all validations e.g not only selling store !
