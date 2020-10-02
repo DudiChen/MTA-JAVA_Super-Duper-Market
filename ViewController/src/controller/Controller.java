@@ -72,10 +72,11 @@ public class Controller {
             if (exception instanceof ValidationException) {
                 view.displayError(exception.getMessage());
             }
-            if (exception instanceof XMLParseException || exception instanceof XMLException || exception instanceof FileNotFoundException) {
+            else if (exception instanceof XMLParseException || exception instanceof XMLException || exception instanceof FileNotFoundException) {
                 view.displayError("File Not Found");
             } else {
-                System.out.println(exception.getMessage() + "unknown exception while loading xml file"); // TODO : figure out what to do with the exception
+//                System.out.println(exception.getMessage() + "unknown exception while loading xml file"); // TODO : figure out what to do with the exception
+                view.displayError("Couldn't Parse XML due to unknown error:" + exception.getMessage() + System.lineSeparator());
             }
         });
         this.bindTaskToUIComponents(loadXmlTask);

@@ -71,11 +71,11 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         boolean foundStoreProductsDuplicates = checkStoreProductDuplicates(errorMessage, sdmStores);
 
         // Check for Store Non-Existent Product Ids in Discounts:
-        boolean foundNonExistingDiscountsProductIdsInStoresByAllProducts = checkNonExistingDiscountsProductIdsInStores(errorMessage, sdmStores);
+        boolean foundNonExistingDiscountsProductIdsInStores = checkNonExistingDiscountsProductIdsInStores(errorMessage, sdmStores);
 
         // Check invalid conditions and throw exception accordingly:
         if (foundInvalidStoreCoordinates || foundInvalidCustomerCoordinates || foundLocationDuplicates
-                || foundCustomerIdDuplicates || foundStoreIdDuplicates || foundStoreProductsDuplicates || foundNonExistingDiscountsProductIdsInStoresByAllProducts) {
+                || foundCustomerIdDuplicates || foundStoreIdDuplicates || foundProductIdDuplicates || foundStoreProductsDuplicates || foundNonExistingDiscountsProductIdsInStores) {
             throw new ValidationException(errorMessage.getMessage());
         }
     }
@@ -96,23 +96,25 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         Map<Integer, Map<String,List<Integer>>> storeIdToMapDiscountNameToNonExistItemIds = new HashMap<>();
         for (SDMStore sdmStore : sdmStores) {
             List<Integer> storeProductIds = sdmStore.getSDMPrices().getSDMSell().stream().map(SDMSell::getItemId).collect(Collectors.toList());
-            for (SDMDiscount sdmDiscount : sdmStore.getSDMDiscounts().getSDMDiscount()) {
-                itemId = sdmDiscount.getIfYouBuy().getItemId();
-                if (!storeProductIds.contains(itemId)) {
-                    nonExistingDiscountsProductIdsInStoresMapHandler(
-                            storeIdToMapDiscountNameToNonExistItemIds,
-                            sdmStore.getId(),
-                            sdmDiscount.getName(),
-                            itemId);
-                }
-                for (SDMOffer sdmOffer : sdmDiscount.getThenYouGet().getSDMOffer()) {
-                    itemId = sdmOffer.getItemId();
+            if (sdmStore.getSDMDiscounts() != null && !sdmStore.getSDMDiscounts().getSDMDiscount().isEmpty()) {
+                for (SDMDiscount sdmDiscount : sdmStore.getSDMDiscounts().getSDMDiscount()) {
+                    itemId = sdmDiscount.getIfYouBuy().getItemId();
                     if (!storeProductIds.contains(itemId)) {
                         nonExistingDiscountsProductIdsInStoresMapHandler(
                                 storeIdToMapDiscountNameToNonExistItemIds,
                                 sdmStore.getId(),
                                 sdmDiscount.getName(),
                                 itemId);
+                    }
+                    for (SDMOffer sdmOffer : sdmDiscount.getThenYouGet().getSDMOffer()) {
+                        itemId = sdmOffer.getItemId();
+                        if (!storeProductIds.contains(itemId)) {
+                            nonExistingDiscountsProductIdsInStoresMapHandler(
+                                    storeIdToMapDiscountNameToNonExistItemIds,
+                                    sdmStore.getId(),
+                                    sdmDiscount.getName(),
+                                    itemId);
+                        }
                     }
                 }
             }
@@ -123,7 +125,8 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
             StringBuilder lineBuilder = new StringBuilder();
             for (Map.Entry<Integer, Map<String,List<Integer>>> storeEntry : storeIdToMapDiscountNameToNonExistItemIds.entrySet()) {
                 for (Map.Entry<String, List<Integer>> discountEntry : storeEntry.getValue().entrySet()) {
-                    lineBuilder.append("Store Id ").append(storeEntry.getKey()).append(" has Discount ").append("\"").append(discountEntry.getKey()).append("\"").append(" with the following Non-Existent Item Ids: ");
+                    lineBuilder.append("Store Id ").append(storeEntry.getKey()).append(" has Discount ")
+                            .append("\"").append(discountEntry.getKey()).append("\"").append(" with the following Item Ids not available in store: ");
                     for (int i = 0;  i < discountEntry.getValue().size(); i++) {
                         if (i > 0) lineBuilder.append(", ");
                         lineBuilder.append(discountEntry.getValue().get(i));
