@@ -151,7 +151,7 @@ public class Market {
         sellingStore.updateProductPrice(productId, newPrice);
     }
 
-    public void addProductToStore(int storeId, int productId, int price) {
-        this.idToStore.get(storeId).addProductToStock(productId, price);
+    public void addProductToStore(int storeId, int productId, double price) {
+        this.idToStore.get(storeId).addProductToStock(this.getProductById(productId), price);
     }
 }

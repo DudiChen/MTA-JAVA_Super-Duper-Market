@@ -199,7 +199,6 @@ public class MarketBuilder implements Builder<SuperDuperMarketDescriptor, Market
         return constructIdToProduct(new HashSet<>(sdmItems));
     }
 
-    // TODO: Refactor; split checks to separated methods for reuse
     private Map<Integer, Store> getIdToStore(List<SDMStore> sdmStores) {
         return constructIdToStore(new HashSet<>(sdmStores));
     }

@@ -169,8 +169,7 @@ public class Store {
         this.stock.getSoldProducts().get(productId).setPrice(newPrice);
     }
 
-    public void addProductToStock(int productId, int price) {
-        // TODO :: DUDI :: IMPLEMENT !
-        this.stock.addSoldProduct();
+    public void addProductToStock(Product product, double price) {
+        this.stock.addSoldProduct(new StoreProduct(product, price));
     }
 }
