@@ -5,15 +5,15 @@ import entity.Discount;
 import java.io.Serializable;
 
 public class InvoiceDiscountProduct implements Serializable {
-    private int id;
+    private int productId;
     private String name;
     private double additionalCost;
     private double quantity;
     private String discountName;
 
     // TODO: Check if there is any unused ctors and remove
-    public InvoiceDiscountProduct(int id, String name, double additionalCost, double quantity, String discountName) {
-        this.id = id;
+    public InvoiceDiscountProduct(int productId, String name, double additionalCost, double quantity, String discountName) {
+        this.productId = productId;
         this.name = name;
         this.quantity = quantity;
         this.additionalCost = additionalCost;
@@ -21,7 +21,7 @@ public class InvoiceDiscountProduct implements Serializable {
     }
 
     public InvoiceDiscountProduct(Discount.Offer acceptedOffer, String productName) {
-        this.id = acceptedOffer.getProductId();
+        this.productId = acceptedOffer.getProductId();
         this.name = productName;
         this.quantity = acceptedOffer.getQuantity();
         this.additionalCost = acceptedOffer.getForAdditional();
@@ -40,8 +40,8 @@ public class InvoiceDiscountProduct implements Serializable {
         return quantity;
     }
 
-    public int getId() {
-        return id;
+    public int getProductId() {
+        return productId;
     }
 
     public String getDiscountName() {

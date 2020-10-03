@@ -205,9 +205,9 @@ public class Controller {
         view.onOrderPlaced = this::makeOrderForChosenStore;
     }
 
+//    TODO::UI: Missing the Offers support from order when dispalying invoice and calculating order cost - maybe other related details as well
     private void makeOrderForChosenStore(Date date, Integer customerId, Pair<List<Pair<Integer, Double>>, List<Discount.Offer>> productQuantityPairsWithOffers) throws OrderValidationException {
         StringBuilder err = new StringBuilder();
-        // TODO :: DUDI :: use chosen offers and customer id!
         List<Discount.Offer> chosenOffers = productQuantityPairsWithOffers.getValue();
         // validate store coordinate is not the same as customer coordinate
         assert false;
@@ -227,7 +227,7 @@ public class Controller {
         if (productQuantityPairsWithOffers.getKey().size() == 0) {
             view.showMainMenu();
         }
-        int orderInvoiceId = market.receiveOrder(new Order(productQuantityPairsWithOffers.getKey(), this.market.getCustomerById(customerId).getLocation(), date, chosenStore.get().getId()));
+        int orderInvoiceId = market.receiveOrder(new Order(customerId, productQuantityPairsWithOffers.getKey(), chosenOffers, this.market.getCustomerById(customerId).getLocation(), date, chosenStore.get().getId()));
         view.summarizeOrder(market.getOrderInvoice(orderInvoiceId));
     }
     

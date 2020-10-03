@@ -8,6 +8,7 @@ public class OrderInvoice implements Serializable {
 
     private OrderStatus orderStatus = OrderStatus.ISSUED;
     private int orderId;
+    private int customerId;
     private List<InvoiceProduct> invoiceProduct;
     private List<InvoiceDiscountProduct> discountProducts;
     private double totalPrice;
@@ -19,9 +20,10 @@ public class OrderInvoice implements Serializable {
         return shipmentPrice;
     }
 
-    public OrderInvoice(int id, List<InvoiceProduct> invoiceProducts, double totalPrice, Date deliveryDate, int storeId, double shipmentPrice) {
+    public OrderInvoice(int id, List<InvoiceProduct> invoiceProducts, List<InvoiceDiscountProduct> discountProducts, double totalPrice, Date deliveryDate, int storeId, double shipmentPrice) {
         this.orderId = id;
         this.invoiceProduct = invoiceProducts;
+        this.discountProducts = discountProducts;
         this.totalPrice = totalPrice;
         this.deliveryDate = deliveryDate;
         this.storeId = storeId;

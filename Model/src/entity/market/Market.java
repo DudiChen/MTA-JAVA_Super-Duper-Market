@@ -73,15 +73,28 @@ public class Market {
                 .map(InvoiceProduct::getTotalPrice)
                 .reduce((double) 0, Double::sum);
 
+        List<InvoiceDiscountProduct> discountProducts = order.getOffersTaken().stream()
+                .map(discountOffer -> new InvoiceDiscountProduct(
+                        discountOffer.getProductId(),
+                        this.idToProduct.get(discountOffer.getProductId()).getName(),
+                        discountOffer.getForAdditional(),
+                        discountOffer.getQuantity(),
+                        discountOffer.getRelatedDiscountName()))
+                .collect(Collectors.toList());
+
         this.idToOrderInvoice.put(order.getId(),
                 new OrderInvoice(
                         order.getId(),
                         invoiceProducts,
+                        discountProducts,
                         shipmentCost + totalPrice,
                         order.getDeliveryDate(),
                         order.getStoreId(),
                         this.idToStore.get(order.getStoreId()).getShipmentCost(order.getDestination()))
         );
+
+
+
         return order.getId();
     }
 
@@ -98,11 +111,12 @@ public class Market {
     }
 
     public void addStoreOfferPurchasesToOrderInvoice(int storeId, int orderInvoiceId, List<Discount.Offer> acceptedOffers) {
-        this.getOrderInvoice(storeId).setDiscountProducts(
+        this.getOrderInvoice(orderInvoiceId).setDiscountProducts(
                 acceptedOffers.stream()
                 .map(offer -> new InvoiceDiscountProduct(offer, this.idToProduct.get(offer.getProductId()).getName()))
                 .collect(Collectors.toList())
         );
+        this.idToStore.get(storeId).setOrderDiscountProducts(orderInvoiceId, acceptedOffers);
     }
 
     public OrderInvoice getOrderInvoice(int orderInvoiceId) {

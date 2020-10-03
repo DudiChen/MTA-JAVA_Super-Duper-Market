@@ -46,7 +46,7 @@ public class InvoiceDiscountProductContent extends ListCell<InvoiceDiscountProdu
             setContentDisplay(ContentDisplay.TEXT_ONLY);
         } else {
             double additionalCost = invoiceProduct.getAdditionalCost();
-            int id = invoiceProduct.getId();
+            int id = invoiceProduct.getProductId();
             String name = invoiceProduct.getName();
             double quantity = invoiceProduct.getQuantity();
             String discountName = invoiceProduct.getDiscountName();

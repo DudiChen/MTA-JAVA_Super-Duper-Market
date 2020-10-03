@@ -1,6 +1,7 @@
 package entity;
 
 
+import entity.market.InvoiceDiscountProduct;
 import entity.market.OrderInvoice;
 import exception.ProductIdNotFoundException;
 import javafx.util.Pair;
@@ -20,7 +21,7 @@ public class Store {
     private int id;
     private String name;
     private double totalShipmentIncome;
-    private List<OrderInvoice> ordersHistory;
+    private Map<Integer, OrderInvoice> ordersHistory;
     private Map<Integer, List<Discount>> productIdToDiscounts;
 
     public Store(Point point, Stock stock, int ppk, int id, String name, Map<Integer, List<Discount>> productIdToDiscounts) {
@@ -30,7 +31,7 @@ public class Store {
         this.id = id;
         this.name = name;
         this.totalShipmentIncome = 0;
-        this.ordersHistory = new ArrayList<>();
+        this.ordersHistory = new HashMap<>();
         this.productIdToDiscounts = productIdToDiscounts;
     }
 
@@ -39,26 +40,32 @@ public class Store {
     }
 
     public void addOrder(OrderInvoice order) {
-        this.ordersHistory.add(order);
+        this.ordersHistory.put(order.getOrderId(), order);
+    }
+
+    public void setOrderDiscountProducts(int orderInvoiceId, List<Discount.Offer> offerPurchases) {
+        this.ordersHistory.get(orderInvoiceId).setDiscountProducts(
+                offerPurchases.stream().map(offer -> new InvoiceDiscountProduct(
+                        offer.getProductId(),
+                        this.stock.getSoldProducts().get(offer.getProductId()).getName(),
+                        offer.getForAdditional(),
+                        offer.getQuantity(),
+                        offer.getRelatedDiscountName()))
+                .collect(Collectors.toList())
+        );
     }
 
     public int getTotalProductSales(int productId) {
-//        return (int)
-//                this.ordersHistory.stream()
-//                        .map(orderInvoice -> orderInvoice.getInvoiceProducts())
-//                        .flatMap(List::stream)
-//                        .filter(invoiceProduct -> invoiceProduct.getId() == productId)
-//                        .count();
         // TODO: verify Exercise requirements does not contradict returning Discounts product count as well
-        int totalSoldCount = (int) this.ordersHistory.stream()
-                .map(orderInvoice -> orderInvoice.getInvoiceProducts())
+        int totalSoldCount = (int) this.ordersHistory.values().stream()
+                .map(OrderInvoice::getInvoiceProducts)
                 .flatMap(List::stream)
                 .filter(invoiceProduct -> invoiceProduct.getId() == productId)
                 .count();
-        totalSoldCount += (int) this.ordersHistory.stream()
-                .map(orderInvoice -> orderInvoice.getDiscountProducts())
+        totalSoldCount += (int) this.ordersHistory.values().stream()
+                .map(OrderInvoice::getDiscountProducts)
                 .flatMap(List::stream)
-                .filter(discountProduct -> discountProduct.getId() == productId)
+                .filter(discountProduct -> discountProduct.getProductId() == productId)
                 .count();
         return totalSoldCount;
     }
@@ -78,6 +85,7 @@ public class Store {
         return stock;
     }
 
+    // TODO: method not in use.
     public double getProductPriceByPPK(int productId, double distance) throws ProductIdNotFoundException {
         if (!stock.doesProductIdExist(productId)) {
             throw new ProductIdNotFoundException();
@@ -106,7 +114,7 @@ public class Store {
     }
 
     public List<OrderInvoice> getOrdersHistory() {
-        return ordersHistory;
+        return new ArrayList<>(ordersHistory.values());
     }
 
     public double getTotalShipmentIncome() {
@@ -135,7 +143,7 @@ public class Store {
     public List<Discount> getMatchingDiscountsByProductIdQuantityPairs(List<Pair<Integer, Double>> productIdQuantityPairs) {
         Map<Integer,List<Discount>> discountsMap = getDiscountsMapByProductIdList(
                 productIdQuantityPairs.stream()
-                .map(pair -> pair.getKey())
+                .map(Pair::getKey)
                 .collect(Collectors.toList()));
 
         return matchDiscountsByProductIdQuantityPairs(discountsMap, productIdQuantityPairs);
@@ -168,7 +176,7 @@ public class Store {
     public void updateProductPrice(int productId, double newPrice) {
         this.stock.getSoldProducts().get(productId).setPrice(newPrice);
     }
-
+    // TODO: Verify that this flow does not require any validation (e.g. existing productID)
     public void addProductToStock(Product product, double price) {
         this.stock.addSoldProduct(new StoreProduct(product, price));
     }
