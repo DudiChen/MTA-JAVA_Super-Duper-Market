@@ -87,6 +87,7 @@ public class Market {
                 this.idToOrderInvoice.put(order.getId(),
                 new OrderInvoice(
                         order.getId(),
+                        order.getCustomerId(),
                         invoiceProducts,
                         discountProducts,
                         shipmentCost + totalPrice,
@@ -150,6 +151,11 @@ public class Market {
         // TODO:: validate all validations e.g not only selling store !
         Store sellingStore = this.idToStore.get(storeId);
         sellingStore.removeProduct(productId);
+    }
+
+    private boolean isProductDeletionValid(int productId, int storeId) {
+        // TODO::DUDI: implement Product Deletion Validation
+        return true;
     }
 
     public void changePriceForProduct(int storeId, int productId, double newPrice) {

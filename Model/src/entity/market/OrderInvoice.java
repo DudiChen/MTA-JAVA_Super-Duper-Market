@@ -17,12 +17,15 @@ public class OrderInvoice implements Serializable {
     private int storeId;
     private double shipmentPrice;
 
+    public int getCustomerId() { return this.customerId; }
+
     public double getShipmentPrice() {
         return shipmentPrice;
     }
 
-    public OrderInvoice(int id, List<InvoiceProduct> invoiceProducts, List<InvoiceDiscountProduct> discountProducts, double totalPrice, Date deliveryDate, int storeId, double shipmentPrice) {
-        this.orderId = id;
+    public OrderInvoice(int orderId, int customerId, List<InvoiceProduct> invoiceProducts, List<InvoiceDiscountProduct> discountProducts, double totalPrice, Date deliveryDate, int storeId, double shipmentPrice) {
+        this.orderId = orderId;
+        this.customerId = customerId;
         this.invoiceProducts = invoiceProducts;
         this.discountProducts = discountProducts;
         this.totalPrice = totalPrice;
@@ -69,7 +72,6 @@ public class OrderInvoice implements Serializable {
     public Date getDeliveryDate() {
         return deliveryDate;
     }
-
 
     enum OrderStatus implements Serializable {
         ACCEPTED, CANCELED, ISSUED
