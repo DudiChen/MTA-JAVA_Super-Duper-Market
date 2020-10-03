@@ -75,7 +75,6 @@ public class Controller {
             else if (exception instanceof XMLParseException || exception instanceof XMLException || exception instanceof FileNotFoundException) {
                 view.displayError("File Not Found");
             } else {
-//                System.out.println(exception.getMessage() + "unknown exception while loading xml file"); // TODO : figure out what to do with the exception
                 view.displayError("Couldn't Parse XML due to unknown error:" + exception.getMessage() + System.lineSeparator());
             }
         });
@@ -207,6 +206,7 @@ public class Controller {
     }
 
 //    TODO::UI: Missing the Offers support from order when displaying invoice and calculating order cost - maybe other related details as well
+//    TODO::UI: in the Order History, under Orders tab; the Discount offer items are not counted - need to add as "Number of items from Discounts".
 //    TODO::UI: Orders does not display customer related data
 //    TODO::UI: On Dynamic Order display; missing prompt to user about order split info before viewing multiple orders
     private void makeOrderForChosenStore(Date date, Integer customerId, Pair<List<Pair<Integer, Double>>, List<Discount.Offer>> productQuantityPairsWithOffers) throws OrderValidationException {
@@ -354,7 +354,15 @@ public class Controller {
     }
 
     public boolean isAvailableDiscount(Discount discount, List<Pair<Integer, Double>> orderProducts, List<Discount> chosenDiscounts) {
-        return this.market.isAvailableDiscount(discount, orderProducts, chosenDiscounts);
+        int timesUsedDiscount = Collections.frequency(chosenDiscounts, discount);
+        boolean isAvailable = this.market.isAvailableDiscount(discount, orderProducts, timesUsedDiscount);
+        if (!isAvailable) {
+            view.displayMessage(
+                    String.format("%s: Not eligible %s according to current product quantity.",
+                    discount.getName(),
+                    (timesUsedDiscount > 0) ? "for another discount" : ""));
+        }
+        return isAvailable;
     }
 
     public List<Customer> getAllCustomers() {

@@ -161,10 +161,9 @@ public class Market {
         this.idToStore.get(storeId).addProductToStock(this.getProductById(productId), price);
     }
 
-    public boolean isAvailableDiscount(Discount discount, List<Pair<Integer, Double>> orderProducts, List<Discount> chosenDiscounts) {
+    public boolean isAvailableDiscount(Discount discount, List<Pair<Integer, Double>> orderProducts, int timesUsedDiscount) {
         int discountProductId = discount.getProductId();
         double discountProductQuantity = discount.getQuantity();
-        int timesUsedDiscount = Collections.frequency(chosenDiscounts, discount);
         double quantityOrderedOfProduct = orderProducts.stream()
                 .filter(productIdToQuantityPair -> productIdToQuantityPair.getKey() == discountProductId)
                 .map(Pair::getValue).reduce(0.0, Double::sum);
