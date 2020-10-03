@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.ListView?>
 <fx:root prefWidth="40.0" type="javafx.scene.control.ListCell" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
     <graphic>
         <VBox prefWidth="100.0">
@@ -16,7 +17,9 @@
                     <Font name="System Bold" size="15.0" />
                 </font></Label>
             <Separator />
-
+            <ListView fx:id="productsContents" />
+            <Label text="From Discounts: "/>
+            <ListView fx:id="invoiceDiscountsContents" />
             <Label fx:id="deliveryDateLabel" text="Delivery Date: " />
             <Separator />
 
@@ -32,6 +35,7 @@
             <Separator />
             <Label fx:id="totalPriceLabel" text="Total Price: " />
             <Separator />
+
         </VBox>
     </graphic>
 </fx:root>

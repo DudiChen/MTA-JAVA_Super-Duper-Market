@@ -2,17 +2,20 @@ package view.menu.item;
 
 import controller.Controller;
 import entity.Product;
+import entity.market.InvoiceDiscountProduct;
 import entity.market.OrderInvoice;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class OrderInvoiceContent extends ListCell<OrderInvoice> {
 
@@ -31,6 +34,10 @@ public class OrderInvoiceContent extends ListCell<OrderInvoice> {
     private Label shipmentPriceLabel;
     @FXML
     private Label totalPriceLabel;
+    @FXML
+    private ListView productsContents;
+    @FXML
+    private ListView invoiceDiscountsContents;
 
     public OrderInvoiceContent(Controller controller) {
         this.controller = controller;
@@ -66,6 +73,13 @@ public class OrderInvoiceContent extends ListCell<OrderInvoice> {
             this.totalPriceLabel.setText("Total Price: " + String.format("%.2f", orderInvoice.getTotalPrice() - orderInvoice.getShipmentPrice()));
             this.shipmentPriceLabel.setText("Shipment Cost: " + String.format("%.2f", orderInvoice.getShipmentPrice()));
             this.totalPriceLabel.setText("Total Price: " + String.format("%.2f", orderInvoice.getTotalPrice()));
+            List<InvoiceDiscountProduct> discountProducts = orderInvoice.getDiscountProducts();
+            this.productsContents.setCellFactory(param -> new InvoiceProductContent());
+            this.productsContents.getItems().addAll(orderInvoice.getInvoiceProducts());
+            if(discountProducts != null) {
+                this.invoiceDiscountsContents.getItems().addAll(discountProducts);
+                this.invoiceDiscountsContents.setCellFactory(param -> new InvoiceDiscountProductContent());
+            }
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         }
     }
