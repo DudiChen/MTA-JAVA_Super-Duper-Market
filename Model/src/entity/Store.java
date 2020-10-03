@@ -121,13 +121,17 @@ public class Store {
     }
 
     public List<Discount> getDiscountsByProductId(int productId) {
-        return this.productIdToDiscounts.get(productId);
+        List<Discount> discounts = this.productIdToDiscounts.get(productId);
+        return (discounts != null) ? discounts : new ArrayList<>();
     }
 
     private Map<Integer,List<Discount>> getDiscountsMapByProductIdList(List<Integer> productIds) {
         List<Discount> result = new ArrayList<>();
         return productIds.stream()
-                .filter(productId -> getDiscountsByProductId(productId)  != null)
+                .filter(productId -> {
+                    List<Discount> discounts = getDiscountsByProductId(productId);
+                    return (discounts != null && !discounts.isEmpty());
+                })
                 .collect(Collectors.toMap(productId -> productId, this::getDiscountsByProductId));
     }
 
@@ -170,5 +174,17 @@ public class Store {
     // TODO: Verify that this flow does not require any validation (e.g. existing productID)
     public void addProductToStock(Product product, double price) {
         this.stock.addSoldProduct(new StoreProduct(product, price));
+    }
+
+    public boolean isLastProductSold(int productId) {
+//        int numberOfOtherProductsSold =  (int) this.stock.getSoldProducts().values().stream().filter(storeProduct -> storeProduct.getId() != productId).count();
+//        return numberOfOtherProductsSold > 0;
+        Optional<StoreProduct> otherProduct =  this.stock.getSoldProducts().values().stream().filter(storeProduct -> storeProduct.getId() != productId).findFirst();
+        return !otherProduct.isPresent();
+
+    }
+
+    public void removeProductDiscounts(int productId) {
+        this.productIdToDiscounts.remove(productId);
     }
 }

@@ -68,7 +68,7 @@ public class StoreProductsMenu extends ProductsMenu {
     public void onProductHover(Product product, Point mousePos) {
         if (this.currentPopup == null) {
             List<Discount> discounts = this.store.getDiscountsByProductId(product.getId());
-            if (discounts != null) {
+            if (discounts != null && !discounts.isEmpty()) {
                 DiscountsMenu discountsMenu = new DiscountsMenu(discounts, this.controller, this::onDiscountChoice);
                 discountsMenu.getContent().addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, event -> {
                     onPopupUnHover();

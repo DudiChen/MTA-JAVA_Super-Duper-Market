@@ -206,7 +206,7 @@ public class Controller {
     }
 
 //    TODO::UI: Missing the Offers support from order when displaying invoice.
-//    TODO::UI: in the Order History, under Orders tab; the Discount offer items are not counted - need to add as "Number of items from Discounts" => use getNumberOfInvoiceProducts().
+//    TODO::UI: in the Order History, under Orders tab; the Discount offer items are not counted - need to add as "Number of items from Discounts" => use getNumberOfDiscountProducts() & getNumberOfInvoiceProducts().
 //    TODO::UI: Orders does not display customer related data
 //    TODO::UI: On Dynamic Order display; missing prompt to user about order split info before viewing multiple orders
     private void makeOrderForChosenStore(Date date, Integer customerId, Pair<List<Pair<Integer, Double>>, List<Discount.Offer>> productQuantityPairsWithOffers) throws OrderValidationException {
@@ -374,9 +374,14 @@ public class Controller {
     }
 
     public void deleteProduct(int productId, int storeId) {
-        this.market.deleteProductForStore(productId, storeId);
-        ApplicationContext.getInstance().navigateBack();
-        this.view.onStoreIdChoice.accept(storeId);
+        try {
+            this.market.deleteProductForStore(productId, storeId);
+            ApplicationContext.getInstance().navigateBack();
+            this.view.onStoreIdChoice.accept(storeId);
+        }
+        catch (ValidationException e) {
+            this.view.displayMessage(e.getMessage());
+        }
     }
 
     public void changePriceForProduct(int storeId, int productId, double newPrice) {

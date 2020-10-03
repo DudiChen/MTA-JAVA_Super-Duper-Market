@@ -3,7 +3,9 @@ package entity.market;
 import entity.*;
 import exception.MarketIsEmptyException;
 import javafx.util.Pair;
+import util.ErrorMessage;
 
+import javax.xml.bind.ValidationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -147,18 +149,94 @@ public class Market {
         return (idToProduct == null || idToProduct.isEmpty()) || (idToStore == null || idToStore.isEmpty()) ;
     }
 
-    public void deleteProductForStore(int productId, int storeId) {
-        // TODO:: validate all validations e.g not only selling store !
-        Store sellingStore = this.idToStore.get(storeId);
+//    public void deleteProductForStore(int productId, int storeId, Optional<String> discountsRemovedMessage) throws ValidationException {
+    public void deleteProductForStore(int productId, int storeId) throws ValidationException {
+//        validateProductDeletionFromStore(storeId, productId, discountsRemovedMessage);
+        validateProductDeletionFromStore(storeId, productId);
+        Store sellingStore = this.getStoreById(storeId);
         sellingStore.removeProduct(productId);
     }
 
-    private boolean isProductDeletionValid(int productId, int storeId) {
+//    private void validateProductDeletionFromStore(int storeId, int productId, Optional<String> discountsRemovedMessage) throws ValidationException {
+    private void validateProductDeletionFromStore(int storeId, int productId) throws ValidationException {
         // TODO::DUDI: implement Product Deletion Validation
-        return true;
+        ErrorMessage errorMessage = new ErrorMessage("");
+        boolean isNotSoldInAtLeastOneOtherStore = !checkIfProductSoldInAtLeastOneOtherStore(errorMessage, productId, storeId);
+        boolean isLastProductSoldByStore = checkIfProductTheLastInStore(errorMessage, storeId, productId);
+        if (isNotSoldInAtLeastOneOtherStore || isLastProductSoldByStore) {
+            throw new ValidationException(errorMessage.getMessage());
+        }
+//        boolean isProductAssociatedDiscount = handleIfProductAssociatedDiscount(discountsRemovedMessage, storeId, productId);
+        boolean isProductAssociatedDiscount = handleIfProductAssociatedDiscount(storeId, productId);
+//        if (isProductAssociatedDiscount) {
+//
+//        }
     }
 
-//    private boolean isProductSoldIn
+//    private boolean handleIfProductAssociatedDiscount(Optional<String> discountsRemovedMessage, int storeId, int productId) {
+    private boolean handleIfProductAssociatedDiscount(int storeId, int productId) {
+        Store store = this.getStoreById(storeId);
+        List<Discount> productAssociatedDiscounts = store.getDiscountsByProductId(productId);
+        boolean isProductAssociatedWithDiscounts = productAssociatedDiscounts.size() > 0;
+        if (isProductAssociatedWithDiscounts) {
+//            StringBuilder message = new StringBuilder();
+//            String productName = this.getProductById(productId).getName();
+//            List<String> discountsNames = productAssociatedDiscounts.stream()
+//                    .map(Discount::getName).collect(Collectors.toList());
+//            StringBuilder discountsNamesBuilder = new StringBuilder();
+//            for (int i = 0; i < discountsNames.size(); i++) {
+//                if (i > 0) discountsNamesBuilder.append(", ");
+//                discountsNamesBuilder.append("\"").append(discountsNames.get(i)).append("\"");
+//            }
+//            message
+//                    .append("Removed the following Discounts associated with Product \"")
+//                    .append(productName).append("\" (Product ID: ")
+//                    .append(productId).append("): ").append(
+//                    discountsNamesBuilder.toString()
+//            )
+//                    .append(System.lineSeparator());
+//            discountsRemovedMessage = Optional.of(message.toString());
+
+            productAssociatedDiscounts.stream()
+                    .map(Discount::getProductId)
+                    .forEach(store::removeProductDiscounts);
+        }
+        return isProductAssociatedWithDiscounts;
+    }
+
+    private boolean checkIfProductTheLastInStore(ErrorMessage errorMessage, int storeId, int productId) {
+        boolean isLastProductInStore = this.getStoreById(storeId).isLastProductSold(productId);
+        if (isLastProductInStore) {
+            StringBuilder message = new StringBuilder();
+            String productName = this.getProductById(productId).getName();
+            message
+                    .append("Cannot perform delete to Product \"")
+                    .append(productName).append("\" (Product ID: ")
+                    .append(productId).append(") in store since it is the last product available.")
+                    .append(System.lineSeparator());
+            errorMessage.appendMessage(message.toString());
+        }
+        return isLastProductInStore;
+    }
+
+    private boolean checkIfProductSoldInAtLeastOneOtherStore(ErrorMessage errorMessage, int productId, int storeId) {
+        int numberOfStoresSellingProduct = (int) this.idToStore.values().stream()
+                .filter(store -> store.getId() != storeId)
+                .filter(store -> store.isProductSold(productId))
+                .count();
+        boolean soldInAtLeastOneOtherStore = numberOfStoresSellingProduct > 0;
+        if (!soldInAtLeastOneOtherStore) {
+            StringBuilder message = new StringBuilder();
+            String productName = this.getProductById(productId).getName();
+            message
+                    .append("Cannot perform delete to Product \"")
+                    .append(productName).append("\" (Product ID: ")
+                    .append(productId).append(") in store since it has to be sold in at least one store.")
+                    .append(System.lineSeparator());
+            errorMessage.appendMessage(message.toString());
+        }
+        return (numberOfStoresSellingProduct > 0);
+    }
 
     public void changePriceForProduct(int storeId, int productId, double newPrice) {
         Store sellingStore = this.idToStore.get(storeId);
