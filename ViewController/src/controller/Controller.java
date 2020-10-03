@@ -369,6 +369,10 @@ public class Controller {
         return this.market.getAllCustomers();
     }
 
+    public Customer getCustomerById(int customerId) {
+        return this.market.getCustomerById(customerId);
+    }
+
     public void deleteProduct(int productId, int storeId) {
         this.market.deleteProductForStore(productId, storeId);
         ApplicationContext.getInstance().navigateBack();
