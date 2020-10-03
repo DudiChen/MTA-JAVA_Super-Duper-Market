@@ -187,7 +187,7 @@ public class Controller {
     }
 
     private void registerOnOrderAccepted() {
-        view.onOrderAccepted = (orderInvoiceId) -> market.approveOrder(orderInvoiceId);
+        view.onOrderAccepted = orderInvoiceId -> market.approveOrder(orderInvoiceId);
     }
 
     private void registerOnOrderCanceled() {

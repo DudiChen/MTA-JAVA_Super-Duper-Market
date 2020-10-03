@@ -1,14 +1,9 @@
 package view.menu;
 
-import com.sun.deploy.net.MessageHeader;
 import controller.Controller;
-import entity.Customer;
 import entity.Discount;
 import entity.Product;
 import entity.Store;
-import exception.OrderValidationException;
-import javafx.event.ActionEvent;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -25,7 +20,6 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import view.ApplicationContext;
 import view.TriConsumer;
-import view.menu.item.AbstractProductContent;
 import view.menu.item.ProductsContentFactory;
 
 import java.awt.*;
@@ -39,7 +33,6 @@ public class StoreProductsMenu extends ProductsMenu {
 
     private final Stage primaryStage;
     private final Store store;
-    //    private final Controller controller;
     private Popup currentPopup;
     private boolean currentPopupFocused = true;
     private boolean hovered = true;
@@ -141,6 +134,39 @@ public class StoreProductsMenu extends ProductsMenu {
         });
     }
 
+    @Override
+    protected boolean validateOrder() {
+        boolean isValidForProducts = super.validateOrder();
+        boolean isValidForDiscounts = true;
+        List<Discount> validDiscounts = new ArrayList<>();
+        List<Discount> nonValidDiscounts = new ArrayList<>();
+        List<Discount> temp = new ArrayList<>();
+        temp.addAll(this.chosenDiscounts);
+        for(int i = 0; i  < temp.size(); i++) {
+            this.chosenDiscounts = temp.subList(0, i);
+            if(isAvailableDiscount(temp.get(i))) {
+                validDiscounts.add(temp.get(i));
+            }
+            else {
+                nonValidDiscounts.add(temp.get(i));
+            }
+        }
+        this.chosenDiscounts = temp;
+        String removedDiscounts = nonValidDiscounts.stream()
+                .map(Discount::getName)
+                .reduce("", (acc, curr) -> acc + " " + curr);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        if (validDiscounts.size() != this.chosenDiscounts.size()) {
+            alert.setContentText("Removed Discounts: " + removedDiscounts);
+            this.chosenDiscounts = validDiscounts;
+            this.chosenDiscountsLabel.setText("Chosen Discounts: " +
+                    this.chosenDiscounts.stream().map(Discount::getName).reduce("", (acc, curr) ->  acc + ", " + curr));
+            isValidForDiscounts = false;
+            alert.show();
+        }
+        return isValidForDiscounts && isValidForProducts;
+    }
+
 
     private void onProductDelete(int productId) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.CANCEL);
@@ -152,7 +178,11 @@ public class StoreProductsMenu extends ProductsMenu {
                 .ifPresent(buttonType -> {
                     Stream<Product> productStream = this.products.stream();
                     this.products = productStream.filter(product -> product.getId() != productId).collect(Collectors.toList());
+//                    try {
                     controller.deleteProduct(productId, store.getId());
+//                    }  catch(ValidationException e){
+
+//                    }
                 });
     }
 

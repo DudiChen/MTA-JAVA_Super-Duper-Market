@@ -49,7 +49,7 @@ public class MapMenu extends StackPane implements Navigatable {
                             Point2D point = canvas.localToScreen(e.getX(), e.getY());
                             // show the popup at the mouse's location on the screen
                             popup.show(canvas, point.getX(), point.getY());
-                        } else if (popup.isShowing()) {
+                        } else {
                             // hide popup if showing and mouse no longer within rectangle
                             popup.hide();
                         }

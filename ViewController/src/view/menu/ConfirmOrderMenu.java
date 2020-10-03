@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-public class ConfirmOrderScreen implements Initializable, Navigatable {
+public class ConfirmOrderMenu implements Initializable, Navigatable {
     private final OrderInvoice orderInvoice;
     private final Consumer<Integer> onOrderAccepted;
     private final Store store;
@@ -54,7 +54,7 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
         return null;
     }
 
-    public ConfirmOrderScreen(Store store, OrderInvoice orderInvoice, Consumer<Integer> onOrderAccepted, Controller controller) {
+    public ConfirmOrderMenu(Store store, OrderInvoice orderInvoice, Consumer<Integer> onOrderAccepted, Controller controller) {
         this.onOrderAccepted = onOrderAccepted;
         this.orderInvoice = orderInvoice;
         this.controller = controller;
@@ -70,7 +70,7 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.storeNameLabel.setText(this.storeNameLabel.getText() + this.store.getName() + " ID: " + this.store.getId() + " At: x: " + store.getLocation().getX() + " y: " + store.getLocation().getY());
-        this.approveButton.setOnAction(e -> this.onOrderAccepted.accept(orderInvoice.getOrderId()));
+            this.approveButton.setOnAction(e -> this.onOrderAccepted.accept(orderInvoice.getOrderId()));
         this.shipmentCostLabel.setText(this.shipmentCostLabel.getText() + String.format("%.2f", orderInvoice.getShipmentPrice()));
         this.totalLabel.setText(this.totalLabel.getText() + String.format("%.2f",orderInvoice.getTotalPrice()));
         this.invoiceProductsContents.setCellFactory(param -> new InvoiceProductContent());
