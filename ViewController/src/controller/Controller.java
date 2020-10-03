@@ -233,8 +233,7 @@ public class Controller {
         int orderInvoiceId = market.receiveOrder(new Order(customerId, productQuantityPairsWithOffers.getKey(), chosenOffers, this.market.getCustomerById(customerId).getLocation(), date, chosenStore.get().getId()));
         view.summarizeOrder(market.getOrderInvoice(orderInvoiceId));
     }
-    
-    
+
     // TODO :: make an alert when dynamic order is more than 2 stores long
     public void makeDynamicOrder() {
         fetchAllProductsListToUI();
@@ -355,7 +354,7 @@ public class Controller {
     }
 
     public boolean isAvailableDiscount(Discount discount, List<Pair<Integer, Double>> orderProducts, List<Discount> chosenDiscounts) {
-        return true;
+        return this.market.isAvailableDiscount(discount, orderProducts, chosenDiscounts);
     }
 
     public List<Customer> getAllCustomers() {

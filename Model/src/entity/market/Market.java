@@ -146,14 +146,6 @@ public class Market {
         return (idToProduct == null || idToProduct.isEmpty()) || (idToStore == null || idToStore.isEmpty()) ;
     }
 
-//    public List<Customer> getAllCustomers() {
-//        return new ArrayList<>(idToCustomer.values());
-//    }
-
-//    public Customer getCustomerById(int customerId) {
-//        return this.idToCustomer.get(customerId);
-//    }
-
     public void deleteProductForStore(int productId, int storeId) {
         // TODO:: validate all validations e.g not only selling store !
         Store sellingStore = this.idToStore.get(storeId);
@@ -167,5 +159,16 @@ public class Market {
 
     public void addProductToStore(int storeId, int productId, double price) {
         this.idToStore.get(storeId).addProductToStock(this.getProductById(productId), price);
+    }
+
+    public boolean isAvailableDiscount(Discount discount, List<Pair<Integer, Double>> orderProducts, List<Discount> chosenDiscounts) {
+        int discountProductId = discount.getProductId();
+        double discountProductQuantity = discount.getQuantity();
+        int timesUsedDiscount = Collections.frequency(chosenDiscounts, discount);
+        double quantityOrderedOfProduct = orderProducts.stream()
+                .filter(productIdToQuantityPair -> productIdToQuantityPair.getKey() == discountProductId)
+                .map(Pair::getValue).reduce(0.0, Double::sum);
+        int timesEligibleForDiscount = (int) ((quantityOrderedOfProduct - (discountProductQuantity * timesUsedDiscount)) / discountProductQuantity);
+        return timesEligibleForDiscount > 0;
     }
 }
