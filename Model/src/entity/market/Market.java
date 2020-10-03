@@ -1,6 +1,7 @@
 package entity.market;
 
 import entity.*;
+import exception.DiscountsRemovedException;
 import exception.MarketIsEmptyException;
 import javafx.util.Pair;
 import util.ErrorMessage;
@@ -150,56 +151,59 @@ public class Market {
     }
 
 //    public void deleteProductForStore(int productId, int storeId, Optional<String> discountsRemovedMessage) throws ValidationException {
-    public void deleteProductForStore(int productId, int storeId) throws ValidationException {
+    public void deleteProductForStore(int productId, int storeId) throws ValidationException, DiscountsRemovedException {
 //        validateProductDeletionFromStore(storeId, productId, discountsRemovedMessage);
-        validateProductDeletionFromStore(storeId, productId);
-        Store sellingStore = this.getStoreById(storeId);
-        sellingStore.removeProduct(productId);
+        try {
+            validateProductDeletionFromStore(storeId, productId);
+        } catch (DiscountsRemovedException e) {
+            throw e;
+        }
+        finally {
+            Store sellingStore = this.getStoreById(storeId);
+            sellingStore.removeProduct(productId);
+        }
     }
 
 //    private void validateProductDeletionFromStore(int storeId, int productId, Optional<String> discountsRemovedMessage) throws ValidationException {
-    private void validateProductDeletionFromStore(int storeId, int productId) throws ValidationException {
-        // TODO::DUDI: implement Product Deletion Validation
+    private void validateProductDeletionFromStore(int storeId, int productId) throws ValidationException, DiscountsRemovedException {
         ErrorMessage errorMessage = new ErrorMessage("");
         boolean isNotSoldInAtLeastOneOtherStore = !checkIfProductSoldInAtLeastOneOtherStore(errorMessage, productId, storeId);
         boolean isLastProductSoldByStore = checkIfProductTheLastInStore(errorMessage, storeId, productId);
         if (isNotSoldInAtLeastOneOtherStore || isLastProductSoldByStore) {
             throw new ValidationException(errorMessage.getMessage());
         }
-//        boolean isProductAssociatedDiscount = handleIfProductAssociatedDiscount(discountsRemovedMessage, storeId, productId);
         boolean isProductAssociatedDiscount = handleIfProductAssociatedDiscount(storeId, productId);
-//        if (isProductAssociatedDiscount) {
-//
-//        }
     }
 
 //    private boolean handleIfProductAssociatedDiscount(Optional<String> discountsRemovedMessage, int storeId, int productId) {
-    private boolean handleIfProductAssociatedDiscount(int storeId, int productId) {
+    private boolean handleIfProductAssociatedDiscount(int storeId, int productId) throws DiscountsRemovedException {
         Store store = this.getStoreById(storeId);
         List<Discount> productAssociatedDiscounts = store.getDiscountsByProductId(productId);
         boolean isProductAssociatedWithDiscounts = productAssociatedDiscounts.size() > 0;
         if (isProductAssociatedWithDiscounts) {
-//            StringBuilder message = new StringBuilder();
-//            String productName = this.getProductById(productId).getName();
-//            List<String> discountsNames = productAssociatedDiscounts.stream()
-//                    .map(Discount::getName).collect(Collectors.toList());
-//            StringBuilder discountsNamesBuilder = new StringBuilder();
-//            for (int i = 0; i < discountsNames.size(); i++) {
-//                if (i > 0) discountsNamesBuilder.append(", ");
-//                discountsNamesBuilder.append("\"").append(discountsNames.get(i)).append("\"");
-//            }
-//            message
-//                    .append("Removed the following Discounts associated with Product \"")
-//                    .append(productName).append("\" (Product ID: ")
-//                    .append(productId).append("): ").append(
-//                    discountsNamesBuilder.toString()
-//            )
-//                    .append(System.lineSeparator());
+            StringBuilder message = new StringBuilder();
+            String productName = this.getProductById(productId).getName();
+            List<String> discountsNames = productAssociatedDiscounts.stream()
+                    .map(Discount::getName).collect(Collectors.toList());
+            StringBuilder discountsNamesBuilder = new StringBuilder();
+            for (int i = 0; i < discountsNames.size(); i++) {
+                if (i > 0) discountsNamesBuilder.append(", ");
+                discountsNamesBuilder.append("\"").append(discountsNames.get(i)).append("\"");
+            }
+            message
+                    .append("Removed the following Discounts associated with Product \"")
+                    .append(productName).append("\" (Product ID: ")
+                    .append(productId).append("): ").append(
+                    discountsNamesBuilder.toString()
+            )
+                    .append(System.lineSeparator());
 //            discountsRemovedMessage = Optional.of(message.toString());
 
             productAssociatedDiscounts.stream()
                     .map(Discount::getProductId)
                     .forEach(store::removeProductDiscounts);
+
+            throw new DiscountsRemovedException(message.toString());
         }
         return isProductAssociatedWithDiscounts;
     }

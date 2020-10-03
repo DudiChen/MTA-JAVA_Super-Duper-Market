@@ -4,6 +4,7 @@ import command.Executor;
 import entity.*;
 import entity.market.Market;
 import entity.market.OrderInvoice;
+import exception.DiscountsRemovedException;
 import exception.MarketIsEmptyException;
 import exception.OrderValidationException;
 import exception.XMLException;
@@ -379,7 +380,7 @@ public class Controller {
             ApplicationContext.getInstance().navigateBack();
             this.view.onStoreIdChoice.accept(storeId);
         }
-        catch (ValidationException e) {
+        catch (ValidationException | DiscountsRemovedException e) {
             this.view.displayMessage(e.getMessage());
         }
     }
