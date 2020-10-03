@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class BackButtonPage implements Initializable, Navigatable {
+public class BackButtonMenu implements Initializable, Navigatable {
 
     private final Parent content;
     private Runnable navigateBack;
@@ -24,7 +24,7 @@ public class BackButtonPage implements Initializable, Navigatable {
     @FXML
     private VBox mainContent;
 
-    public BackButtonPage(Runnable navigateBack) {
+    public BackButtonMenu(Runnable navigateBack) {
         this.navigateBack = navigateBack;
         this.content = loadFXML("backButton");
     }

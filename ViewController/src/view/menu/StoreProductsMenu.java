@@ -142,7 +142,6 @@ public class StoreProductsMenu extends ProductsMenu {
         List<Discount> nonValidDiscounts = new ArrayList<>();
         List<Discount> temp = new ArrayList<>();
         temp.addAll(this.chosenDiscounts);
-
         for(int i = 0; i  < temp.size(); i++) {
             this.chosenDiscounts = temp.subList(0, i);
             if(isAvailableDiscount(temp.get(i))) {
@@ -161,7 +160,7 @@ public class StoreProductsMenu extends ProductsMenu {
             alert.setContentText("Removed Discounts: " + removedDiscounts);
             this.chosenDiscounts = validDiscounts;
             this.chosenDiscountsLabel.setText("Chosen Discounts: " +
-                    this.chosenDiscounts.stream().map(Discount::getName).reduce("", (acc, curr) -> ", " + acc + curr));
+                    this.chosenDiscounts.stream().map(Discount::getName).reduce("", (acc, curr) ->  acc + ", " + curr));
             isValidForDiscounts = false;
             alert.show();
         }

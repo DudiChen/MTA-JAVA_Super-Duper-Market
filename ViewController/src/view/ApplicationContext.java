@@ -1,17 +1,15 @@
 package view;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import view.menu.BackButtonPage;
+import view.menu.BackButtonMenu;
 import view.menu.Navigatable;
 import java.util.Stack;
 
 public class ApplicationContext {
     private Tab rootTab;
     private Stack<Navigatable> pagesStack;
-    private BackButtonPage backPage;
+    private BackButtonMenu backPage;
     private static ApplicationContext instance;
     private ApplicationContext() {
         this.pagesStack = new Stack<>();
@@ -70,7 +68,7 @@ public class ApplicationContext {
     }
 
     private void initBackPage() {
-        this.backPage = new BackButtonPage(this::navigateBack);
+        this.backPage = new BackButtonMenu(this::navigateBack);
         this.rootTab.setContent(this.backPage.getContent());
     }
 }

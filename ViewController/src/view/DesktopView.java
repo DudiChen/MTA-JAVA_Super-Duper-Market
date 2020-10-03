@@ -11,7 +11,6 @@ import entity.Product;
 import entity.Store;
 import entity.market.OrderInvoice;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -87,7 +86,7 @@ public class DesktopView extends View {
 
     @Override
     public void summarizeOrder(OrderInvoice orderInvoice) {
-        this.appContext.navigate(new ConfirmOrderScreen(this.controller.getStoreById(orderInvoice.getStoreId()), orderInvoice, id -> {
+        this.appContext.navigate(new ConfirmOrderMenu(this.controller.getStoreById(orderInvoice.getStoreId()), orderInvoice, id -> {
             onOrderAccepted.accept(id);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText("Order ID " + id + " Received");
