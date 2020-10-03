@@ -8,9 +8,10 @@ import entity.Product;
 import entity.Store;
 import exception.OrderValidationException;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
@@ -29,10 +30,8 @@ import view.menu.item.ProductsContentFactory;
 
 import java.awt.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,12 +39,14 @@ public class StoreProductsMenu extends ProductsMenu {
 
     private final Stage primaryStage;
     private final Store store;
-//    private final Controller controller;
+    //    private final Controller controller;
     private Popup currentPopup;
     private boolean currentPopupFocused = true;
     private boolean hovered = true;
     private List<Discount> chosenDiscounts;
 
+    @FXML
+    private Label storeNameLabel;
     @FXML
     private Label chosenDiscountsLabel;
     @FXML
@@ -61,6 +62,7 @@ public class StoreProductsMenu extends ProductsMenu {
         this.primaryStage = primaryStage;
         this.chosenDiscounts = new ArrayList<>();
         this.store = store;
+        this.storeNameLabel.setText(store.getName());
     }
 
     public void onProductHover(Product product, Point mousePos) {
@@ -137,15 +139,21 @@ public class StoreProductsMenu extends ProductsMenu {
             ApplicationContext.getInstance().navigateBack();
             this.onProductAdd(Integer.parseInt(newVal.split(":")[0]));
         });
-//        this.chosenDiscountsLabel.setText("Chosen Products:");
     }
 
 
     private void onProductDelete(int productId) {
-//        this.productsList.getItems().remove(controller.getProductById(productId));
-        Stream<Product> productStream = this.products.stream();
-        this.products = productStream.filter(product -> product.getId() != productId).collect(Collectors.toList());
-        controller.deleteProduct(productId, store.getId());
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.CANCEL);
+        alert.setTitle("Delete Product");
+        alert.setHeaderText("This will delete " + controller.getProductById(productId).getName() + " for " + store.getName());
+        alert.setContentText("Are you sure ?");
+        alert.showAndWait()
+                .filter(response -> response == ButtonType.YES)
+                .ifPresent(buttonType -> {
+                    Stream<Product> productStream = this.products.stream();
+                    this.products = productStream.filter(product -> product.getId() != productId).collect(Collectors.toList());
+                    controller.deleteProduct(productId, store.getId());
+                });
     }
 
     private void onProductPriceChange(int productId, double newPrice) {
