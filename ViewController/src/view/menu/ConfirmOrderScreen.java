@@ -35,6 +35,8 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
     private Button approveButton;
     @FXML
     private Label storeNameLabel;
+    @FXML
+    private Label orderingCustomerLabel;
     private Parent content;
 
     // TODO: move to utils
@@ -72,7 +74,7 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
         this.invoiceProductsContents.getItems().addAll(orderInvoice.getInvoiceProducts());
         List<InvoiceDiscountProduct> discountProducts = orderInvoice.getDiscountProducts();
         if(discountProducts != null) {
-            this.invoiceDiscountsContents.getItems().addAll();
+            this.invoiceDiscountsContents.getItems().addAll(discountProducts);
             this.invoiceDiscountsContents.setCellFactory(param -> new InvoiceDiscountProductContent());
         }
     }

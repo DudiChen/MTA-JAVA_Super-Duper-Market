@@ -9,8 +9,6 @@
 <fx:root prefWidth="40.0" type="javafx.scene.control.ListCell" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
     <graphic>
         <VBox prefWidth="100.0">
-            @FXML
-            private Label discountNameLabel;
             <Separator />
             <Label fx:id="nameLabel">
                 <font>

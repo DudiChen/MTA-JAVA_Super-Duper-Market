@@ -148,6 +148,7 @@ public class Controller {
                             }
                         }
                     });
+            view.displayMessage("Please Confirm / Cancel All Orders");
         };
     }
 

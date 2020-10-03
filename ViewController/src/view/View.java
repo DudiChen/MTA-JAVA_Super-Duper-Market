@@ -50,4 +50,6 @@ public abstract class View {
     public abstract StringProperty xmlProgressStateProperty();
 
     public abstract DoubleProperty xmlProgressBarProperty();
+
+    public abstract void displayMessage(String msg);
 }

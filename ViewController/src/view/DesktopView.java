@@ -108,6 +108,13 @@ public class DesktopView extends View {
     }
 
     @Override
+    public void displayMessage(String msg){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setContentText(msg);
+        alert.show();
+    }
+
+    @Override
     public void fileLoadedSuccessfully() {
 //        Alert alert = new Alert(Alert.AlertType.INFORMATION);
 //        alert.setContentText("File Loaded Successfully");
