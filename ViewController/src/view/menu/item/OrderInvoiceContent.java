@@ -70,7 +70,7 @@ public class OrderInvoiceContent extends ListCell<OrderInvoice> {
             this.deliveryDateLabel.setText("Delivery Date: " + s);
             this.providingStoreLabel.setText("Providing Store: " + this.controller.getStoreNameByID(orderInvoice.getStoreId()) + ", ID: " + orderInvoice.getStoreId());
             this.numberOfItemsLabel.setText("Number of Items: " + orderInvoice.getInvoiceProducts().size());
-            this.totalPriceLabel.setText("Total Price: " + String.format("%.2f", orderInvoice.getTotalPrice() - orderInvoice.getShipmentPrice()));
+            this.totalProductsPriceLabel.setText("Total Price: " + String.format("%.2f", orderInvoice.getTotalPrice() - orderInvoice.getShipmentPrice()));
             this.shipmentPriceLabel.setText("Shipment Cost: " + String.format("%.2f", orderInvoice.getShipmentPrice()));
             this.totalPriceLabel.setText("Total Price: " + String.format("%.2f", orderInvoice.getTotalPrice()));
             List<InvoiceDiscountProduct> discountProducts = orderInvoice.getDiscountProducts();

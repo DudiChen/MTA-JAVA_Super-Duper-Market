@@ -206,7 +206,6 @@ public class Controller {
         view.onOrderPlaced = this::makeOrderForChosenStore;
     }
 
-//    TODO::UI: Missing the Offers support from order when displaying invoice.
 //    TODO::UI: in the Order History, under Orders tab; the Discount offer items are not counted - need to add as "Number of items from Discounts" => use getNumberOfDiscountProducts() & getNumberOfInvoiceProducts().
 //    TODO::UI: Orders does not display customer related data
 //    TODO::UI: On Dynamic Order display; missing prompt to user about order split info before viewing multiple orders
