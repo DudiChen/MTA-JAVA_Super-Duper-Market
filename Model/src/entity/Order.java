@@ -26,6 +26,7 @@ public class Order {
         this.id = MarketUtils.generateIdForOrder();
         this.storeId = storeId;
     }
+
     // TODO: use customerId for InvoiceOrder Conversion and display
     public int getCustomerId() {
         return customerId;

@@ -11,6 +11,7 @@ public class OrderInvoice implements Serializable {
     private int customerId;
     private List<InvoiceProduct> invoiceProduct;
     private List<InvoiceDiscountProduct> discountProducts;
+//    TODO: possible inconsistency with price type across classes
     private double totalPrice;
     private Date deliveryDate;
     private int storeId;

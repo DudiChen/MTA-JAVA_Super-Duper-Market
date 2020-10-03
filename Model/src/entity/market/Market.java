@@ -69,10 +69,6 @@ public class Market {
                         )
                 ).collect(Collectors.toList());
         double shipmentCost = this.idToStore.get(order.getStoreId()).getShipmentCost(order.getDestination());
-        double totalPrice = invoiceProducts.stream()
-                .map(InvoiceProduct::getTotalPrice)
-                .reduce((double) 0, Double::sum);
-
         List<InvoiceDiscountProduct> discountProducts = order.getOffersTaken().stream()
                 .map(discountOffer -> new InvoiceDiscountProduct(
                         discountOffer.getProductId(),
@@ -81,8 +77,14 @@ public class Market {
                         discountOffer.getQuantity(),
                         discountOffer.getRelatedDiscountName()))
                 .collect(Collectors.toList());
+        double totalPrice = invoiceProducts.stream()
+                .map(InvoiceProduct::getTotalPrice)
+                .reduce(0.0, Double::sum);
+        totalPrice += discountProducts.stream()
+                .map(InvoiceDiscountProduct::getAdditionalCost)
+                .reduce(0.0, Double::sum);
 
-        this.idToOrderInvoice.put(order.getId(),
+                this.idToOrderInvoice.put(order.getId(),
                 new OrderInvoice(
                         order.getId(),
                         invoiceProducts,
@@ -92,8 +94,6 @@ public class Market {
                         order.getStoreId(),
                         this.idToStore.get(order.getStoreId()).getShipmentCost(order.getDestination()))
         );
-
-
 
         return order.getId();
     }
