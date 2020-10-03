@@ -158,6 +158,8 @@ public class Market {
         return true;
     }
 
+//    private boolean isProductSoldIn
+
     public void changePriceForProduct(int storeId, int productId, double newPrice) {
         Store sellingStore = this.idToStore.get(storeId);
         sellingStore.updateProductPrice(productId, newPrice);
