@@ -205,7 +205,9 @@ public class Controller {
         view.onOrderPlaced = this::makeOrderForChosenStore;
     }
 
-//    TODO::UI: Missing the Offers support from order when dispalying invoice and calculating order cost - maybe other related details as well
+//    TODO::UI: Missing the Offers support from order when displaying invoice and calculating order cost - maybe other related details as well
+//    TODO::UI: Orders does not display customer related data
+//    TODO::UI: On Dynamic Order display; missing prompt to user about order split info before viewing multiple orders
     private void makeOrderForChosenStore(Date date, Integer customerId, Pair<List<Pair<Integer, Double>>, List<Discount.Offer>> productQuantityPairsWithOffers) throws OrderValidationException {
         StringBuilder err = new StringBuilder();
         List<Discount.Offer> chosenOffers = productQuantityPairsWithOffers.getValue();
