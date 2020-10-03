@@ -11,7 +11,6 @@ public class InvoiceDiscountProduct implements Serializable {
     private double quantity;
     private String discountName;
 
-    // TODO: Check if there is any unused ctors and remove
     public InvoiceDiscountProduct(int productId, String name, double additionalCost, double quantity, String discountName) {
         this.productId = productId;
         this.name = name;

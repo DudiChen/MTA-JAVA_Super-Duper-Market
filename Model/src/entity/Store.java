@@ -1,6 +1,5 @@
 package entity;
 
-
 import entity.market.InvoiceDiscountProduct;
 import entity.market.OrderInvoice;
 import exception.ProductIdNotFoundException;
@@ -121,22 +120,14 @@ public class Store {
         return totalShipmentIncome;
     }
 
-    // TODO: Check which Discount methods are not in use and remove
-//    public List<Discount> getDiscountsPerPurchase(int productId, double quantity) {
-//        List<Discount> result = new ArrayList<>();
-//
-//        return result;
-//    }
-
     public List<Discount> getDiscountsByProductId(int productId) {
         return this.productIdToDiscounts.get(productId);
     }
 
-    public Map<Integer,List<Discount>> getDiscountsMapByProductIdList(List<Integer> productIds) {
+    private Map<Integer,List<Discount>> getDiscountsMapByProductIdList(List<Integer> productIds) {
         List<Discount> result = new ArrayList<>();
         return productIds.stream()
                 .filter(productId -> getDiscountsByProductId(productId)  != null)
-//                .flatMap(productId -> this.productIdToDiscounts.get(productId).stream())
                 .collect(Collectors.toMap(productId -> productId, this::getDiscountsByProductId));
     }
 
