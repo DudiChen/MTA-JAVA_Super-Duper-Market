@@ -70,7 +70,7 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.storeNameLabel.setText(this.storeNameLabel.getText() + this.store.getName() + " ID: " + this.store.getId() + " At: x: " + store.getLocation().getX() + " y: " + store.getLocation().getY());
-        this.approveButton.setOnAction(e -> this.onOrderAccepted.accept(orderInvoice.getOrderId()));
+            this.approveButton.setOnAction(e -> this.onOrderAccepted.accept(orderInvoice.getOrderId()));
         this.shipmentCostLabel.setText(this.shipmentCostLabel.getText() + String.format("%.2f", orderInvoice.getShipmentPrice()));
         this.totalLabel.setText(this.totalLabel.getText() + String.format("%.2f",orderInvoice.getTotalPrice()));
         this.invoiceProductsContents.setCellFactory(param -> new InvoiceProductContent());
