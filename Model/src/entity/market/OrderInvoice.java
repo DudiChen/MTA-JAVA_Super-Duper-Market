@@ -9,7 +9,7 @@ public class OrderInvoice implements Serializable {
     private OrderStatus orderStatus = OrderStatus.ISSUED;
     private int orderId;
     private int customerId;
-    private List<InvoiceProduct> invoiceProduct;
+    private List<InvoiceProduct> invoiceProducts;
     private List<InvoiceDiscountProduct> discountProducts;
 //    TODO: possible inconsistency with price type across classes
     private double totalPrice;
@@ -23,7 +23,7 @@ public class OrderInvoice implements Serializable {
 
     public OrderInvoice(int id, List<InvoiceProduct> invoiceProducts, List<InvoiceDiscountProduct> discountProducts, double totalPrice, Date deliveryDate, int storeId, double shipmentPrice) {
         this.orderId = id;
-        this.invoiceProduct = invoiceProducts;
+        this.invoiceProducts = invoiceProducts;
         this.discountProducts = discountProducts;
         this.totalPrice = totalPrice;
         this.deliveryDate = deliveryDate;
@@ -40,12 +40,16 @@ public class OrderInvoice implements Serializable {
     }
 
     public List<InvoiceProduct> getInvoiceProducts() {
-        return invoiceProduct;
+        return invoiceProducts;
     }
+
+    public int getNumberOfInvoiceProducts() { return invoiceProducts.size(); }
 
     public List<InvoiceDiscountProduct> getDiscountProducts() {
         return discountProducts;
     }
+
+    public int getNumberOfDiscountProducts() { return discountProducts.size(); }
 
     public void setDiscountProducts(List<InvoiceDiscountProduct> value) {
         this.discountProducts = value;
