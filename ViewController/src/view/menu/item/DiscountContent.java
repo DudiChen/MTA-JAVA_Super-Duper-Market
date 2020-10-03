@@ -55,7 +55,7 @@ public class DiscountContent extends ListCell<Discount> {
             if(discount.getOperator().equals(Discount.DiscountOperator.ALL_OR_NOTHING)) {
                 discountButton.setVisible(true);
                 discountButton.setText("Get For Additional " + discount.getOffers().get(0).getForAdditional());
-                discountButton.setOnAction(e -> onDiscountChoice.accept(discount, null));
+                discountButton.setOnAction(e -> onDiscountChoice.accept(discount, Discount.Offer.ALL));
             }
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         }

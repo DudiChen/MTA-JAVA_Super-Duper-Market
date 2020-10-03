@@ -71,11 +71,13 @@ public class Discount {
     }
 
     public static class Offer {
+        public static final Offer ALL = new Offer();
         String relatedDiscountName;
         private int productId;
         private double quantity;
         private int forAdditional;
 
+        private Offer(){};
         public Offer(String discountName, int productId, double quantity, int forAdditional) {
             this.relatedDiscountName = discountName;
             this.productId = productId;

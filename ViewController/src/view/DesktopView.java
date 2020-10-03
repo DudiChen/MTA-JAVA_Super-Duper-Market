@@ -97,7 +97,7 @@ public class DesktopView extends View {
             } else if (this.productsTab.isSelected()) {
                 this.appContext.navigateBack();
             }
-        }));
+        }, controller));
     }
 
     @Override
