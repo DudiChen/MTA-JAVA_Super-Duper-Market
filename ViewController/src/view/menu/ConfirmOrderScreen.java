@@ -1,5 +1,6 @@
 package view.menu;
 
+import controller.Controller;
 import entity.Store;
 import entity.market.InvoiceDiscountProduct;
 import entity.market.InvoiceProduct;
@@ -23,6 +24,7 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
     private final OrderInvoice orderInvoice;
     private final Consumer<Integer> onOrderAccepted;
     private final Store store;
+    private final Controller controller;
     @FXML
     private ListView invoiceProductsContents;
     @FXML
@@ -52,9 +54,10 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
         return null;
     }
 
-    public ConfirmOrderScreen(Store store, OrderInvoice orderInvoice, Consumer<Integer> onOrderAccepted) {
+    public ConfirmOrderScreen(Store store, OrderInvoice orderInvoice, Consumer<Integer> onOrderAccepted, Controller controller) {
         this.onOrderAccepted = onOrderAccepted;
         this.orderInvoice = orderInvoice;
+        this.controller = controller;
         this.store = store;
         this.content = loadFXML("confirmOrder");
     }
@@ -72,6 +75,7 @@ public class ConfirmOrderScreen implements Initializable, Navigatable {
         this.totalLabel.setText(this.totalLabel.getText() + String.format("%.2f",orderInvoice.getTotalPrice()));
         this.invoiceProductsContents.setCellFactory(param -> new InvoiceProductContent());
         this.invoiceProductsContents.getItems().addAll(orderInvoice.getInvoiceProducts());
+        this.orderingCustomerLabel.setText("Ordering Customer: " +  this.controller.getCustomerById(orderInvoice.getCustomerId()).getName());
         List<InvoiceDiscountProduct> discountProducts = orderInvoice.getDiscountProducts();
         if(discountProducts != null) {
             this.invoiceDiscountsContents.getItems().addAll(discountProducts);
