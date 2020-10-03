@@ -22,9 +22,9 @@ public class DiscountsMenu implements Navigatable, Initializable {
     private final Controller controller;
     @FXML
     private ListView<Discount> discountsContentsList;
-    private BiConsumer<Discount, Discount.Offer> onDiscountChoice;
+    private BiConsumer<Discount, List<Discount.Offer>> onDiscountChoice;
 
-    public DiscountsMenu(List<Discount> discounts, Controller controller, BiConsumer<Discount, Discount.Offer> onDiscountChoice) {
+    public DiscountsMenu(List<Discount> discounts, Controller controller, BiConsumer<Discount, List<Discount.Offer>> onDiscountChoice) {
         this.controller = controller;
         this.onDiscountChoice = onDiscountChoice;
         this.discounts = discounts;

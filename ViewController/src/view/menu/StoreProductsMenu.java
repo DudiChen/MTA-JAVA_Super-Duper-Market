@@ -83,12 +83,12 @@ public class StoreProductsMenu extends ProductsMenu {
     }
 
     // TODO:: look here
-    private void onDiscountChoice(Discount discount, Discount.Offer offer) {
+    private void onDiscountChoice(Discount discount, List<Discount.Offer> offers) {
         if (!this.isAvailableDiscount(discount)) {
             return;
         }
         this.chosenDiscountsLabel.setText(this.chosenDiscountsLabel.getText() + ", " + discount.getName());
-        this.chosenOffers.add(offer);
+        this.chosenOffers.addAll(offers);
         this.chosenDiscounts.add(discount);
     }
 

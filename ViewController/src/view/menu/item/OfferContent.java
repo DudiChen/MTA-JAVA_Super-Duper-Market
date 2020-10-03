@@ -11,18 +11,20 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 class OfferContent extends ListCell<Discount.Offer> {
     private final Discount discount;
     private final Controller controller;
-    private BiConsumer<Discount, Discount.Offer> onDiscountChoice;
+    private BiConsumer<Discount, List<Discount.Offer>> onDiscountChoice;
 
     @FXML
     private Label offerLabel;
     @FXML
     private Button offerButton;
-    public OfferContent(Discount discount, Controller controller, BiConsumer<Discount, Discount.Offer> onDiscountChoice) {
+    public OfferContent(Discount discount, Controller controller, BiConsumer<Discount, List<Discount.Offer>> onDiscountChoice) {
         this.controller = controller;
         this.onDiscountChoice = onDiscountChoice;
         this.discount = discount;
@@ -53,7 +55,9 @@ class OfferContent extends ListCell<Discount.Offer> {
                 case ONE_OF: case IRRELEVANT:
                     this.offerLabel.setText(getProductDescription(offer, true));
                     this.offerButton.setVisible(true);
-                    this.offerButton.setOnAction(e -> this.onDiscountChoice.accept(discount, offer));
+                    List<Discount.Offer> offerList = new ArrayList<>();
+                    offerList.add(offer);
+                    this.offerButton.setOnAction(e -> this.onDiscountChoice.accept(discount, offerList));
                     break;
                 case ALL_OR_NOTHING:
                     this.offerLabel.setText(getProductDescription(offer, false));

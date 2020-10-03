@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 public class DiscountContent extends ListCell<Discount> {
@@ -20,9 +21,9 @@ public class DiscountContent extends ListCell<Discount> {
     private ListView<Discount.Offer> productsInDiscountList;
     @FXML
     private Button discountButton;
-    private BiConsumer<Discount, Discount.Offer> onDiscountChoice;
+    private BiConsumer<Discount, List<Discount.Offer>> onDiscountChoice;
 
-    public DiscountContent(Controller controller, BiConsumer<Discount, Discount.Offer> onDiscountChoice) {
+    public DiscountContent(Controller controller, BiConsumer<Discount, List<Discount.Offer>> onDiscountChoice) {
         this.controller = controller;
         this.onDiscountChoice = onDiscountChoice;
         loadFXML();
@@ -55,7 +56,7 @@ public class DiscountContent extends ListCell<Discount> {
             if(discount.getOperator().equals(Discount.DiscountOperator.ALL_OR_NOTHING)) {
                 discountButton.setVisible(true);
                 discountButton.setText("Get For Additional " + discount.getOffers().get(0).getForAdditional());
-                discountButton.setOnAction(e -> onDiscountChoice.accept(discount, Discount.Offer.ALL));
+                discountButton.setOnAction(e -> onDiscountChoice.accept(discount, discount.getOffers()));
             }
             setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         }
