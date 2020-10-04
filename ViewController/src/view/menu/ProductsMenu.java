@@ -99,7 +99,7 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
     }
 
     protected void getOrderDetails() {
-        Date date = null;
+//        Date date = null;
         // validate everything
 
         // filter all 0 quantities and transform from binding properties to values
@@ -113,7 +113,7 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
             this.chosenCustomerId = Integer.parseInt(this.customers.getValue().split(":")[0]);
         }
         // System.out.println(chosenCustomerId);
-        this.date = date;
+//        this.date = date;
         this.orderProducts = chosenProductToQuantity;
     }
 
