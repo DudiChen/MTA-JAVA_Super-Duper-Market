@@ -39,7 +39,8 @@ public class StoreContent extends ListCell<Store> {
     // TODO: move to utils
     private void loadFXML() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../sample/store.fxml"));
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("../sample/store.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/menu/sample/store.fxml"));
             loader.setRoot(this);
             loader.setController(this);
             loader.load();

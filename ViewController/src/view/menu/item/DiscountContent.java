@@ -32,7 +32,8 @@ public class DiscountContent extends ListCell<Discount> {
     // TODO: move to utils
     private void loadFXML() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../sample/discountContent.fxml"));
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("../sample/discountContent.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/menu/sample/discountContent.fxml"));
             loader.setRoot(this);
             loader.setController(this);
             loader.load();

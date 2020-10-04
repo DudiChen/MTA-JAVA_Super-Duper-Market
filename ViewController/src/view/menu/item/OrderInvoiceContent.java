@@ -47,7 +47,8 @@ public class OrderInvoiceContent extends ListCell<OrderInvoice> {
     // TODO: move to utils
     private void loadFXML() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../sample/orderInvoice.fxml"));
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("../sample/orderInvoice.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/menu/sample/orderInvoice.fxml"));
             loader.setRoot(this);
             loader.setController(this);
             loader.load();

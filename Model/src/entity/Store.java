@@ -55,7 +55,6 @@ public class Store {
     }
 
     public int getTotalProductSales(int productId) {
-        // TODO::DUDI: verify Exercise requirements does not contradict returning Discounts product count as well
         int totalSoldCount = (int) this.ordersHistory.values().stream()
                 .map(OrderInvoice::getInvoiceProducts)
                 .flatMap(List::stream)
@@ -171,7 +170,6 @@ public class Store {
     public void updateProductPrice(int productId, double newPrice) {
         this.stock.getSoldProducts().get(productId).setPrice(newPrice);
     }
-    // TODO: Verify that this flow does not require any validation (e.g. existing productID)
     public void addProductToStock(Product product, double price) {
         this.stock.addSoldProduct(new StoreProduct(product, price));
     }

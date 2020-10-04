@@ -34,7 +34,8 @@ class OfferContent extends ListCell<Discount.Offer> {
     // TODO: move to utils
     private void loadFXML() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../sample/offer.fxml"));
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("../sample/offer.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/menu/sample/offer.fxml"));
             loader.setRoot(this);
             loader.setController(this);
             loader.load();

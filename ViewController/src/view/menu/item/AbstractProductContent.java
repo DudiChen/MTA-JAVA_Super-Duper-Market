@@ -38,7 +38,8 @@ public abstract class AbstractProductContent extends ListCell<Product> implement
     // TODO: move to utils
     protected void loadFXML(String name) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../sample/" + name + ".fxml"));
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("../sample/" + name + ".fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/menu/sample/" + name + ".fxml"));
             loader.setRoot(this);
             loader.setController(this);
             loader.load();

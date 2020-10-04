@@ -29,7 +29,8 @@ public class InvoiceDiscountProductContent extends ListCell<InvoiceDiscountProdu
     // TODO: move to utils
     private void loadFXML() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../sample/invoiceDiscountContent.fxml"));
+//            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/menu/sample/invoiceDiscountContent.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/menu/sample/invoiceDiscountContent.fxml"));
             loader.setRoot(this);
             loader.setController(this);
             loader.load();

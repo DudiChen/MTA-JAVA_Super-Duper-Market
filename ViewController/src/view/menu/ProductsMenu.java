@@ -70,7 +70,8 @@ public class ProductsMenu<T extends AbstractProductContent> implements Initializ
     //TODO: move to utils
     private Parent loadFXML(String name) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("sample/" + name + ".fxml"));
+//            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("view/menu/sample/" + name + ".fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("view/menu/sample/" + name + ".fxml"));
             fxmlLoader.setController(this);
             Parent page = fxmlLoader.load();
             return page;
